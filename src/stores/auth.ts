@@ -1,0 +1,395 @@
+import { defineStore } from 'pinia'
+import { ref, computed } from 'vue'
+import { supabase } from '@/services/supabase'
+import type { User, UserProfile } from '@/types'
+import type { AuthError } from '@supabase/supabase-js'
+
+interface AuthResponse {
+  success: boolean
+  error?: string
+}
+
+export const useAuthStore = defineStore('auth', () => {
+
+  const user = ref<User | null>(null)
+  const profile = ref<UserProfile | null>(null)
+  const loading = ref(false)
+  const error = ref<string | null>(null)
+  const isAuthenticated = computed(() => !!user.value)
+  const userEmail = computed(() => user.value?.email || '')
+  const userName = computed(() => profile.value?.name || '')
+
+  //const userNickname = computed(() => profile.value?.nickname || '')
+
+  async function loadProfile(userId: string) {
+    try {
+      const { data, error: profileError } = await supabase
+        .from('profiles')
+        .select('*')
+        .eq('id', userId)
+        .single()
+
+      if (profileError) {
+        console.warn('Profile not found:', profileError.message)
+        profile.value = null
+        return
+      }
+
+      profile.value = data as UserProfile
+    } catch (e) {
+      console.error('Failed to load profile:', e)
+      profile.value = null
+    }
+  }
+
+  async function setUserFromSession(sessionUser: {
+    id: string
+    email?: string
+    created_at: string
+  }) {
+    user.value = {
+      id: sessionUser.id,
+      email: sessionUser.email!,
+      createdAt: sessionUser.created_at
+    }
+
+    await loadProfile(sessionUser.id)
+  }
+
+  async function initialize() {
+    loading.value = true
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+
+      if (session?.user) {
+        await setUserFromSession(session.user)
+      }
+
+      supabase.auth.onAuthStateChange(async (_event, session) => {
+        if (session?.user) {
+          await setUserFromSession(session.user)
+        } else {
+          user.value = null
+          profile.value = null
+        }
+      })
+    } catch (e) {
+      const authError = e as AuthError
+      error.value = authError.message
+      console.error('Auth initialization error:', authError)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function signUp(email: string, password: string, name?: string): Promise<AuthResponse> {
+    loading.value = true
+    error.value = null
+
+    try {
+      // Валидация
+      if (!email || !password) {
+        throw new Error('Email and password are required')
+      }
+
+      if (password.length < 6) {
+        throw new Error('Password must be at least 6 characters')
+      }
+
+      // Шаг 1: Регистрация пользователя в Supabase Auth
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            name: name || '' // Передаем имя в метаданные
+          }
+        }
+      })
+
+      if (signUpError) throw signUpError
+
+      if (!authData.user) {
+        throw new Error('User registration failed')
+      }
+
+      // Устанавливаем пользователя в состояние
+      user.value = {
+        id: authData.user.id,
+        email: authData.user.email!,
+        createdAt: authData.user.created_at
+      }
+
+      // Шаг 2: Создаем профиль в таблице profiles (если передано имя)
+      if (name && name.trim()) {
+        const { data: profileData, error: profileError } = await supabase
+          .from('profiles')
+          .insert({
+            id: authData.user.id, // Foreign key на auth.users.id
+            name: name.trim()
+          })
+          .select()
+          .single()
+
+        if (profileError) {
+          console.error('Profile creation failed:', profileError)
+          // Можно добавить логику повторной попытки или оставить профиль пустым
+        } else {
+          profile.value = profileData as UserProfile
+        }
+      }
+
+      return { success: true }
+    } catch (e) {
+      const authError = e as AuthError | Error
+      error.value = authError.message
+      return { success: false, error: authError.message }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function signIn(email: string, password: string): Promise<AuthResponse> {
+    loading.value = true
+    error.value = null
+
+    try {
+      if (!email || !password) {
+        throw new Error('Email and password are required')
+      }
+      const { data, error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password
+      })
+      if (signInError) throw signInError
+      if (!data.user) {
+        throw new Error('Sign in failed')
+      }
+      await setUserFromSession(data.user)
+
+      return { success: true }
+    } catch (e) {
+      const authError = e as AuthError | Error
+      error.value = authError.message
+      return { success: false, error: authError.message }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function signOut() {
+    loading.value = true
+    try {
+      await supabase.auth.signOut()
+      user.value = null
+      profile.value = null
+      error.value = null
+    } catch (e) {
+      const authError = e as AuthError
+      error.value = authError.message
+      console.error('Sign out error:', authError)
+    } finally {
+      loading.value = false
+    }
+  }
+  async function updateProfile(updates: {
+    name?: string
+    nickname?: string
+  }): Promise<AuthResponse> {
+    if (!user.value) {
+      return { success: false, error: 'User not authenticated' }
+    }
+
+    loading.value = true
+    error.value = null
+
+    try {
+      // Валидация
+      if (updates.name !== undefined && !updates.name.trim()) {
+        throw new Error('Name cannot be empty')
+      }
+
+      // Обновляем профиль в БД
+      const { data, error: updateError } = await supabase
+        .from('profiles')
+        .update(updates)
+        .eq('id', user.value.id)
+        .select()
+        .single()
+
+      if (updateError) throw updateError
+
+      // Обновляем локальное состояние
+      if (profile.value && data) {
+        profile.value = {
+          ...profile.value,
+          ...data
+        }
+      }
+
+      return { success: true }
+    } catch (e) {
+      const err = e as Error
+      error.value = err.message
+      return { success: false, error: err.message }
+    } finally {
+      loading.value = false
+    }
+  }
+  function clearError() {
+    error.value = null
+  }
+
+  return {
+    user,
+    profile,
+    loading,
+    error,
+
+    isAuthenticated,
+    userEmail,
+    userName,
+
+    initialize,
+    signUp,
+    signIn,
+    signOut,
+    updateProfile,
+    clearError
+  }
+})
+
+// import { defineStore } from 'pinia'
+// import { ref, computed } from 'vue'
+// import { supabase } from '@/services/supabase'
+// import type { User } from '@/types'
+// import type { AuthError } from '@supabase/supabase-js'
+
+// interface AuthResponse {
+//   success: boolean
+//   error?: string
+// }
+
+// export const useAuthStore = defineStore('auth', () => {
+//   const user = ref<User | null>(null)
+//   const loading = ref(false)
+//   const error = ref<string | null>(null)
+
+//   const isAuthenticated = computed(() => !!user.value)
+
+//   async function initialize() {
+//     loading.value = true
+//     try {
+//       const { data: { session } } = await supabase.auth.getSession()
+
+//       if (session?.user) {
+//         user.value = {
+//           id: session.user.id,
+//           email: session.user.email!,
+//           createdAt: session.user.created_at
+//         }
+//       }
+
+//       // Подписываемся на изменения auth состояния
+//       // Когда пользователь логинится/разлогинивается - обновляем состояние
+//       supabase.auth.onAuthStateChange((_event, session) => {
+//         if (session?.user) {
+//           user.value = {
+//             id: session.user.id,
+//             email: session.user.email!,
+//             createdAt: session.user.created_at
+//           }
+//         } else {
+//           user.value = null
+//         }
+//       })
+//     } catch (e) {
+//       const authError = e as AuthError
+//       error.value = authError.message
+//     } finally {
+//       loading.value = false
+//     }
+//   }
+
+//   async function signUp(email: string, password: string): Promise<AuthResponse> {
+//     loading.value = true
+//     error.value = null
+//     try {
+//       const { data, error: signUpError } = await supabase.auth.signUp({
+//         email,
+//         password
+//       })
+
+//       if (signUpError) throw signUpError
+
+//       if (data.user) {
+//         user.value = {
+//           id: data.user.id,
+//           email: data.user.email!,
+//           createdAt: data.user.created_at
+//         }
+//       }
+
+//       return { success: true }
+//     } catch (e) {
+//       const authError = e as AuthError
+//       error.value = authError.message
+//       return { success: false, error: authError.message }
+//     } finally {
+//       loading.value = false
+//     }
+//   }
+
+//   async function signIn(email: string, password: string): Promise<AuthResponse> {
+//     loading.value = true
+//     error.value = null
+//     try {
+//       const { data, error: signInError } = await supabase.auth.signInWithPassword({
+//         email,
+//         password
+//       })
+
+//       if (signInError) throw signInError
+
+//       if (data.user) {
+//         user.value = {
+//           id: data.user.id,
+//           email: data.user.email!,
+//           createdAt: data.user.created_at
+//         }
+//       }
+
+//       return { success: true }
+//     } catch (e) {
+//       const authError = e as AuthError
+//       error.value = authError.message
+//       return { success: false, error: authError.message }
+//     } finally {
+//       loading.value = false
+//     }
+//   }
+
+//   async function signOut() {
+//     loading.value = true
+//     try {
+//       await supabase.auth.signOut()
+//       user.value = null
+//     } catch (e) {
+//       const authError = e as AuthError
+//       error.value = authError.message
+//     } finally {
+//       loading.value = false
+//     }
+//   }
+
+//   return {
+//     user,
+//     loading,
+//     error,
+//     isAuthenticated,
+//     initialize,
+//     signUp,
+//     signIn,
+//     signOut
+//   }
+// })

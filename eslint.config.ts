@@ -9,4 +9,9 @@ export default defineConfig([
   tseslint.configs.recommended,
   pluginVue.configs["flat/essential"],
   { files: ["**/*.vue"], languageOptions: { parserOptions: { parser: tseslint.parser } } },
+  {
+    "vue/multi-word-component-names": ["error", {
+      "ignores": [Home]
+    }]
+  }
 ]);

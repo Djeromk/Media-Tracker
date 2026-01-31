@@ -1,4 +1,5 @@
 import type { KinopoiskItem } from "@/types";
+import { isModuleBlock } from "typescript";
 
 const API_KEY = import.meta.env.VITE_KINOPOISK_API_KEY;
 const BASE_URL = "https://kinopoiskapiunofficial.tech";
@@ -21,9 +22,13 @@ export class Kinopoisk {
     return data.items.map((item: KinopoiskItem) => ({
       id: item.kinopoiskId.toString(),
       title: item.nameRu || item.nameOriginal,
-      posterPath: item.posterUrl || item.posterUrlPreview,
+      posterUrl: item.posterUrlPreview || item.posterUrl || null,
       releaseDate: item.year,
       isSeries: item.type === "TV_SHOW",
+      year: item.year.toString(),
+      ratingImdb: item.ratingImdb,
+      ratingKinopoisk: item.ratingKinopoisk,
+      other: item
     }));
   }
 }

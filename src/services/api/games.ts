@@ -10,7 +10,18 @@ export class GamesService {
     )
     const data = await response.json()
 
-    return data
+    return data.results.map((item: ExternalGame) => {
+      return {
+        id: item.id,
+        title: item.name,
+        posterUrl: item.background_image,
+        releaseDate: item.released,
+        isSeries: false,
+        year: item.released,
+        metacritic: item.metacritic,
+       other: item
+      }
+    })
   }
 
   async getGameDetails(id: string): Promise<ExternalGame> {

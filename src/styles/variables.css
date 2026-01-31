@@ -1,0 +1,12 @@
+:root {
+	--primary-400: #0ad314;
+	--primary-600: #08b811;
+	--neo-background: #d1d9e6;
+	--neo-secondary: #E35205;
+	--neo-background-body: #e6e6e6;
+	--neo-dark: #a3b1c6;
+	--neo-light: #e0e5ec;
+	--neo-shadow: 9px 9px 16px rgba(163, 177, 198, 0.6), -9px -9px 16px rgba(255, 255, 255, 0.5);
+	--neo-shadow-inset: inset 6px 6px 12px rgba(163, 177, 198, 0.5), inset -6px -6px 12px rgba(255, 255, 255, 0.8);
+	--neo-shadow-sm: 4px 4px 8px rgba(163, 177, 198, 0.6), -4px -4px 8px rgba(255, 255, 255, 0.5);
+  }

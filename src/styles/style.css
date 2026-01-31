@@ -1,0 +1,59 @@
+@import "tailwindcss";
+@import "./variables.css";
+
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-[var(--neo-background-body)] text-gray-800;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@utility btn-neo {
+  @apply px-6 py-3 rounded-2xl bg-[var(--neo-background)] shadow-[var(--neo-shadow)]
+  transition-all duration-200 font-medium
+  hover:shadow-[var(--neo-shadow-sm)] active:shadow-[var(--neo-shadow-inset)];
+}
+@layer components {
+
+  .btn-neo-primary {
+    @apply btn-neo text-[var(--primary-600)];
+  }
+
+  /* Неоморфная карточка */
+  .card-neo {
+    @apply bg-(--neo-background) rounded-xl p-6 outline-1 outline-gray-300 shadow-(--neo-shadow);
+  }
+
+  /* Неоморфный input */
+  .input-neo {
+    @apply w-full px-4 py-3 rounded-2xl bg-[var(--neo-background)] shadow-[var(--neo-shadow-inset)]
+           border-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-400)];
+  }
+
+  /* Кнопка добавления (круглая с +) */
+  .btn-add {
+    @apply p-5 rounded-xl bg-[var(--neo-background)] shadow-[var(--neo-shadow)] outline-1 outline-gray-300
+           flex items-center justify-center text-2xl text-gray-600 cursor-pointer
+           hover:shadow-[var(--neo-shadow-sm)] hover:text-[var(--primary-600)]
+           active:shadow-[var(--neo-shadow-inset)] transition-all duration-200;
+  }
+
+  /* Прогресс бар */
+  .progress-neo {
+    @apply w-full h-3 rounded-full bg-[var(--neo-background)] shadow-[var(--neo-shadow-inset)] overflow-hidden;
+  }
+
+  .progress-fill {
+    @apply h-full bg-gradient-to-r from-[var(--primary-400)] to-[var(--primary-600)] rounded-full;
+  }
+}
