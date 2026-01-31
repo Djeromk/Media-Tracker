@@ -23,12 +23,12 @@ export const mediaService = {
     const { item, type, userId, status = 'backlog' } = params
 
     try {
-      const externalId = 'id' in item ? item.id : null
-      if (!externalId) {
+      const external_id = 'id' in item ? item.id : null
+      if (!external_id) {
         throw new Error('External ID is missing')
       }
       const { data: existingMedia, error: findError } = await db.getMediaByExternalId(
-        externalId,
+        external_id,
         type
       )
 	  if (findError) {
@@ -98,7 +98,7 @@ export const mediaService = {
   ) {
     let title = ''
     let coverUrl: string | null = null
-    const externalId = 'id' in item ? item.id : null
+    const external_id = 'id' in item ? item.id : null
 
     // Получаем title в зависимости от типа
     if ('title' in item) {
@@ -120,7 +120,7 @@ export const mediaService = {
       type,
       title,
       coverUrl,
-      externalId,
+      external_id,
       isCustom: false,
       createdBy: userId
     }

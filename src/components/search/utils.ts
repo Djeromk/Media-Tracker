@@ -15,14 +15,14 @@ function getItemId(item: KinopoiskItem | ExternalBook | ExternalGame): string {
   }
 
   function alreadyAdded(item: KinopoiskItem | ExternalBook | ExternalGame): boolean {
-	const searchItemId = getItemId(item)
+	const searchItemId = getItemId(item).toString()
 	return mediaStore.userMedia.some(
 	  (userMediaItem) => userMediaItem.media?.external_id === searchItemId
 	)
   }
 
   function getExistingStatus(item: KinopoiskItem | ExternalBook | ExternalGame): MediaStatus | null {
-	const searchItemId = getItemId(item)
+	const searchItemId = getItemId(item).toString()
 	const existingItem = mediaStore.userMedia.find(
 	  (userMediaItem) => userMediaItem.media?.external_id === searchItemId
 	)

@@ -28,11 +28,11 @@ export const db = {
     return supabase.from("media_items").select("*").eq("id", id).single();
   },
 
-  async getMediaByExternalId(externalId: string, type: MediaType) {
+  async getMediaByExternalId(external_id: string, type: MediaType) {
     const { data, error } = await supabase
       .from("media_items")
       .select("*")
-      .eq("external_id", externalId)
+      .eq("external_id", external_id)
       .eq("type", type)
       .limit(1);
 
@@ -51,7 +51,7 @@ export const db = {
     type: MediaType;
     title: string;
     coverUrl: string | null;
-    externalId: string | null;
+    external_id: string | null;
     isCustom: boolean;
     createdBy: string | null;
   }) {
@@ -61,7 +61,8 @@ export const db = {
         type: data.type,
         title: data.title,
         cover_url: data.coverUrl,
-        external_id: data.externalId,
+        //external_id: data.externalId,
+        external_id: data.external_id,
         is_custom: data.isCustom,
         created_by: data.createdBy,
       })

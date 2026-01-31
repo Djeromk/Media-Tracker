@@ -11,7 +11,7 @@ export interface BaseMedia {
   title: string;
   coverUrl: string | null;
   cover_url: string | null;
-  externalId: string | null;
+ // externalId: string | null;
   external_id: string | null;
   isCustom: boolean;
   createdBy: string | null;

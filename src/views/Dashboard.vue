@@ -120,10 +120,6 @@ async function handleStatusUpdate(id: string, status: MediaStatus) {
 }
 
 console.log('mediaStore.userMedia ', mediaStore.userMedia)
-
-// function mediaAlreadyExists(item: KinopoiskItem | ExternalBook | ExternalGame) {
-//   return mediaStore.userMedia.some(media => media.id === item)
-// }
 </script>
 
 <template>

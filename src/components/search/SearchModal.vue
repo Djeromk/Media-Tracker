@@ -88,6 +88,7 @@ function getIconComponent(iconName: string) {
     ClockFading,
     CircleCheckBig,
   };
+  console.log('icons[iconName]', icons[iconName])
   return icons[iconName];
 }
 
