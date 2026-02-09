@@ -1,11 +1,10 @@
-import type { KinopoiskItem } from "@/types";
-import { isModuleBlock } from "typescript";
+import type { KinopoiskItem, ExternalMovie, KinopoiskItemByID, KinopoiskTVSeason } from "@/types";
 
 const API_KEY = import.meta.env.VITE_KINOPOISK_API_KEY;
 const BASE_URL = "https://kinopoiskapiunofficial.tech";
 
 export class Kinopoisk {
-  async searchMovies(query: string): Promise<KinopoiskItem[]> {
+  async searchMovies(query: string): Promise<ExternalMovie[]> {
     const headers: HeadersInit = {
       "X-API-KEY": API_KEY,
       "Content-Type": "application/json",
@@ -18,18 +17,49 @@ export class Kinopoisk {
       },
     );
     const data = await response.json();
-
     return data.items.map((item: KinopoiskItem) => ({
       id: item.kinopoiskId.toString(),
       title: item.nameRu || item.nameOriginal,
-      posterUrl: item.posterUrlPreview || item.posterUrl || null,
+      thumbnail: item.posterUrlPreview || item.posterUrl || null,
       releaseDate: item.year,
-      isSeries: item.type === "TV_SHOW",
+      isSeries: item.type === "TV_SERIES",
       year: item.year.toString(),
       ratingImdb: item.ratingImdb,
       ratingKinopoisk: item.ratingKinopoisk,
       other: item
     }));
+  }
+
+  async searchMovieByID(id: string): Promise<KinopoiskItemByID> {
+    const headers: HeadersInit = {
+      "X-API-KEY": API_KEY,
+      "Content-Type": "application/json",
+    };
+    const response = await fetch(
+      `${BASE_URL}/api/v2.2/films/${id}`,
+      {
+        method: "GET",
+        headers,
+      },
+    );
+    const data = await response.json();
+    return data
+  }
+
+  async getTVSeasons(id: string): Promise<KinopoiskTVSeason[]> {
+    const headers: HeadersInit = {
+      "X-API-KEY": API_KEY,
+      "Content-Type": "application/json",
+    };
+    const response = await fetch(
+      `${BASE_URL}/api/v2.2/films/${id}/seasons`,
+      {
+        method: "GET",
+        headers,
+      },
+    );
+    const data = await response.json();
+    return data.items;
   }
 }
 export const kinopoiskService = new Kinopoisk();

@@ -5,10 +5,12 @@ import { useAuthStore } from "@/stores/auth";
 import MediaTypeCard from "@/components/dashboard/MediaTypeCard.vue";
 import SearchModal from "@/components/search/SearchModal.vue";
 import Banner from "@/components/dashboard/Banner.vue";
+import MediaAccordion from "@/components/accordion/MediaAccordion.vue";
 import type {
   MediaType,
   MediaStatus,
-  KinopoiskItem,
+ // KinopoiskItem,
+  ExternalMovie,
   ExternalBook,
   ExternalGame,
 } from "@/types";
@@ -17,7 +19,7 @@ const mediaStore = useMediaStore();
 const authStore = useAuthStore();
 
 const isSearchModalOpen = ref(false);
-const selectedMediaType = ref<MediaType>("movie");
+const selectedMediaType = ref<MediaType>('other');
 const notification = ref<{ message: string; type: "success" | "error" } | null>(
   null,
 );
@@ -30,10 +32,10 @@ onMounted(() => {
 });
 
 const inProgressItems = computed(() => ({
-  movie: mediaStore.getInProgressByType('movie')[0] || null,
-  book: mediaStore.getInProgressByType('book')[0] || null,
-  game: mediaStore.getInProgressByType('game')[0] || null
-}))
+  movie: mediaStore.getInProgressByType("movie")[0] || null,
+  book: mediaStore.getInProgressByType("book")[0] || null,
+  game: mediaStore.getInProgressByType("game")[0] || null,
+}));
 
 function openSearchModal(type: MediaType) {
   selectedMediaType.value = type;
@@ -50,76 +52,93 @@ function timeOfDay() {
 }
 
 async function handleMediaSelect(
-  item: KinopoiskItem | ExternalBook | ExternalGame,
-  status: MediaStatus
+  item: ExternalMovie | ExternalBook | ExternalGame,
+  status: MediaStatus,
 ) {
-  console.log('=== Starting media add process ===')
-  console.log('Item:', item)
-  console.log('Type:', selectedMediaType.value)
-  console.log('Status:', status)
-  console.log('User authenticated:', authStore.isAuthenticated)
+  console.log("=== Starting media add process ===");
+  console.log("Item:", item);
+  console.log("Type:", selectedMediaType.value);
+  console.log("Status:", status);
+  console.log("User authenticated:", authStore.isAuthenticated);
 
   if (!authStore.isAuthenticated) {
     notification.value = {
-      message: 'Войдите в аккаунт, чтобы сохранять медиа в свой список',
-      type: 'error'
-    }
-    setTimeout(() => notification.value = null, 3000)
-    return
+      message: "Войдите в аккаунт, чтобы сохранять медиа в свой список",
+      type: "error",
+    };
+    setTimeout(() => (notification.value = null), 3000);
+    return;
+  }
+
+  if (status) {
   }
 
   const result = await mediaStore.addMediaFromExternal(
     item,
     selectedMediaType.value,
-    status // Передаем выбранный статус
-  )
+    status,
+  );
 
-  console.log('=== Result ===', result)
+  console.log("=== Result ===", result);
 
   if (result.success) {
     notification.value = {
-      message: result.message || 'Медиа успешно добавлено в ваш список!',
-      type: 'success'
-    }
+      message: result.message || "Медиа успешно добавлено в ваш список!",
+      type: "success",
+    };
   } else {
     notification.value = {
-      message: result.error || 'Ошибка при добавлении медиа',
-      type: 'error'
-    }
+      message: result.error || "Ошибка при добавлении медиа",
+      type: "error",
+    };
   }
 
-  setTimeout(() => notification.value = null, 3000)
+  setTimeout(() => (notification.value = null), 3000);
 }
 
 async function handleStatusUpdate(id: string, status: MediaStatus) {
-  console.log('=== Updating status ===')
-  console.log('Item ID:', id)
-  console.log('New status:', status)
+  console.log("=== Updating status ===");
+  console.log("Item ID:", id);
+  console.log("New status:", status);
 
   const updates = {
     status,
-    is_finished: status === 'completed',
-    completed_at: status === 'completed' ? new Date().toISOString() : null
-  }
+    is_finished: status === "completed",
+    completed_at: status === "completed" ? new Date().toISOString() : null,
+  };
 
-  const result = await mediaStore.updateMedia(id, updates)
+  const result = await mediaStore.updateMedia(id, updates);
 
   if (result.success) {
     notification.value = {
-      message: 'Статус успешно обновлен!',
-      type: 'success'
-    }
+      message: "Статус успешно обновлен!",
+      type: "success",
+    };
   } else {
     notification.value = {
-      message: result.error || 'Ошибка при обновлении статуса',
-      type: 'error'
-    }
+      message: result.error || "Ошибка при обновлении статуса",
+      type: "error",
+    };
   }
 
-  setTimeout(() => notification.value = null, 3000)
+  setTimeout(() => (notification.value = null), 3000);
 }
 
-console.log('mediaStore.userMedia ', mediaStore.userMedia)
+
+async function handleDeleteItem(id: string) {
+  const result = await mediaStore.deleteMedia(id);
+
+  if (result.success) {
+    showNotification("Элемент удален из списка", "success");
+  } else {
+    showNotification(result.error || "Ошибка при удалении элемента", "error");
+  }
+}
+
+function showNotification(message: string, type: "success" | "error") {
+  notification.value = { message, type };
+  setTimeout(() => (notification.value = null), 3000);
+}
 </script>
 
 <template>
@@ -146,13 +165,11 @@ console.log('mediaStore.userMedia ', mediaStore.userMedia)
           </p>
         </div>
       </Transition>
-
       <Banner v-if="!authStore.user" />
-
-      <h1 class="text-3xl font-bold text-gray-800 mb-8">{{ timeOfDay() + ', ' + authStore.profile?.name }}</h1>
-
-      <!-- Grid карточек -->
-      <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-6">
+      <h1 class="text-3xl font-bold text-gray-800 mb-8">
+        {{ timeOfDay() + ", " + authStore.profile?.name }}
+      </h1>
+      <div class="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-3 gap-6">
         <MediaTypeCard
           type="book"
           :stats="mediaStore.stats.books"
@@ -177,11 +194,17 @@ console.log('mediaStore.userMedia ', mediaStore.userMedia)
           :on-update-status="handleStatusUpdate"
         />
       </div>
+      <MediaAccordion
+      class="pt-8"
+        v-if="authStore.user && mediaStore.userMedia.length > 0"
+        :user-media="mediaStore.userMedia"
+        @update-status="handleStatusUpdate"
+        @delete-item="handleDeleteItem"
+      />
     </div>
 
-    <!-- Search Modal -->
     <SearchModal
-      :is-open="isSearchModalOpen"
+      v-if="isSearchModalOpen"
       :media-type="selectedMediaType"
       @close="closeSearchModal"
       @select="handleMediaSelect"

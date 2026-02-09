@@ -8,7 +8,8 @@ import type {
   MediaStatus,
   DashboardStats,
   ExternalGame,
-  KinopoiskItem,
+  //KinopoiskItem,
+  ExternalMovie,
   ExternalBook,
 } from "@/types";
 import { useAuthStore } from "./auth";
@@ -62,20 +63,16 @@ export const useMediaStore = defineStore("media", () => {
     return userMedia.value.filter((m) => m.status === status);
   };
 
-  // Загружает все медиа текущего пользователя из БД
   async function fetchUserMedia() {
     if (!authStore.user) return;
-
     loading.value = true;
     error.value = null;
+
     try {
       const { data, error: fetchError } = await db.getUserMedia(
-        authStore.user.id,
+        authStore.user.id
       );
-
       if (fetchError) throw fetchError;
-
-      // data приходит как массив объектов из Supabase
       userMedia.value = data as UserMedia[];
     } catch (e) {
       const dbError = e as PostgrestError;
@@ -86,9 +83,9 @@ export const useMediaStore = defineStore("media", () => {
   }
 
   async function addMediaFromExternal(
-    item: KinopoiskItem | ExternalBook | ExternalGame,
+    item: ExternalMovie | ExternalBook | ExternalGame,
     type: MediaType,
-    status: MediaStatus = "backlog",
+    status: MediaStatus = "backlog"
   ): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
@@ -130,7 +127,7 @@ export const useMediaStore = defineStore("media", () => {
   // Добавляет новый медиа элемент в список пользователя
   async function addMedia(
     mediaId: string,
-    status: MediaStatus,
+    status: MediaStatus
   ): Promise<MediaResponse> {
     if (!authStore.user)
       return { success: false, error: "User not authenticated" };
@@ -161,7 +158,7 @@ export const useMediaStore = defineStore("media", () => {
   // Обновляет существующий медиа элемент (рейтинг, статус, отзыв и т.д.)
   async function updateMedia(
     id: string,
-    updates: Partial<UserMedia>,
+    updates: Partial<UserMedia>
   ): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
@@ -181,7 +178,6 @@ export const useMediaStore = defineStore("media", () => {
     }
   }
 
-  // Удаляет медиа элемент из списка пользователя
   async function deleteMedia(id: string): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
@@ -204,18 +200,17 @@ export const useMediaStore = defineStore("media", () => {
   const getInProgressByType = computed(() => {
     return (type: MediaType) => {
       const items = userMedia.value.filter(
-        m => m.media?.type === type && m.status === 'in_progress'
-      )
+        (m) => m.media?.type === type && m.status === "in_progress"
+      );
 
       // Сортируем по дате обновления (или создания) - самый свежий первый
       return items.sort((a, b) => {
-        const dateA = new Date(a.updatedAt || a.createdAt).getTime()
-        const dateB = new Date(b.updatedAt || b.createdAt).getTime()
-        return dateB - dateA // От новых к старым
-      })
-    }
-  })
-
+        const dateA = new Date(a.updatedAt || a.createdAt).getTime();
+        const dateB = new Date(b.updatedAt || b.createdAt).getTime();
+        return dateB - dateA; // От новых к старым
+      });
+    };
+  });
 
   return {
     userMedia,

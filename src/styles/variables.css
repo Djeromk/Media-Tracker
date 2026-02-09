@@ -1,8 +1,9 @@
 :root {
 	--primary-400: #0ad314;
 	--primary-600: #08b811;
-	--neo-background: #d1d9e6;
+	/* --neo-background: #d1d9e6; */
 	--neo-secondary: #E35205;
+	--neo-background: #e6e6e6;
 	--neo-background-body: #e6e6e6;
 	--neo-dark: #a3b1c6;
 	--neo-light: #e0e5ec;

@@ -16,5 +16,3 @@ const authStore = useAuthStore()
 authStore.initialize().then(() => {
   app.mount('#app')
 })
-
-console.log('✅ App initialized')

@@ -21,12 +21,27 @@ const routes: RouteRecordRaw[] = [
     component: () => import('@/views/Dashboard.vue'),
     meta: { requiresAuth: false }
   },
-//   {
-//     path: '/media/:type/:id',
-//     name: 'media-detail',
-//     component: () => import('@/views/MediaDetail.vue'),
-//     meta: { requiresAuth: false }
-//   },
+  // {
+  //   path: '/media/:type/:id',
+  //   name: 'media-page',
+  //   component: () => import('@/views/MediaPage.vue'),
+  //   meta: { requiresAuth: false }
+  // },
+  {
+    path: '/books/:id',
+    name: 'book-page',
+    component: () => import('@/views/BookPage.vue'),
+    //meta: { requiresAuth: false },
+    props: true
+  },
+
+  {
+    path: '/movies/:id',
+    name: 'movie-page',
+    component: () => import('@/views/MoviePage.vue'),
+    //meta: { requiresAuth: false },
+    props: true
+  },
 //   {
 //     path: '/my-lists',
 //     name: 'my-lists',

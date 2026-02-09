@@ -25,13 +25,13 @@ const actions = [
   },
   {
     status: 'completed' as MediaStatus,
-    label: 'Завершено',
+    label: 'Завершить',
     icon: CheckCircle,
     color: 'text-green-600'
   },
   {
     status: 'dropped' as MediaStatus,
-    label: 'Брошено',
+    label: 'Бросить',
     icon: XCircle,
     color: 'text-red-600'
   }
@@ -51,7 +51,6 @@ function getMediaTitle(): string {
 }
 
 function getCoverUrl(): string | null {
-  console.log('props.item.media', props.item.media)
   return props.item.media?.coverUrl || props.item.media?.cover_url ||null
 }
 

@@ -5,23 +5,28 @@ import type {
   MediaStatus,
   ExternalBook,
   ExternalGame,
-  KinopoiskItem,
+  ExternalMovie
+  //KinopoiskItem,
 } from "@/types";
 import {
   getItemId,
-  alreadyAdded,
-  getExistingStatus,
   getTitle,
   getImage,
   getMetacritic,
   getReleaseDate,
   getSubtitle,
+  getSearchPlaceholder,
+  getAvailableStatuses,
+  getStatusIcon,
+  getStatusLabel,
+  isCurrentStatus,
+  createImageErrorHandler,
 } from "./utils";
 import { kinopoiskService } from "@/services/api/kinopoisk";
 import { booksService } from "@/services/api/google-books";
 import { gamesService } from "@/services/api/games";
 import { useMediaStore } from "@/stores/media";
-import { MEDIA_TYPE_LABELS, STATUS_LABELS } from "@/types";
+import { MEDIA_TYPE_LABELS } from "@/types";
 import fallbackImage from "@/assets/fallback.svg";
 import {
   X,
@@ -33,7 +38,6 @@ import {
 } from "lucide-vue-next";
 
 interface Props {
-  isOpen: boolean;
   mediaType: MediaType;
 }
 
@@ -41,9 +45,21 @@ interface Emits {
   (e: "close"): void;
   (
     e: "select",
-    item: KinopoiskItem | ExternalBook | ExternalGame,
+    item: ExternalMovie | ExternalBook | ExternalGame,
     status: MediaStatus,
   ): void;
+}
+
+/**
+ * Интерфейс для обогащенного результата поиска
+ * Содержит оригинальный элемент + информацию о его статусе в списке пользователя
+ */
+interface EnrichedSearchResult {
+  item: ExternalMovie | ExternalBook | ExternalGame;
+  id: string;
+  isAdded: boolean;
+  currentStatus: MediaStatus | null;
+  userMediaId: string | null;
 }
 
 const props = defineProps<Props>();
@@ -51,33 +67,42 @@ const emit = defineEmits<Emits>();
 
 const searchQuery = ref("");
 const mediaStore = useMediaStore();
-const searchResults = ref<(KinopoiskItem | ExternalBook | ExternalGame)[]>([]);
+const searchResults = ref<(ExternalMovie | ExternalBook | ExternalGame)[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
 const activeDropdown = ref<string | null>(null);
 
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
-
-const placeholder = computed(() => {
-  const labels = {
-    movie: "Поиск фильмов...",
-    shows: "Поиск сериалов...",
-    book: "Поиск книг...",
-    game: "Поиск игр...",
-  };
-  return labels[props.mediaType];
+/**
+ * Computed свойство для обогащения результатов поиска
+ * Для каждого результата добавляет информацию:
+ * - isAdded: добавлен ли элемент в список пользователя
+ * - currentStatus: текущий статус элемента (если добавлен)
+ * - userMediaId: ID записи в user_media (нужен для обновления статуса)
+ *
+ * Это позволяет избежать множественных вызовов функций поиска в template
+ */
+const enrichedResults = computed<EnrichedSearchResult[]>(() => {
+  return searchResults.value.map((item) => {
+    const itemId = getItemId(item);
+    const userMediaItem = mediaStore.userMedia.find(
+      (userMedia) => userMedia.media?.external_id === itemId,
+    );
+    return {
+      item,
+      id: itemId,
+      isAdded: !!userMediaItem,
+      currentStatus: userMediaItem?.status || null,
+      userMediaId: userMediaItem?.id || null,
+    };
+  });
 });
 
-const availableStatuses: { value: MediaStatus; label: string; icon: string }[] =
-  [
-    { value: "backlog", label: STATUS_LABELS.backlog, icon: "Archive" },
-    { value: "in_progress", label: STATUS_LABELS.in_progress, icon: "Clock" },
-    {
-      value: "completed",
-      label: STATUS_LABELS.completed,
-      icon: "CircleCheckBig",
-    },
-  ];
+const availableStatuses = computed(() =>
+  getAvailableStatuses(props.mediaType),
+);
+
+const placeholder = computed(() => getSearchPlaceholder(props.mediaType));
 
 function getIconComponent(iconName: string) {
   const icons: Record<
@@ -88,7 +113,6 @@ function getIconComponent(iconName: string) {
     ClockFading,
     CircleCheckBig,
   };
-  console.log('icons[iconName]', icons[iconName])
   return icons[iconName];
 }
 
@@ -105,14 +129,11 @@ watch(searchQuery, (newQuery) => {
   }, 1000);
 });
 
-console.log("mediaStore in SearchModal: ", mediaStore.userMedia);
-
 async function performSearch(query: string) {
   loading.value = true;
   error.value = null;
-
   try {
-    let results: (KinopoiskItem | ExternalBook | ExternalGame)[] = [];
+    let results: (ExternalMovie | ExternalBook | ExternalGame)[] = [];
 
     switch (props.mediaType) {
       case "book":
@@ -127,7 +148,6 @@ async function performSearch(query: string) {
     }
 
     searchResults.value = results;
-    console.log("searchResults", searchResults.value);
   } catch (e) {
     const err = e as Error;
     error.value = err.message || "Ошибка поиска";
@@ -136,33 +156,51 @@ async function performSearch(query: string) {
   }
 }
 
+/**
+ * Закрывает модальное окно и очищает результаты поиска
+ */
 function handleClose() {
   searchQuery.value = "";
   searchResults.value = [];
+  activeDropdown.value = null;
   emit("close");
 }
 
-console.log("searchResults.value: ", searchResults.value);
-
-const handleImageError = (event: Event) => {
-  if (event.target as HTMLImageElement) {
-    (event.target as HTMLImageElement).src = fallbackImage;
-  }
-};
+const handleImageError = createImageErrorHandler(fallbackImage);
 
 function toggleDropdown(itemId: string) {
   activeDropdown.value = activeDropdown.value === itemId ? null : itemId;
 }
 
-function handleSelectWithStatus(
-  item: KinopoiskItem | ExternalBook | ExternalGame,
+async function handleSelectWithStatus(
+  result: EnrichedSearchResult,
   status: MediaStatus,
 ) {
-  emit("select", item, status);
+  if (result.isAdded && result.currentStatus === status) {
+    activeDropdown.value = null;
+    return;
+  }
+  if (result.isAdded && result.userMediaId) {
+    const updates = {
+      status,
+      is_finished: status === "completed",
+      completed_at: status === "completed" ? new Date().toISOString() : null,
+    };
+
+    await mediaStore.updateMedia(result.userMediaId, updates);
+    activeDropdown.value = null;
+    return;
+  }
+
+  emit("select", result.item, status);
   activeDropdown.value = null;
   handleClose();
 }
 
+
+/**
+ * Директива для автофокуса на input при открытии модального окна
+ */
 const vFocus = {
   mounted: (el: HTMLElement) => {
     el.focus();
@@ -174,8 +212,7 @@ const vFocus = {
   <!-- Overlay -->
   <Transition name="fade">
     <div
-      v-if="isOpen"
-      class="fixed inset-0 bg-black/30 z-50 flex items-center justify-center p-4"
+      class="fixed inset-0 bg-black/30 z-10 flex items-center justify-center p-4"
       @click.self="handleClose"
     >
       <!-- Modal -->
@@ -194,8 +231,6 @@ const vFocus = {
             <X />
           </button>
         </div>
-
-        <!-- Search Input -->
         <input
           v-model="searchQuery"
           type="text"
@@ -204,8 +239,6 @@ const vFocus = {
           autofocus
           v-focus
         />
-
-        <!-- Loading -->
         <div v-if="loading" class="flex justify-center py-8">
           <div
             class="animate-spin rounded-full h-12 w-12 border-b-2 border-primary-600"
@@ -219,12 +252,12 @@ const vFocus = {
 
         <!-- Results -->
         <div
-          v-else-if="searchResults.length > 0"
+          v-else-if="enrichedResults.length > 0"
           class="overflow-y-auto no-scrollbar flex-1 space-y-3"
         >
           <div
-            v-for="item in searchResults"
-            :key="'id' in item ? item.id : Math.random()"
+            v-for="result in enrichedResults"
+            :key="result.id"
             class="flex items-center space-x-4 p-4 rounded-2xl bg-(--neo-background) shadow-neo hover:shadow-neo-sm cursor-pointer transition-all"
           >
             <!-- Image -->
@@ -232,9 +265,9 @@ const vFocus = {
               class="w-30 h-40 shrink-0 rounded-xl overflow-hidden bg-gray-200"
             >
               <img
-                v-if="getImage(item)"
-                :src="getImage(item)!"
-                :alt="getTitle(item)"
+                v-if="getImage(result.item)"
+                :src="getImage(result.item)!"
+                :alt="getTitle(result.item)"
                 class="w-full h-full object-cover"
                 @error="handleImageError"
               />
@@ -248,123 +281,115 @@ const vFocus = {
 
             <!-- Info -->
             <div class="flex-1 min-w-0 space-y-3">
+              <router-link
+                :to="`/${mediaType}s/${result.item.id}`">
               <h3 class="font-semibold text-2xl text-gray-800 truncate">
-                {{ getTitle(item) }}
+                {{ getTitle(result.item) }}
               </h3>
+              </router-link>
+
               <p class="text-base text-gray-500">
-                {{ getSubtitle(item) }}
+                {{ getSubtitle(result.item) }}
               </p>
               <p class="text-base text-gray-500">
-                {{ getReleaseDate(item) }}
+                {{ getReleaseDate(result.item) }}
               </p>
+
+              <!-- Metacritic для игр -->
               <div
                 v-if="
-                  props.mediaType === 'game' &&
-                  'metacritic' in item &&
-                  item.metacritic
+                  mediaType === 'game' &&
+                  'metacritic' in result.item &&
+                  result.item.metacritic
                 "
                 class="text-sm w-10 h-10 flex items-center justify-center rounded-md"
                 :class="{
-                  'bg-green-500': item.metacritic >= 75,
+                  'bg-green-500': result.item.metacritic >= 75,
                   'bg-yellow-500':
-                    item.metacritic <= 74 && item.metacritic >= 50,
-                  'bg-red-500': item.metacritic <= 50,
-                  hidden: item.metacritic === 0,
+                    result.item.metacritic <= 74 &&
+                    result.item.metacritic >= 50,
+                  'bg-red-500': result.item.metacritic <= 50,
+                  hidden: result.item.metacritic === 0,
                 }"
               >
                 <span class="font-bold">
-                  {{ getMetacritic(item) }}
+                  {{ getMetacritic(result.item) }}
                 </span>
               </div>
-              <div
-                v-if="props.mediaType === 'movie'"
-                class="text-sm text-gray-500"
-              >
-                <span v-if="'ratingKinopoisk' in item">
+              <div v-if="mediaType === 'movie'" class="text-sm text-gray-500">
+                <span v-if="'ratingKinopoisk' in result.item">
                   Кинопоиск:
                   <span class="font-semibold text-base">
-                    {{ item.ratingKinopoisk }}
+                    {{ result.item.ratingKinopoisk }}
                   </span>
                 </span>
-                <span v-if="'ratingImdb' in item">
+                <span v-if="'ratingImdb' in result.item" class="ml-3">
                   IMDB:
                   <span class="font-semibold text-base">
-                    {{ item.ratingImdb }}
+                    {{ result.item.ratingImdb }}
                   </span>
                 </span>
               </div>
+              <div v-if="mediaType === 'book' && 'pageCount' in result.item">
+                {{ result.item.pageCount }} стр.
+              </div>
             </div>
+
+            <!-- Action Button & Dropdown -->
             <div class="relative shrink-0">
               <button
-                v-if="alreadyAdded(item)"
-                @click="toggleDropdown(getItemId(item))"
+                v-if="result.isAdded"
+                @click="toggleDropdown(result.id)"
                 class="btn-add group bg-green-50 border-2 border-green-500"
               >
                 <span class="text-lg flex items-center gap-2">
                   <component
-                    :is="
-                      getIconComponent(
-                        availableStatuses.find(
-                          (s) => s.value === getExistingStatus(item),
-                        )?.icon || 'Archive',
-                      )
-                    "
+                    :is="getIconComponent(getStatusIcon(result.currentStatus))"
                     :size="20"
                   />
-                  {{
-                    availableStatuses.find(
-                      (s) => s.value === getExistingStatus(item),
-                    )?.label
-                  }}
+                  {{ getStatusLabel(mediaType, result.currentStatus) }}
                 </span>
                 <ChevronDown
                   :class="[
                     'transition-transform duration-200',
-                    activeDropdown === getItemId(item) ? 'rotate-180' : '',
+                    activeDropdown === result.id ? 'rotate-180' : '',
                   ]"
                 />
               </button>
-
-              <!-- Кнопка для новых элементов -->
               <button
                 v-else
-                @click="toggleDropdown(getItemId(item))"
+                @click="toggleDropdown(result.id)"
                 class="btn-add group"
               >
                 <span class="text-lg">Добавить в </span>
                 <ChevronDown
                   :class="[
                     'transition-transform duration-200',
-                    activeDropdown === getItemId(item) ? 'rotate-180' : '',
+                    activeDropdown === result.id ? 'rotate-180' : '',
                   ]"
                 />
               </button>
-
               <Transition name="dropdown">
                 <div
-                  v-if="activeDropdown === getItemId(item)"
+                  v-if="activeDropdown === result.id"
                   class="absolute right-0 top-full mt-2 w-48 p-0 z-20"
                   @click.stop
                 >
                   <button
                     v-for="status in availableStatuses"
                     :key="status.value"
-                    @click="handleSelectWithStatus(item, status.value)"
-                    class="w-full bg-(--neo-background) cursor-pointer px-4 py-4 text-left first:rounded-t-xl last:rounded-b-xl hover:bg-(--neo-background-body) transition-colors flex items-center gap-2"
+                    @click="handleSelectWithStatus(result, status.value)"
+                    :disabled="isCurrentStatus(result, status.value)"
+                    class="w-full bg-(--neo-background) cursor-pointer px-4 py-4 text-left first:rounded-t-xl last:rounded-b-xl hover:bg-(--neo-background-body) transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
                     :class="{
-                      'bg-green-100':
-                        alreadyAdded(item) &&
-                        getExistingStatus(item) === status.value,
+                      'bg-green-100': isCurrentStatus(result, status.value),
                     }"
                   >
                     <span class="text-lg text-gray-700">{{
                       status.label
                     }}</span>
                     <span
-                      v-if="
-                        alreadyAdded(item) &&
-                        getExistingStatus(item) === status.value
-                      "
+                      v-if="isCurrentStatus(result, status.value)"
                       class="ml-auto text-green-600"
                     >
                       <Check />
@@ -401,7 +426,7 @@ const vFocus = {
   opacity: 0;
 }
 
-dropdown-enter-active,
+.dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.2s ease;
 }

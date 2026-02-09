@@ -14,7 +14,7 @@ export class GamesService {
       return {
         id: item.id,
         title: item.name,
-        posterUrl: item.background_image,
+        thumbnail: item.background_image,
         releaseDate: item.released,
         isSeries: false,
         year: item.released,

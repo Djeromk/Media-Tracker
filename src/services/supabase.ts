@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { MediaType, MediaStatus, UserMedia } from "@/types";
+import { MediaType, MediaStatus } from "@/types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -114,7 +114,7 @@ export const db = {
   }) {
     return supabase.from("games").insert({
       id: data.id,
-     // developer: data.developer,
+      // developer: data.developer,
       platform: data.platform,
       genre: data.genre,
     });
@@ -154,30 +154,41 @@ export const db = {
     });
   },
 
-  // async updateUserMedia(id: string, updates: Partial<UserMedia>) {
-  //   return supabase.from("user_media").update(updates).eq("id", id);
-  // },
+  async updateUserMedia(
+    id: string,
+    updates: {
+      status?: MediaStatus;
+      rating?: number | null;
+      review?: string | null;
+      is_finished?: boolean;
+      started_at?: string | null;
+      completed_at?: string | null;
+      currentPage?: number | null;
+      currentSeason?: number | null;
+      currentEpisode?: number | null;
+      hoursPlayed?: number | null;
+    },
+  ) {
+    const dbUpdates: Record<string, string | number | boolean | null> = {};
 
-  async updateUserMedia(id: string, updates: {
-    status?: MediaStatus
-    rating?: number | null
-    review?: string | null
-    is_finished?: boolean
-    started_at?: string | null
-    completed_at?: string | null
-  }) {
-    const dbUpdates: Record<string, string | number | boolean | null> = {}
+    if (updates.status !== undefined) dbUpdates.status = updates.status;
+    if (updates.rating !== undefined) dbUpdates.rating = updates.rating;
+    if (updates.review !== undefined) dbUpdates.review = updates.review;
+    if (updates.is_finished !== undefined) dbUpdates.is_finished = updates.is_finished;
+    if (updates.started_at !== undefined) dbUpdates.started_at = updates.started_at;
+    if (updates.completed_at !== undefined) dbUpdates.completed_at = updates.completed_at;
+    if (updates.currentPage !== undefined)
+      dbUpdates.current_page = updates.currentPage;
+    if (updates.currentSeason !== undefined)
+      dbUpdates.current_season = updates.currentSeason;
+    if (updates.currentEpisode !== undefined)
+      dbUpdates.current_episode = updates.currentEpisode;
+    if (updates.hoursPlayed !== undefined)
+      dbUpdates.hours_played = updates.hoursPlayed;
 
-    if (updates.status !== undefined) dbUpdates.status = updates.status
-    if (updates.rating !== undefined) dbUpdates.rating = updates.rating
-    if (updates.review !== undefined) dbUpdates.review = updates.review
+    dbUpdates.updated_at = new Date().toISOString();
 
-    dbUpdates.updated_at = new Date().toISOString()
-
-    return supabase
-      .from('user_media')
-      .update(dbUpdates)
-      .eq('id', id)
+    return supabase.from("user_media").update(dbUpdates).eq("id", id);
   },
 
   async deleteUserMedia(id: string) {

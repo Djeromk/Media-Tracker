@@ -67,17 +67,11 @@ const completionPercentage = computed(() => {
       </div>
     </div>
 
-    <!-- Текущий элемент (если есть) -->
-    <InProgress
-      v-if="inProgressItem"
-      :item="inProgressItem"
-      @update-status="onUpdateStatus"
-    />
 
-    <!-- Прогресс бар завершения -->
-    <div>
+
+    <div v-if="completionPercentage" class="py-5">
       <div class="flex items-center justify-between mb-2">
-        <span class="text-xs text-gray-500">Completion</span>
+        <span class="text-xs text-gray-500">Прогресс:</span>
         <span class="text-xs font-medium text-gray-700">{{ completionPercentage }}%</span>
       </div>
       <div class="progress-neo">
@@ -87,5 +81,10 @@ const completionPercentage = computed(() => {
         />
       </div>
     </div>
+    <InProgress
+      v-if="inProgressItem"
+      :item="inProgressItem"
+      @update-status="onUpdateStatus"
+    />
   </div>
 </template>
