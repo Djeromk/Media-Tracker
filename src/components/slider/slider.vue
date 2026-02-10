@@ -9,8 +9,6 @@ const props = defineProps({
   label: { type: String, default: "Выберите значение" },
 });
 
-console.log('modelValue: ', props.modelValue)
-
 const emit = defineEmits(["update:modelValue"]);
 
 const value = computed({
@@ -21,15 +19,6 @@ const value = computed({
 const progress = computed(() => {
   return ((value.value - props.min) / (props.max - props.min)) * 100;
 });
-// console.log("progress ", Math.round(progress.value));
-
-// watch(props.model_value, (newValue) => {
-//   console.log("watch model_value", newValue);
-// });
-// const updateValue = (event) => {
-//   //console.log('slider input', event)
-//   emit("update:modelValue", Number(event.target.value));
-// };
 </script>
 
 <template>
@@ -67,7 +56,6 @@ const progress = computed(() => {
   width: 100%;
   max-width: 300px;
   font-family: sans-serif;
-  background-color: aquamarine;
 }
 
 .slider-label {

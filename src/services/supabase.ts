@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { MediaType, MediaStatus } from "@/types";
+import { MediaType, MediaStatus, WatchedEpisodesMap } from "@/types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -167,9 +167,10 @@ export const db = {
       currentSeason?: number | null;
       currentEpisode?: number | null;
       hoursPlayed?: number | null;
+      watched_episodes?: WatchedEpisodesMap;
     },
   ) {
-    const dbUpdates: Record<string, string | number | boolean | null> = {};
+    const dbUpdates: Record<string, string | number | boolean | null | WatchedEpisodesMap> = {};
 
     if (updates.status !== undefined) dbUpdates.status = updates.status;
     if (updates.rating !== undefined) dbUpdates.rating = updates.rating;
@@ -185,6 +186,8 @@ export const db = {
       dbUpdates.current_episode = updates.currentEpisode;
     if (updates.hoursPlayed !== undefined)
       dbUpdates.hours_played = updates.hoursPlayed;
+    if (updates.watched_episodes !== undefined)
+      dbUpdates.watched_episodes = updates.watched_episodes;
 
     dbUpdates.updated_at = new Date().toISOString();
 
@@ -194,4 +197,31 @@ export const db = {
   async deleteUserMedia(id: string) {
     return supabase.from("user_media").delete().eq("id", id);
   },
+  async updateSeriesProgress(
+    userMediaId: string,
+    updates: {
+      watchedEpisodes?: WatchedEpisodesMap;
+      currentSeason?: number | null;
+      currentEpisode?: number | null;
+    }
+  ) {
+    const dbUpdates: Record<string, unknown> = {};
+    console.log('updates', updates);
+    if (updates.watchedEpisodes !== undefined) {
+      dbUpdates.watched_episodes = updates.watchedEpisodes;
+    }
+    if (updates.currentSeason !== undefined) {
+      dbUpdates.current_season = updates.currentSeason;
+    }
+    if (updates.currentEpisode !== undefined) {
+      dbUpdates.current_episode = updates.currentEpisode;
+    }
+
+    dbUpdates.updated_at = new Date().toISOString();
+
+    return supabase
+      .from('user_media')
+      .update(dbUpdates)
+      .eq('id', userMediaId);
+  }
 };

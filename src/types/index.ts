@@ -1,5 +1,10 @@
+export * from "./movie";
+export * from "./book";
+export * from "./series";
+
 export type MediaType = "movie" | "book" | "game" | "other";
 export type MediaStatus = "completed" | "dropped" | "in_progress" | "backlog";
+export type MediaItem = Movie | Book | Game;
 
 export interface BaseMedia {
   id: string;
@@ -7,103 +12,19 @@ export interface BaseMedia {
   title: string;
   coverUrl: string | null;
   cover_url: string | null;
-  // externalId: string | null;
   external_id: string | null;
   isCustom: boolean;
   createdBy: string | null;
   createdAt: string;
 }
 
-// Фильм/Сериал
 export interface Movie extends BaseMedia {
   type: "movie";
-  // director: string | null;
-  // durationMinutes: number | null;
   releaseYear: number | null;
   isSeries: boolean;
   cover_url: string | null;
-  // seasonsCount: number | null;
-  // episodesCount: number | null;
 }
 
-export interface KinopoiskItem {
-  kinopoiskId: number;
-  imdbId: string;
-  nameRu: string;
-  nameEn: string;
-  nameOriginal: string;
-  countries: { countries: string }[];
-  genres: { genre: string }[];
-  ratingKinopoisk: number;
-  ratingImdb: number;
-  year: number;
-  type: string;
-  posterUrl: string;
-  posterUrlPreview: string;
-  isSeries: boolean;
-}
-
-export interface KinopoiskItemByID {
-  kinopoiskId: number;
-  kinopoiskHDId: string;
-  imdbId: string;
-  nameRu: string;
-  nameEn: string;
-  nameOriginal: string;
-  posterUrl: string;
-  posterUrlPreview: string;
-  coverUrl: string;
-  logoUrl: string;
-  reviewsCount: number;
-  ratingGoodReview: number;
-  ratingGoodReviewVoteCount: number;
-  ratingKinopoisk: number;
-  ratingKinopoiskVoteCount: number;
-  ratingImdb: number;
-  ratingImdbVoteCount: number;
-  ratingFilmCritics: number;
-  ratingFilmCriticsVoteCount: number;
-  ratingAwait: number;
-  ratingAwaitCount: number;
-  ratingRfCritics: number;
-  ratingRfCriticsVoteCount: number;
-  webUrl: string;
-  year: number;
-  filmLength: number;
-  slogan: string;
-  description: string;
-  shortDescription: string;
-  editorAnnotation: string;
-  isTicketsAvailable: false;
-  productionStatus: string;
-  type: "FILM" | "TV_SHOW";
-  ratingMpaa: string;
-  ratingAgeLimits: string;
-  hasImax: false;
-  has3D: false;
-  lastSync: string;
-  countries: { country: string }[];
-  genres: { genre: string }[];
-  startYear: number;
-  endYear: number;
-  serial: boolean;
-  shortFilm: boolean;
-  completed: boolean;
-}
-
-export interface KinopoiskTVSeason {
-  number: number;
-  episodes: KinopoiskTVEpisode[];
-}
-
-export interface KinopoiskTVEpisode {
-  seasonNumber: number;
-  episodeNumber: number;
-  nameRu: string;
-  nameEn: string;
-  synopsis: string;
-}
-// Книга
 export interface Book extends BaseMedia {
   type: "book";
   author: string | null;
@@ -111,55 +32,6 @@ export interface Book extends BaseMedia {
   isbn: string | null;
 }
 
-export interface GoogleBooksItem {
-  kind: "books#volume";
-  id: string;
-  etag: string;
-  selfLink: string;
-  volumeInfo: {
-    title: string;
-    subtitle: string;
-    authors: [string];
-    publisher: string;
-    publishedDate: string;
-    description: string;
-    industryIdentifiers: [
-      {
-        type: string;
-        identifier: string;
-      },
-    ];
-    pageCount: number;
-    dimensions: {
-      height: string;
-      width: string;
-      thickness: string;
-    };
-    printType: string;
-    mainCategory: string;
-    categories: [string];
-    averageRating: number;
-    ratingsCount: number;
-    contentVersion: string;
-    imageLinks: {
-      smallThumbnail: string;
-      thumbnail: string;
-      small: string;
-      medium: string;
-      large: string;
-      extraLarge: string;
-    };
-    language: string;
-    previewLink: string;
-    infoLink: string;
-    canonicalVolumeLink: string;
-  };
-  searchInfo: {
-    textSnippet: string;
-  };
-}
-
-// Игра
 export interface Game extends BaseMedia {
   type: "game";
   developer: string | null;
@@ -167,10 +39,6 @@ export interface Game extends BaseMedia {
   genre: string[] | null;
 }
 
-// Union type для всех медиа
-export type MediaItem = Movie | Book | Game;
-
-// Связь пользователя с медиа
 export interface UserMedia {
   id: string;
   userId: string;
@@ -189,9 +57,12 @@ export interface UserMedia {
   currentSeason: number | null;
   currentEpisode: number | null;
   hoursPlayed: number | null;
+  watched_episodes: WatchedEpisodesMap;
 }
 
-// Статистика для Dashboard
+type WatchedEpisodesMap = {
+  [seasonNumber: string]: number[];
+};
 export interface MediaStats {
   total: number;
   completed: number;
@@ -208,44 +79,6 @@ export interface DashboardStats {
     totalItems: number;
     completedItems: number;
   };
-}
-
-// Данные из внешних API
-export interface ExternalMovie {
-  id: string;
-  imdbId: string;
-  nameRu: string;
-  nameEn: string;
-  nameOriginal: string;
-  countries: { country: string }[];
-  genres: { genre: string }[];
-  ratingKinopoisk: number;
-  ratingImdb: number;
-  year: number;
-  type: string;
-  posterUrl: string;
-  posterUrlPreview: string;
-  thumbnail: string;
-  isSeries: boolean;
-}
-
-export interface ExternalBook {
-  id: string;
-  title: string;
-  authors: string[];
-  thumbnail: string | null;
-  description: string;
-  pageCount?: number;
-  isbn?: string;
-  publisher?: string;
-  publishedDate?: string;
-  categories?: string[];
-  averageRating?: number;
-  language?: string;
-  mainCategory?: string;
-  previewLink?: string;
-  infoLink?: string;
-  canonicalVolumeLink?: string;
 }
 
 export interface ExternalGame {
@@ -276,7 +109,6 @@ export interface SignUpData {
   email: string;
   password: string;
   name: string;
-  // nickname: string
 }
 export interface SignInData {
   email: string;

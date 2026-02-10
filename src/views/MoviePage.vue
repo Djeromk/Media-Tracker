@@ -9,6 +9,7 @@ import MediaStatusDropdown from "@/components/media/MediaStatusDropdown.vue";
 import MediaRating from "@/components/media/MediaRating.vue";
 import MediaPoster from "@/components/media/MediaPoster.vue";
 import MovieRatings from "@/components/media/MovieRatings.vue";
+import SeriesProgress from "@/components/series/SeriesProgress.vue";
 import {
   ArrowLeft,
   Calendar,
@@ -57,6 +58,7 @@ onMounted(async () => {
     const err = e as Error;
     error.value = err.message || "Не удалось загрузить фильм";
   } finally {
+    console.log('movie.serial && userMediaEntry', movie.value, userMediaEntry.value);
     loading.value = false;
   }
 });
@@ -74,6 +76,7 @@ async function handleUpdateStatus(status: MediaStatus) {
   console.log('updates', updates);
   await mediaStore.updateMedia(userMediaEntry.value.id, updates);
 }
+
 </script>
 
 <template>
@@ -116,6 +119,11 @@ async function handleUpdateStatus(status: MediaStatus) {
             @update="handleUpdateStatus"
           />
           <MediaRating v-if="userMediaEntry" :user-media-entry="userMediaEntry" />
+          <SeriesProgress
+            v-if="movie.serial && userMediaEntry"
+            :movie-id="movieId"
+            :user-media-entry="userMediaEntry"
+          />
         </div>
 
         <div class="flex-1 flex flex-col gap-4">

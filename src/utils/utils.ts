@@ -6,7 +6,7 @@ import type { MediaStatus, UserMedia } from "@/types";
 export function createStatusUpdatePayload(status: MediaStatus) {
   return {
     status,
-    is_finished: status === "completed",
+    is_finished: status === "completed" || status == "dropped",
     completed_at: status === "completed" ? new Date().toISOString() : null,
   };
 }
@@ -41,12 +41,13 @@ export function transformKinopoiskToExternalMovie(
     genres: { genre: string }[];
     ratingImdb: number;
     ratingKinopoisk: number;
+	serial: boolean;
   },
 ) {
   return {
     id: movie.kinopoiskId.toString(),
     thumbnail: movie.posterUrl,
-    isSeries: movie.type === "TV_SHOW",
+    isSeries: movie.serial,
     imdbId: movie.imdbId,
     year: movie.year,
     type: movie.type,
@@ -54,6 +55,7 @@ export function transformKinopoiskToExternalMovie(
     posterUrlPreview: movie.posterUrlPreview,
     nameRu: movie.nameRu,
     nameEn: movie.nameEn,
+    title: movie.nameRu || movie.nameEn || movie.nameOriginal,
     nameOriginal: movie.nameOriginal,
     countries: movie.countries,
     genres: movie.genres,
@@ -62,31 +64,19 @@ export function transformKinopoiskToExternalMovie(
   };
 }
 
-/**
- * Форматирует длительность фильма в минутах в строку "X мин"
- */
 export function formatFilmLength(minutes: number | null | undefined): string {
   if (!minutes) return "";
   return `${minutes} мин`;
 }
 
-/**
- * Получает название фильма с fallback на разные варианты
- */
 export function getMovieTitle(movie: {
   nameRu?: string;
   nameEn?: string;
   nameOriginal?: string;
 }): string {
-	console.log('nameRu', movie.nameRu);
-	console.log('nameEn', movie.nameEn);
-	console.log('nameOriginal', movie.nameOriginal);
   return movie.nameRu || movie.nameEn || movie.nameOriginal || "";
 }
 
-/**
- * Получает оригинальное название если оно отличается от основного
- */
 export function getMovieOriginalTitle(movie: {
   nameRu?: string;
   nameEn?: string;

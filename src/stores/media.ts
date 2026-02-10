@@ -162,6 +162,7 @@ export const useMediaStore = defineStore("media", () => {
   ): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
+    console.log('updateMedia updates', id, updates.watched_episodes);
     try {
       const { error: updateError } = await db.updateUserMedia(id, updates);
 
