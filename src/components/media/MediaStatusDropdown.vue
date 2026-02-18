@@ -33,16 +33,17 @@ function handleStatusClick(status: MediaStatus) {
 </script>
 
 <template>
-  <div class="relative w-full shadow-(--neo-shadow) rounded-2xl">
+  <div class="relative bg-(--primary-500) w-full rounded-2xl">
     <button
       @click="statusDropdownOpen = !statusDropdownOpen"
-      class="w-full flex items-center justify-between px-4 py-3 rounded-xl cursor-pointer transition-all shadow-neo bg-(--neo-background) hover:shadow-(--neo-shadow-sm)"
+      class="w-full flex items-center justify-between px-4 py-3 rounded-2xl  cursor-pointer transition-all hover:bg-(--primary-600) "
       :class="{
-        'border-2 border-green-500 bg-green-50': currentStatus !== null,
+        'border-2 border-green-500 bg-green-500 text-black hover:bg-green-600': currentStatus !== null,
       }"
     >
       <span
-        class="text-base font-medium text-gray-700 flex items-center gap-2"
+        class="text-base font-medium text-white flex items-center gap-2"
+
       >
         <span v-if="currentStatus">
           {{ availableStatuses.find((s) => s.value === currentStatus)?.label }}
@@ -55,23 +56,25 @@ function handleStatusClick(status: MediaStatus) {
       <ChevronDown
         :size="18"
         :class="[
-          'text-gray-500 transition-transform duration-200',
+          'text-white transition-transform duration-200',
           statusDropdownOpen ? 'rotate-180' : '',
         ]"
       />
     </button>
     <div
       v-if="statusDropdownOpen"
-      class="absolute left-0 right-0 top-full mt-2 z-10 rounded-xl overflow-hidden shadow-neo bg-(--neo-background)"
+      class="absolute bg-grey-200 left-0 right-0 top-full mt-2 z-10 rounded-xl overflow-hidden"
+      style="background-color: #d1d5db;"
     >
       <button
         v-for="status in availableStatuses"
         :key="status.value"
         @click="handleStatusClick(status.value)"
-        class="w-full px-4 py-3 text-left text-base text-gray-700 cursor-pointer hover:bg-(--neo-background) transition-colors flex items-center justify-between"
+        class="select-btn w-full px-4 py-3 text-left text-base text-gray-700  cursor-pointer flex items-center justify-between"
         :class="{
-          'bg-green-50': currentStatus === status.value,
+          'bg-green-50 text-black': currentStatus === status.value,
         }"
+        style=""
       >
         <span>{{ status.label }}</span>
         <Check
@@ -83,3 +86,13 @@ function handleStatusClick(status: MediaStatus) {
     </div>
   </div>
 </template>
+
+<style scoped>
+.select-btn {
+  background-color: #d1d5db;
+}
+.select-btn:hover {
+  background-color:  #6b7280;
+  color: white
+}
+</style>

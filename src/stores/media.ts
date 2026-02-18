@@ -125,35 +125,37 @@ export const useMediaStore = defineStore("media", () => {
   }
 
   // Добавляет новый медиа элемент в список пользователя
-  async function addMedia(
-    mediaId: string,
-    status: MediaStatus
-  ): Promise<MediaResponse> {
-    if (!authStore.user)
-      return { success: false, error: "User not authenticated" };
+  // async function addMedia(
+  //   mediaId: string,
+  //   status: MediaStatus
+  // ): Promise<MediaResponse> {
+  //   if (!authStore.user)
+  //     return { success: false, error: "User not authenticated" };
 
-    loading.value = true;
-    error.value = null;
-    try {
-      const { error: addError } = await db.addUserMedia({
-        userId: authStore.user.id,
-        mediaId,
-        status,
-      });
+  //   loading.value = true;
+  //   error.value = null;
+  //   try {
+  //     const { error: addError } = await db.addUserMedia({
+  //       userId: authStore.user.id,
+  //       mediaId,
+  //       status,
+  //       current_season: 1,
+  //       current_episode: 1,
+  //     });
 
-      if (addError) throw addError;
+  //     if (addError) throw addError;
 
-      // Перезагружаем данные чтобы получить обновленный список
-      await fetchUserMedia();
-      return { success: true };
-    } catch (e) {
-      const dbError = e as PostgrestError;
-      error.value = dbError.message;
-      return { success: false, error: dbError.message };
-    } finally {
-      loading.value = false;
-    }
-  }
+  //     // Перезагружаем данные чтобы получить обновленный список
+  //     await fetchUserMedia();
+  //     return { success: true };
+  //   } catch (e) {
+  //     const dbError = e as PostgrestError;
+  //     error.value = dbError.message;
+  //     return { success: false, error: dbError.message };
+  //   } finally {
+  //     loading.value = false;
+  //   }
+  // }
 
   // Обновляет существующий медиа элемент (рейтинг, статус, отзыв и т.д.)
   async function updateMedia(
@@ -162,7 +164,7 @@ export const useMediaStore = defineStore("media", () => {
   ): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
-    console.log('updateMedia updates', id, updates.watched_episodes);
+    console.log("updateMedia updates", id, updates.watched_episodes);
     try {
       const { error: updateError } = await db.updateUserMedia(id, updates);
 
@@ -223,7 +225,7 @@ export const useMediaStore = defineStore("media", () => {
     getInProgressByType,
     addMediaFromExternal,
     fetchUserMedia,
-    addMedia,
+    //addMedia,
     updateMedia,
     deleteMedia,
   };

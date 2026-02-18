@@ -42,6 +42,14 @@ const routes: RouteRecordRaw[] = [
     //meta: { requiresAuth: false },
     props: true
   },
+
+  {
+    path: '/games/:id',
+    name: 'game-page',
+    component: () => import('@/views/GamePage.vue'),
+    //meta: { requiresAuth: false },
+    props: true
+  },
 //   {
 //     path: '/my-lists',
 //     name: 'my-lists',

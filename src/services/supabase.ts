@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { MediaType, MediaStatus, WatchedEpisodesMap } from "@/types";
+import { MediaType, MediaStatus, WatchedEpisodesMap, InsertData } from "@/types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -61,7 +61,6 @@ export const db = {
         type: data.type,
         title: data.title,
         cover_url: data.coverUrl,
-        //external_id: data.externalId,
         external_id: data.external_id,
         is_custom: data.isCustom,
         created_by: data.createdBy,
@@ -74,21 +73,13 @@ export const db = {
 
   async createMovie(data: {
     id: string;
-    // director: string | null
-    // durationMinutes: number | null
     year: number | null;
     isSeries: boolean;
-    // seasonsCount: number | null
-    // episodesCount: number | null
   }) {
     return supabase.from("movies").insert({
       id: data.id,
-      // director: data.director,
-      // duration_minutes: data.durationMinutes,
       release_year: data.year,
       is_series: data.isSeries,
-      //seasons_count: data.seasonsCount,
-      //episodes_count: data.episodesCount
     });
   },
 
@@ -146,12 +137,15 @@ export const db = {
     userId: string;
     mediaId: string;
     status: MediaStatus;
+    current_season: number | null
+    current_episode: number | null
   }) {
     return supabase.from("user_media").insert({
       user_id: data.userId,
       media_id: data.mediaId,
       status: data.status,
-    });
+      current_season: data.current_season,
+      current_episode: data.current_episode,});
   },
 
   async updateUserMedia(

@@ -2,8 +2,9 @@
 import { computed } from 'vue'
 import type { MediaType, MediaStats, MediaStatus, UserMedia } from '@/types'
 import { Plus, Archive, ClockFading, CircleCheckBig } from 'lucide-vue-next'
-import { MEDIA_TYPE_LABELS, MEDIA_TYPE_ICONS, STATUS_LABELS } from '@/types'
+import { MEDIA_TYPE_LABELS, STATUS_LABELS } from '@/types'
 import InProgress from './InProgress.vue'
+import { BookOpenText, Film, Gamepad2 } from 'lucide-vue-next'
 
 interface Props {
   type: MediaType
@@ -14,7 +15,16 @@ interface Props {
 }
 
 const props = defineProps<Props>()
-
+const MediaTypeIcon = computed(() => {
+  switch (props.type) {
+    case 'book':
+      return BookOpenText
+    case 'movie':
+      return Film
+    case 'game':
+      return Gamepad2
+  }
+})
 // Вычисляем процент завершения
 const completionPercentage = computed(() => {
   if (props.stats.total === 0) return 0
@@ -23,17 +33,17 @@ const completionPercentage = computed(() => {
 </script>
 
 <template>
-  <div class="card-neo w-full">
+  <div class="category-card w-full">
     <!-- Заголовок с иконкой и кнопкой добавления -->
     <div class="flex items-center justify-between mb-6">
       <div class="flex items-center space-x-3 min-h-25">
-        <span class="text-6xl">{{ MEDIA_TYPE_ICONS[type] }}</span>
-        <div>
-          <h3 class="text-3xl font-semibold text-gray-800 ">
+        <div class="icon-wrapper flex items-center justify-center p-4" :class="`bg-(--${type}s-400)`">
+          <span class="text-6xl"><component :is="MediaTypeIcon" :size="24" /></span>
+        </div>
+          <h3 class="text-3xl font-semibold text-gray-800 max-w-40">
             {{ MEDIA_TYPE_LABELS[type] }}
           </h3>
           <p class="text-xl text-gray-500">{{ stats.total }}</p>
-        </div>
       </div>
       <button @click="onAddClick" class="btn-add hover:text-blue-500">
         <Plus />

@@ -6,7 +6,7 @@ import fallbackImage from "@/assets/fallback.svg";
 interface Props {
   src: string | null;
   alt: string;
-  fallbackIcon?: "film" | "book";
+  fallbackIcon?: "film" | "book" | "gamepad";
 }
 
 const props = withDefaults(defineProps<Props>(), {
@@ -19,7 +19,7 @@ const FallbackIcon = props.fallbackIcon === "film" ? Film : BookOpen;
 
 <template>
   <div
-    class="w-55 h-72 rounded-2xl overflow-hidden shadow-neo bg-(--neo-background)"
+    class="w-55 h-72 rounded-2xl overflow-hidden"
   >
     <img
       v-if="src"

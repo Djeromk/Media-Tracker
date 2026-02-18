@@ -1,4 +1,4 @@
-import type { MediaStatus, UserMedia } from "@/types";
+import type { MediaStatus, UserMedia, ExternalGame, GameById } from "@/types";
 
 /**
  * Создает объект обновления статуса для user_media
@@ -62,6 +62,21 @@ export function transformKinopoiskToExternalMovie(
     ratingImdb: movie.ratingImdb,
     ratingKinopoisk: movie.ratingKinopoisk,
   };
+}
+
+export function transformGameToExternalGame(game: GameById): ExternalGame {
+  return {
+    id: game.id.toString(),
+    name: game.name,
+    background_image: game.background_image,
+    thumbnail: game.background_image_additional,
+    description: game.description,
+    released: game.released,
+    genres: game.esrb_rating?.name ? [game.esrb_rating.name] : [],
+    platforms: game.platforms.map((platform) => platform.platform.name),
+    developers: null,
+    metacritic: game.metacritic,
+  }
 }
 
 export function formatFilmLength(minutes: number | null | undefined): string {

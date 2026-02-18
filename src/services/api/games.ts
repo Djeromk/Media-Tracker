@@ -1,4 +1,4 @@
-import type { ExternalGame } from '@/types'
+import type { ExternalGame, GameById } from '@/types'
 
 const API_KEY = import.meta.env.VITE_RAWG_API_KEY
 const BASE_URL = 'https://api.rawg.io/api'
@@ -24,7 +24,7 @@ export class GamesService {
     })
   }
 
-  async getGameDetails(id: string): Promise<ExternalGame> {
+  async getGameDetails(id: string): Promise<GameById> {
     const response = await fetch(`${BASE_URL}/games/${id}?key=${API_KEY}`)
     const game = await response.json()
 

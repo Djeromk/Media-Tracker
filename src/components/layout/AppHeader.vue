@@ -17,9 +17,9 @@ async function handleLogout() {
       <div class="flex justify-between items-center h-16">
         <router-link
           to="/"
-          class="text-2xl font-bold text-primary-600 hover:text-primary-700 transition-colors"
+          class="text-4xl font-extrabold text-primary-600 hover:text-primary-700 transition-colors"
         >
-          Media Tracker
+          Media Archive
         </router-link>
 
         <div class="flex items-center space-x-4">

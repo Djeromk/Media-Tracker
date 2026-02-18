@@ -112,7 +112,7 @@ function confirmDelete() {
         <div class="relative">
           <button
             @click="toggleStatusDropdown"
-            class="px-4 py-2 rounded-xl bg-white shadow-md hover:shadow-lg transition-all flex items-center gap-2 border border-gray-200"
+            class="px-4 py-2 cursor-pointer rounded-xl bg-white shadow-md hover:shadow-lg transition-all flex items-center gap-2 border border-gray-200"
           >
             <span class="text-sm font-medium text-gray-700">
               Изменить статус
@@ -136,7 +136,7 @@ function confirmDelete() {
                 v-for="status in availableStatuses"
                 :key="status.value"
                 @click="handleStatusChange(status.value)"
-                class="w-full px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center justify-between"
+                class="w-full cursor-pointer px-4 py-3 text-left hover:bg-gray-50 transition-colors flex items-center justify-between"
               >
                 <span class="text-sm text-gray-700">{{ status.label }}</span>
               </button>
@@ -147,7 +147,7 @@ function confirmDelete() {
         <!-- Кнопка удаления -->
         <button
           @click="openDeleteModal"
-          class="p-3 rounded-xl bg-white shadow-md hover:shadow-lg hover:bg-red-50 transition-all border border-gray-200 hover:border-red-300"
+          class="p-3 rounded-xl cursor-pointer bg-white shadow-md hover:shadow-lg hover:bg-red-50 transition-all border border-gray-200 hover:border-red-300"
           title="Удалить из списка"
         >
           <Trash2 class="w-5 h-5 text-gray-500 group-hover:text-red-500 transition-colors" />

@@ -217,7 +217,7 @@ const vFocus = {
     >
       <!-- Modal -->
       <div
-        class="card-neo shadow-none bg-white w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col no-scrollbar"
+        class="card-padded shadow-none bg-white w-full max-w-4xl max-h-[80vh] overflow-hidden flex flex-col no-scrollbar"
       >
         <!-- Header -->
         <div class="flex items-center justify-between mb-6">
@@ -235,7 +235,7 @@ const vFocus = {
           v-model="searchQuery"
           type="text"
           :placeholder="placeholder"
-          class="input-neo mb-6"
+          class="input mb-6"
           autofocus
           v-focus
         />

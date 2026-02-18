@@ -7,18 +7,12 @@ import type {
 	SeasonProgress
   } from '@/types';
 
-  /**
-   * Вычисляет полный прогресс просмотра сериала
-   */
   export function calculateSeriesProgress(
 	seasons: KinopoiskTVSeason[],
 	watchedEpisodes: WatchedEpisodesMap
   ): SeriesProgress {
-	console.log('calculateSeriesProgress seasons', seasons)
-	console.log('calculateSeriesProgress watchedEpisodes', watchedEpisodes)
 	const seasonProgress: SeasonProgress[] = seasons.map(season => {
 	  const watched = watchedEpisodes[season.number.toString()] || [];
-	  console.log('watched', watched)
 	  const total = season.episodes.length;
 
 	  return {

@@ -1,6 +1,7 @@
 export * from "./movie";
 export * from "./book";
 export * from "./series";
+export * from "./game";
 
 export type MediaType = "movie" | "book" | "game" | "other";
 export type MediaStatus = "completed" | "dropped" | "in_progress" | "backlog";
@@ -16,6 +17,14 @@ export interface BaseMedia {
   isCustom: boolean;
   createdBy: string | null;
   createdAt: string;
+}
+
+export type InsertData = {
+  user_id: string
+  media_id: string
+  status: MediaStatus
+  current_season?: number
+  current_episode?: number
 }
 
 export interface Movie extends BaseMedia {
@@ -54,8 +63,10 @@ export interface UserMedia {
   media?: MediaItem;
   current_page: number | null;
   currentPage: number | null;
-  currentSeason: number | null;
-  currentEpisode: number | null;
+  //currentSeason: number | null;
+  current_season: number | null;
+  //currentEpisode: number | null;
+  current_episode: number | null;
   hoursPlayed: number | null;
   watched_episodes: WatchedEpisodesMap;
 }

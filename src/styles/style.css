@@ -1,12 +1,559 @@
 @import "tailwindcss";
 @import "./variables.css";
 
+/* ============================================
+   БАЗОВЫЕ СТИЛИ - Modern SaaS UI
+   ============================================ */
+
+@layer base {
+
+  .scrollbar-hide-true {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+  }
+
+  .scrollbar-hide-true::-webkit-scrollbar {
+    display: none;
+  }
+	/* Подключаем Inter шрифт (если он уже есть в проекте) */
+	* {
+		font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
+	}
+
+	body {
+		@apply bg-[var(--background-body)] text-[var(--text-secondary)] antialiased;
+		font-size: var(--text-base);
+		line-height: var(--leading-normal);
+		-webkit-font-smoothing: antialiased;
+		-moz-osx-font-smoothing: grayscale;
+	}
+
+	/* ТИПОГРАФИКА - УСИЛЕННЫЙ КОНТРАСТ */
+
+	/* H1 - Главный заголовок страницы (увеличен с 36px до 48px) */
+	h1 {
+		font-size: var(--text-4xl);           /* 48px */
+		font-weight: var(--font-bold);        /* 700 */
+		line-height: var(--leading-tight);    /* 1.15 */
+		letter-spacing: var(--tracking-tight); /* -0.015em */
+		color: var(--text-primary);            /* Почти черный */
+	}
+
+	/* H2 - Заголовки секций (увеличен с 24px до 36px) */
+	h2 {
+		font-size: var(--text-3xl);           /* 36px */
+		font-weight: var(--font-bold);        /* 700 */
+		line-height: var(--leading-tight);    /* 1.15 */
+		letter-spacing: var(--tracking-tight);
+		color: var(--text-primary);
+	}
+
+	/* H3 - Подзаголовки (увеличен с 20px до 28px) */
+	h3 {
+		font-size: var(--text-2xl);           /* 28px */
+		font-weight: var(--font-semibold);    /* 600 */
+		line-height: var(--leading-snug);     /* 1.375 */
+		color: var(--text-primary);
+	}
+
+	/* H4 - Заголовки карточек */
+	h4 {
+		font-size: var(--text-lg);            /* 18px */
+		font-weight: var(--font-semibold);    /* 600 */
+		line-height: var(--leading-normal);
+		color: var(--text-primary);
+	}
+
+	/* Body текст - основной */
+	p, span, div {
+		font-size: var(--text-base);          /* 15px */
+		line-height: var(--leading-normal);   /* 1.5 */
+	}
+
+	/* Вторичный текст - подписи, метаданные */
+	.text-secondary {
+		font-size: var(--text-sm);            /* 13px */
+		color: var(--text-tertiary);          /* Средне-серый */
+	}
+
+	/* Скрытие скроллбара */
+	.no-scrollbar::-webkit-scrollbar {
+		display: none;
+	}
+
+	.no-scrollbar {
+		-ms-overflow-style: none;
+		scrollbar-width: none;
+	}
+}
+
+/* ============================================
+   UTILITY КЛАССЫ
+   ============================================ */
+
+
+	/* Кнопка - базовая */
+	@utility btn {
+		@apply inline-flex items-center justify-center gap-2
+		       px-4 py-2.5 rounded-lg
+		       font-medium text-sm
+		       transition-all duration-(--transition-base)
+		       focus:outline-none focus:ring-2 focus:ring-offset-2
+		       disabled:opacity-50 disabled:cursor-not-allowed;
+	}
+
+	/* Карточка - базовая */
+	@utility card {
+		@apply bg-[var(--background-card)]
+		       rounded-xl
+		       border border-[var(--border-color)]
+		       shadow-[var(--shadow-sm)]
+		       transition-shadow duration-[var(--transition-base)];
+	}
+
+	/* Badge - базовый */
+	@utility badge {
+		@apply inline-flex items-center gap-1.5
+		       px-2.5 py-1
+		       rounded-md
+		       text-[var(--text-xs)]
+		       font-medium
+		       transition-colors duration-[var(--transition-fast)];
+	}
+
+	/* Input - базовый */
+	@utility input {
+		@apply w-full px-3 py-2
+		       rounded-lg
+		       bg-white
+		       border border-[var(--border-color)]
+		       text-[var(--text-secondary)]
+		       text-[var(--text-sm)]
+		       placeholder:text-[var(--text-tertiary)]
+		       focus:outline-none
+		       focus:ring-2
+		       focus:ring-[var(--primary-500)]
+		       focus:border-transparent
+		       transition-all duration-[var(--transition-fast)]
+		       disabled:bg-[var(--background-subtle)]
+		       disabled:cursor-not-allowed;
+	}
+
+  @utility icon-wrapper {
+		@apply flex items-center justify-center
+		       rounded-lg
+		       transition-all duration-[var(--transition-base)];
+	}
+
+  @utility nav-link {
+		@apply px-4 py-2
+		       rounded-md
+		       text-[var(--text-sm)]
+		       font-medium
+		       text-[var(--text-tertiary)]
+		       hover:text-[var(--text-secondary)]
+		       hover:bg-[var(--background-hover)]
+		       transition-colors duration-[var(--transition-fast)]
+		       cursor-pointer;
+	}
+
+
+/* ============================================
+   КОМПОНЕНТЫ - Modern SaaS UI
+   ============================================ */
+
+@layer components {
+
+	/* ----------------------------------------
+	   КНОПКИ
+	   ---------------------------------------- */
+
+	/* Primary - главное действие */
+	.btn-primary {
+		@apply btn
+		       bg-[var(--primary-600)]
+		       text-white
+		       hover:bg-[var(--primary-700)]
+		       active:bg-[var(--primary-800)]
+		       focus:ring-[var(--primary-500)]
+		       shadow-[var(--shadow-sm)];
+	}
+
+	/* Secondary - второстепенное */
+	.btn-secondary {
+		@apply btn
+		       bg-white
+		       text-[var(--text-secondary)]
+		       border border-[var(--border-color)]
+		       hover:bg-[var(--background-hover)]
+		       active:bg-[var(--background-active)]
+		       focus:ring-[var(--gray-400)]
+		       shadow-[var(--shadow-xs)];
+	}
+
+	/* Ghost - без фона */
+	.btn-ghost {
+		@apply btn
+		       bg-transparent
+		       text-[var(--text-tertiary)]
+		       hover:bg-[var(--background-hover)]
+		       hover:text-[var(--text-secondary)]
+		       active:bg-[var(--background-active)]
+		       focus:ring-[var(--gray-400)];
+	}
+
+	/* Добавление - круглая кнопка с + */
+	.btn-add {
+		@apply flex items-center justify-center
+		       rounded-xl
+		       border-2  border-[var(--border-color)]
+		       text-lg font-bold text-white
+		       hover:border-[var(--primary-500)]
+		       hover:bg-[var(--primary-50)]
+		       transition-all duration-[var(--transition-base)]
+		       cursor-pointer;
+	}
+
+	/* ----------------------------------------
+	   КАРТОЧКИ
+	   ---------------------------------------- */
+
+	/* С паддингом */
+	.card-padded {
+		@apply card p-4;
+	}
+
+	/* Категория медиа - улучшенная */
+	.category-card {
+		@apply card p-6
+		       hover:shadow-[var(--shadow-md)]
+		       hover:border-[var(--primary-200)]
+		       cursor-pointer
+		       transition-all duration-[var(--transition-base)];
+	}
+
+
+	/* Hero карточка - для InProgress */
+	.card-hero {
+		@apply card p-8
+		       bg-[var(--primary-50)]
+		       border-[var(--primary-200)]
+		       shadow-[var(--shadow-md)];
+	}
+
+	/* ----------------------------------------
+	   СТАТУСЫ (без градиентов!)
+	   ---------------------------------------- */
+
+	/* Backlog - нейтральный серый */
+	.badge-backlog {
+		@apply badge
+		       bg-[var(--status-backlog-bg)]
+		       text-[var(--status-backlog-text)]
+		       border border-[var(--status-backlog-border)];
+	}
+
+	/* In Progress - primary синий */
+	.badge-in-progress {
+		@apply badge
+		       bg-[var(--status-progress-bg)]
+		       text-[var(--status-progress-text)]
+		       border border-[var(--status-progress-border)];
+	}
+
+	/* Completed - светлый primary */
+	.badge-completed {
+		@apply badge
+		       bg-[var(--status-completed-bg)]
+		       text-[var(--status-completed-text)]
+		       border border-[var(--status-completed-border)];
+	}
+
+	/* Dropped - темный серый */
+	.badge-dropped {
+		@apply badge
+		       bg-[var(--status-dropped-bg)]
+		       text-[var(--status-dropped-text)]
+		       border border-[var(--status-dropped-border)];
+	}
+
+	/* Wishlist - средний серый */
+	.badge-wishlist {
+		@apply badge
+		       bg-[var(--status-wishlist-bg)]
+		       text-[var(--status-wishlist-text)]
+		       border border-[var(--status-wishlist-border)];
+	}
+
+	/* ----------------------------------------
+	   ПРОГРЕСС БАР (без градиента!)
+	   ---------------------------------------- */
+
+	.progress {
+		@apply w-full h-1.5
+		       rounded-full
+		       bg-[var(--gray-100)]
+		       overflow-hidden;
+	}
+
+	.progress-fill {
+		@apply h-full
+		       rounded-full
+		       bg-[var(--primary-500)]  /* Чистый синий, без градиента */
+		       transition-all duration-[var(--transition-slow)];
+	}
+
+	/* ----------------------------------------
+	   ИКОНКИ И ОБЕРТКИ
+	   ---------------------------------------- */
+
+
+
+	/* Категории - тонкие вариации primary */
+	.icon-wrapper-books {
+		@apply icon-wrapper
+		       bg-[var(--category-books-bg)]
+		      text-white
+	}
+
+	.icon-wrapper-movies {
+		@apply icon-wrapper
+		       bg-[var(--category-movies-bg)]
+		      text-white
+	}
+
+	.icon-wrapper-games {
+		@apply icon-wrapper
+		       bg-[var(--category-games-bg)]
+text-white
+	}
+
+	/* ----------------------------------------
+	   НАВИГАЦИЯ
+	   ---------------------------------------- */
+
+
+
+	.nav-link-active {
+		@apply nav-link
+		       bg-[var(--primary-50)]
+		       text-[var(--primary-700)]
+		       hover:bg-[var(--primary-100)]
+		       hover:text-[var(--primary-800)];
+	}
+
+	/* ----------------------------------------
+	   СПИСКИ
+	   ---------------------------------------- */
+
+	.list-header {
+		@apply flex items-center justify-between
+		       pb-3
+		       border-b border-[var(--border-color)];
+	}
+
+	.list-title {
+		@apply text-[var(--text-lg)]
+		       font-semibold
+		       text-[var(--text-primary)]
+		       flex items-center gap-2;
+	}
+
+	.list-count {
+		@apply text-[var(--text-sm)]
+		       text-[var(--text-tertiary)]
+		       font-normal;
+	}
+
+	/* ----------------------------------------
+	   GRID СИСТЕМЫ
+	   ---------------------------------------- */
+
+	.stats-grid {
+		@apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+	}
+
+	.media-grid {
+		@apply grid grid-cols-1 gap-3;
+	}
+
+	/* ----------------------------------------
+	   DIVIDER
+	   ---------------------------------------- */
+
+	.divider {
+		@apply border-t border-[var(--border-color)] my-6;
+	}
+
+	/* ----------------------------------------
+	   УТИЛИТЫ
+	   ---------------------------------------- */
+
+	/* Текст с многоточием */
+	.text-ellipsis-1 {
+		display: -webkit-box;
+		-webkit-line-clamp: 1;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.text-ellipsis-2 {
+		display: -webkit-box;
+		-webkit-line-clamp: 2;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	.text-ellipsis-3 {
+		display: -webkit-box;
+		-webkit-line-clamp: 3;
+		-webkit-box-orient: vertical;
+		overflow: hidden;
+	}
+
+	/* Skeleton загрузчик */
+	.skeleton {
+		@apply bg-[var(--gray-100)]
+		       animate-pulse
+		       rounded;
+	}
+
+	/* Аватар */
+	.avatar {
+		@apply w-9 h-9
+		       rounded-full
+		       bg-[var(--primary-600)]  /* Чистый синий, без градиента */
+		       flex items-center justify-center
+		       text-white
+		       font-semibold
+		       text-[var(--text-sm)]
+		       shadow-[var(--shadow-sm)];
+	}
+}
+
+/* ============================================
+   АНИМАЦИИ
+   ============================================ */
+
+@keyframes slideIn {
+	from {
+		opacity: 0;
+		transform: translateY(12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes scaleIn {
+	from {
+		opacity: 0;
+		transform: scale(0.95);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+.animate-slide-in {
+	animation: slideIn var(--transition-slower) ease-out;
+}
+
+.animate-fade-in {
+	animation: fadeIn var(--transition-base) ease-out;
+}
+
+.animate-scale-in {
+	animation: scaleIn var(--transition-slower) ease-out;
+}
+
+/* ============================================
+   АДАПТИВНЫЕ УТИЛИТЫ
+   ============================================ */
+
+/* Контейнеры с максимальной шириной */
+.container-sm {
+	max-width: var(--content-width-sm);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.container-md {
+	max-width: var(--content-width-md);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.container-lg {
+	max-width: var(--content-width-lg);
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.container-xl {
+	max-width: var(--content-width-xl);
+	margin-left: auto;
+	margin-right: auto;
+}
+/* @import "tailwindcss";
+@import "./variables.css";
+
 @tailwind utilities;
 
 @layer base {
+
+  * {
+    font-family: 'Inter', sans-serif;
+  }
+
   body {
-    font-family: Arial, Helvetica, sans-serif;
-    @apply bg-[var(--neo-background-body)] text-gray-800;
+    font-family:
+      -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+      "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+      sans-serif;
+    @apply bg-(--background-body) text-(--text-primary) antialiased;
+    line-height: var(--leading-normal);
+    font-size: var(--text-base);
+  }
+
+  h1 {
+    font-size: var(--text-4xl);
+    font-weight: 700;
+    line-height: var(--leading-tight);
+    color: var(--text-primary);
+  }
+
+  h2 {
+    font-size: var(--text-2xl);
+    font-weight: 600;
+    line-height: var(--leading-tight);
+    color: var(--text-primary);
+  }
+
+  h3 {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    line-height: var(--leading-normal);
+    color: var(--text-primary);
+  }
+
+  h4 {
+    font-size: var(--text-lg);
+    font-weight: 500;
+    line-height: var(--leading-normal);
+    color: var(--text-primary);
   }
 
   .no-scrollbar::-webkit-scrollbar {
@@ -19,42 +566,326 @@
   }
 }
 
-@utility btn-neo {
-  @apply px-6 py-3 rounded-2xl bg-[var(--neo-background)] shadow-[var(--neo-shadow)]
-  transition-all duration-200 font-medium
-  hover:shadow-[var(--neo-shadow-sm)] active:shadow-[var(--neo-shadow-inset)];
+   @utility btn-neo {
+    @apply px-6 py-3 rounded-2xl bg-(--neo-background) shadow-(--neo-shadow)
+    transition-all duration-200 font-medium
+    hover:shadow-(--neo-shadow-sm) active:shadow-(--neo-shadow-inset);
+  }
+
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2 px-4 py-2.5
+            rounded-lg font-medium text-sm
+            transition-all duration-(--transition-base)
+            focus:outline-none focus:ring-2 focus:ring-offset-2
+            disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+@utility card {
+  @apply bg-(--background-card) rounded-xl border border-(--gray-200)
+           shadow-sm hover:shadow-md
+           transition-shadow duration-(--transition-base);
+}
+
+@utility badge {
+  @apply inline-flex items-center gap-1.5 px-3 py-1
+           rounded-full text-xs font-medium
+           transition-colors duration-(--transition-fast);
+}
+
+@utility input {
+  @apply w-full px-4 py-2.5 rounded-lg
+           bg-white border border-(--gray-300)
+           text-(--text-primary) placeholder:text-(--text-tertiary)
+           focus:outline-none focus:ring-2 focus:ring-(--primary-500) focus:border-transparent
+           transition-all duration-(--transition-fast)
+           disabled:bg-(--gray-100) disabled:cursor-not-allowed;
+}
+
+@utility select {
+  @apply input appearance-none cursor-pointer
+
+           bg-[length:1.5em] bg-[right_0.5rem_center] bg-no-repeat pr-10;
+}
+
+@utility progress {
+  @apply w-full h-2 rounded-full bg-(--gray-200) overflow-hidden;
+}
+
+@utility stats-grid {
+  @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+}
+
+@utility divider {
+  @apply border-t border-(--gray-200) my-6;
+}
+
+@utility icon-wrapper {
+  @apply flex items-center justify-center w-12 h-12 rounded-lg
+           transition-all duration-(--transition-base);
+}
+
+@utility list-section {
+  @apply space-y-3;
+}
+
+@utility avatar {
+  @apply w-10 h-10 rounded-full bg-gradient-to-br from-(--primary-400) to-(--primary-600)
+           flex items-center justify-center text-white font-semibold text-sm
+           shadow-md;
+}
+
+@utility nav-link {
+  @apply px-4 py-2 rounded-lg text-sm font-medium
+           text-(--text-secondary)
+           hover:text-(--text-primary) hover:bg-(--background-hover)
+           transition-colors duration-(--transition-fast)
+           cursor-pointer;
+}
+
+@utility progress-fill {
+  @apply h-full rounded-full transition-all duration-(--transition-slow);
 }
 @layer components {
 
-  .btn-neo-primary {
-    @apply btn-neo text-[var(--primary-600)];
+  .btn-primary {
+    @apply btn bg-(--primary-600) text-white
+           hover:bg-(--primary-700)
+           active:bg-(--primary-800)
+           focus:ring-(--primary-500)
+           shadow-sm hover:shadow-md;
   }
 
-  /* Неоморфная карточка */
+  .btn-secondary {
+    @apply btn bg-white text-(--text-primary) border border-(--gray-300)
+           hover:bg-(--background-hover)
+           active:bg-(--background-active)
+           focus:ring-(--gray-400)
+           shadow-sm;
+  }
+
+  .btn-ghost {
+    @apply btn bg-transparent text-(--text-secondary)
+           hover:bg-(--background-hover)
+           hover:text-(--text-primary)
+           active:bg-(--background-active)
+           focus:ring-(--gray-400);
+  }
+
+  .btn-danger {
+    @apply btn bg-(--error-500) text-white
+           hover:bg-(--error-600)
+           focus:ring-(--error-500)
+           shadow-sm;
+  }
+
+  .btn-icon {
+    @apply btn aspect-square p-2.5;
+  }
+
+  .btn-add {
+    @apply flex items-center justify-center w-12 h-12 rounded-full
+           bg-white border-2 border-dashed border-(--gray-300)
+           text-(--gray-400) text-xl
+           hover:border-(--primary-500) hover:text-(--primary-600)
+           hover:bg-(--primary-50)
+           transition-all duration-(--transition-base)
+           cursor-pointer shadow-sm hover:shadow-md;
+  }
+
+  .card-padded {
+    @apply card p-6;
+  }
+
+  .category-card {
+    @apply card p-6 cursor-pointer
+           transition-all duration-(--transition-base);
+  }
+
+  .category-card-books {
+    @apply border-l-4 border-l-(--books-500)
+           hover:bg-(--books-50);
+  }
+
+  .category-card-movies {
+    @apply border-l-4 border-l-(--movies-500)
+           hover:bg-(--movies-50);
+  }
+
+  .category-card-games {
+    @apply border-l-4 border-l-(--games-500)
+           hover:bg-(--games-50);
+  }
+
+  .media-card {
+    @apply card flex gap-4 p-4
+           hover:border-(--gray-300)
+           transition-all duration-(--transition-base);
+  }
+
+  .badge-backlog {
+    @apply badge bg-(--warning-50) text-(--warning-600)
+           border border-(--warning-200);
+  }
+
+  .badge-in-progress {
+    @apply badge bg-(--info-50) text-(--info-600)
+           border border-(--info-200);
+  }
+
+  .badge-completed {
+    @apply badge bg-(--success-50) text-(--success-600)
+           border border-(--success-200);
+  }
+
+  .badge-dropped {
+    @apply badge bg-(--error-50) text-(--error-600)
+           border border-(--error-200);
+  }
+
+  .badge-wishlist {
+    @apply badge bg-(--gray-100) text-(--gray-700)
+           border border-(--gray-300);
+  }
+
+  .input-error {
+    @apply input border-(--error-500) focus:ring-(--error-500);
+  }
+
+  .progress-fill-books {
+    @apply progress-fill bg-gradient-to-r from-(--books-400) to-(--books-600);
+  }
+
+  .progress-fill-movies {
+    @apply progress-fill bg-gradient-to-r from-(--movies-400) to-(--movies-600);
+  }
+
+  .progress-fill-games {
+    @apply progress-fill bg-gradient-to-r from-(--games-400) to-(--games-600);
+  }
+
+  .icon-wrapper-books {
+    @apply icon-wrapper bg-(--books-100) text-(--books-600);
+  }
+
+  .icon-wrapper-movies {
+    @apply icon-wrapper bg-(--movies-100) text-(--movies-600);
+  }
+
+  .icon-wrapper-games {
+    @apply icon-wrapper bg-(--games-100) text-(--games-600);
+  }
+
+  .list-header {
+    @apply flex items-center justify-between pb-3 border-b border-(--gray-200);
+  }
+
+  .list-title {
+    @apply text-lg font-semibold text-(--text-primary) flex items-center gap-2;
+  }
+
+  .list-count {
+    @apply text-sm text-(--text-tertiary) font-normal;
+  }
+
+  .nav-link-active {
+    @apply nav-link bg-(--primary-50) text-(--primary-600)
+           hover:bg-(--primary-100);
+  }
+
+  .media-grid {
+    @apply grid grid-cols-1 gap-3;
+  }
+
+  .text-ellipsis-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .text-ellipsis-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .skeleton {
+    @apply bg-(--gray-200) animate-pulse rounded;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-slide-in {
+  animation: slideIn var(--transition-base) ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn var(--transition-base) ease-out;
+}
+
+@layer base {
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    @apply bg-(--neo-background-body) text-gray-800;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@layer components {
+  .btn-neo-primary {
+    @apply btn-neo text-(--primary-600);
+  }
+
   .card-neo {
     @apply bg-(--neo-background) rounded-xl p-6 outline-1 outline-gray-300 shadow-(--neo-shadow);
   }
 
-  /* Неоморфный input */
   .input-neo {
-    @apply w-full px-4 py-3 rounded-2xl bg-[var(--neo-background)] shadow-[var(--neo-shadow-inset)]
-           border-none focus:outline-none focus:ring-2 focus:ring-[var(--primary-400)];
+    @apply w-full px-4 py-3 rounded-2xl bg-(--neo-background) shadow-(--neo-shadow-inset)
+           border-none focus:outline-none focus:ring-2 focus:ring-(--primary-400);
   }
 
-  /* Кнопка добавления (круглая с +) */
-  .btn-add {
-    @apply p-5 rounded-xl bg-[var(--neo-background)] shadow-[var(--neo-shadow)] outline-1 outline-gray-300
+  .btn-add-1 {
+    @apply p-5 rounded-xl bg-(--neo-background) shadow-(--neo-shadow) outline-1 outline-gray-300
            flex items-center justify-center text-2xl text-gray-600 cursor-pointer
-           hover:shadow-[var(--neo-shadow-sm)] hover:text-[var(--primary-600)]
-           active:shadow-[var(--neo-shadow-inset)] transition-all duration-200;
+           hover:shadow-(--neo-shadow-sm) hover:text-(--primary-600)
+           active:shadow-(--neo-shadow-inset) transition-all duration-200;
   }
 
-  /* Прогресс бар */
   .progress-neo {
-    @apply w-full h-3 rounded-full bg-[var(--neo-background)] shadow-[var(--neo-shadow-inset)] overflow-hidden;
+    @apply w-full h-3 rounded-full bg-(--neo-background) shadow-(--neo-shadow-inset) overflow-hidden;
   }
 
   .progress-fill {
-    @apply h-full bg-gradient-to-r from-[var(--primary-400)] to-[var(--primary-600)] rounded-full;
+    @apply h-full bg-gradient-to-r from-(--primary-400) to-(--primary-600) rounded-full;
   }
 }
+ */

@@ -74,7 +74,7 @@ function handleDeleteItem(id: string) {
       </div>
     </div>
 
-    <div class="flex gap-3 flex-wrap w-fit bg-gray-400 p-3 rounded-2xl">
+    <div class="flex gap-3 flex-wrap w-fit p-3 rounded-2xl">
       <button
         v-for="filter in filters"
         :key="filter.value"
@@ -82,8 +82,8 @@ function handleDeleteItem(id: string) {
         :class="[
           'px-6 py-3 rounded-2xl font-medium transition-all duration-200 cursor-pointer',
           selectedFilter === filter.value
-            ? 'bg-(--neo-background-body) text-gray-900 shadow-lg'
-            : ' bg-gray-400 text-gray-900 hover:bg-(--neo-background)'
+            ? 'bg-(---background-body) text-gray-900 shadow-lg'
+            :  'text-gray-900 hover:bg-(--background)'
         ]"
       >
         {{ filter.label }}
@@ -130,7 +130,7 @@ function handleDeleteItem(id: string) {
 
     <div
       v-if="filteredMedia.length === 0"
-      class="card-neo text-center py-12"
+      class="card-padded text-center py-12"
     >
       <p class="text-gray-500 text-lg">
         {{ selectedFilter === 'all'

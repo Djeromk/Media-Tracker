@@ -35,7 +35,7 @@ export const mediaService = {
       if (existingMedia) {
         mediaId = existingMedia.id;
       } else {
-        console.log("Creating new media item...", item);
+        //console.log("Creating new media item...", item);
         const mediaData = this.prepareMediaData(item, type, userId);
         const { data: newMedia, error: createError } =
           await db.createMediaItem(mediaData);
@@ -46,25 +46,33 @@ export const mediaService = {
         }
 
         mediaId = newMedia.id;
-        console.log("Created media_item with ID:", mediaId);
+       // console.log("Created media_item with ID:", mediaId);
 
         // Создаем специфичные данные в зависимости от типа
         await this.createTypeSpecificData(item, type, mediaId);
-        console.log("Created type-specific data for type:", type);
+        //console.log("Created type-specific data for type:", type);
       }
 
       if (userId) {
-        console.log("Adding to user media...");
+        let current_season = null
+        let current_episode = null
+        if("isSeries" in item && item.isSeries){
+          console.log("Adding to user media... item, type", item, type);
+          current_season = 1;
+          current_episode = 1;
+        }
         const { error: addError } = await db.addUserMedia({
           userId,
           mediaId,
           status,
+          current_season,
+          current_episode
         });
 
         if (addError) {
           // Проверяем, не добавлен ли уже этот элемент (UNIQUE constraint)
           if (addError.code !== "23505") {
-            console.log("Media already in user list");
+            //console.log("Media already in user list");
             return {
               success: true,
               mediaId,
@@ -125,12 +133,8 @@ export const mediaService = {
         const movieItem = item as ExternalMovie;
         await db.createMovie({
           id: mediaId,
-          //director: movieItem.director || null,
-          //durationMinutes: movieItem.runtime || null,
           year: movieItem.year,
           isSeries: movieItem.isSeries,
-          // seasonsCount: 'seasonsCount' in movieItem ? movieItem.seasonsCount || null : null,
-          //episodesCount: 'episodesCount' in movieItem ? movieItem.episodesCount || null : null
         });
         break;
       }
@@ -150,7 +154,6 @@ export const mediaService = {
         const gameItem = item as ExternalGame;
         await db.createGame({
           id: mediaId,
-          //developer: gameItem.developers.jo
           platform: gameItem.platforms || null,
           genre: gameItem.genres || null,
         });

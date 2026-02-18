@@ -37,7 +37,7 @@ const expandedSeasons = ref<Set<number>>(new Set());
 const watchedEpisodes = ref<WatchedEpisodesMap>(
   (props.userMediaEntry.watched_episodes as WatchedEpisodesMap) || {}
 );
-
+console.log('props.userMediaEntry SeriesProgress', props.userMediaEntry )
 
 // Вычисляем прогресс на основе сезонов и просмотренных серий
 const progress = computed(() =>
@@ -133,8 +133,8 @@ async function syncProgress() {
   console.log('syncProgress watchedEpisodes', watched_episodes);
   await mediaStore.updateMedia(props.userMediaEntry.id, {
     watched_episodes: watched_episodes,
-    currentSeason: current.currentSeason,
-    currentEpisode: current.currentEpisode
+    current_season: current.currentSeason,
+    current_episode: current.currentEpisode
   });
 }
 </script>
@@ -166,7 +166,7 @@ async function syncProgress() {
         </span>
       </div>
       <div v-else-if="progress.completionPercentage === 100" class="mt-4 flex items-center gap-2 text-green-600">
-        <Check :size="18" />
+        <Check :size="18"  />
         <span class="text-sm font-medium">
           Сериал полностью просмотрен!
         </span>
@@ -194,8 +194,8 @@ async function syncProgress() {
             >
               <Check
                 v-if="isSeasonWatched(watchedEpisodes, season)"
-                :size="16"
-                class="text-white"
+                :size="17"
+                class="text-green-600"
               />
             </button>
 
