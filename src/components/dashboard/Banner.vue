@@ -25,10 +25,10 @@ function handleRegister() {
         </p>
       </div>
       <div class="flex gap-3 shrink-0">
-        <button @click="handleLogin" class="btn-neo px-6 py-3">
+        <button @click="handleLogin" class="btn-primary px-6 py-3">
           Войти
         </button>
-        <button @click="handleRegister" class="btn-neo-primary px-6 py-3">
+        <button @click="handleRegister" class="btn-secondary px-6 py-3">
           Создать аккаунт
         </button>
       </div>

@@ -1,12 +1,9 @@
+/* @import url("https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Epilogue:wght@300;400;500&display=swap"); */
+@import "./fonts.css";
 @import "tailwindcss";
 @import "./variables.css";
 
-/* ============================================
-   БАЗОВЫЕ СТИЛИ - Modern SaaS UI
-   ============================================ */
-
 @layer base {
-
   .scrollbar-hide-true {
     scrollbar-width: none;
     -ms-overflow-style: none;
@@ -15,115 +12,121 @@
   .scrollbar-hide-true::-webkit-scrollbar {
     display: none;
   }
-	/* Подключаем Inter шрифт (если он уже есть в проекте) */
-	* {
-		font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", sans-serif;
-	}
+  * {
+    font-family:
+      "Inter",
+      -apple-system,
+      BlinkMacSystemFont,
+      "Epilogue",
+      "Syne",
+      sans-serif;
+  }
 
-	body {
-		@apply bg-[var(--background-body)] text-[var(--text-secondary)] antialiased;
-		font-size: var(--text-base);
-		line-height: var(--leading-normal);
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-	}
+  body {
+    @apply bg-[var(--background-body)] text-[var(--text-secondary)] antialiased;
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
 
-	/* ТИПОГРАФИКА - УСИЛЕННЫЙ КОНТРАСТ */
+  /* ТИПОГРАФИКА - УСИЛЕННЫЙ КОНТРАСТ */
 
-	/* H1 - Главный заголовок страницы (увеличен с 36px до 48px) */
-	h1 {
-		font-size: var(--text-4xl);           /* 48px */
-		font-weight: var(--font-bold);        /* 700 */
-		line-height: var(--leading-tight);    /* 1.15 */
-		letter-spacing: var(--tracking-tight); /* -0.015em */
-		color: var(--text-primary);            /* Почти черный */
-	}
+  /* H1 - Главный заголовок страницы (увеличен с 36px до 48px) */
+  h1 {
+    font-size: var(--text-4xl); /* 48px */
+    font-weight: var(--font-bold); /* 700 */
+    line-height: var(--leading-tight); /* 1.15 */
+    letter-spacing: var(--tracking-tight); /* -0.015em */
+    color: var(--text-primary); /* Почти черный */
+  }
 
-	/* H2 - Заголовки секций (увеличен с 24px до 36px) */
-	h2 {
-		font-size: var(--text-3xl);           /* 36px */
-		font-weight: var(--font-bold);        /* 700 */
-		line-height: var(--leading-tight);    /* 1.15 */
-		letter-spacing: var(--tracking-tight);
-		color: var(--text-primary);
-	}
+  /* H2 - Заголовки секций (увеличен с 24px до 36px) */
+  h2 {
+    font-size: var(--text-3xl); /* 36px */
+    font-weight: var(--font-bold); /* 700 */
+    line-height: var(--leading-tight); /* 1.15 */
+    letter-spacing: var(--tracking-tight);
+    color: var(--text-primary);
+  }
 
-	/* H3 - Подзаголовки (увеличен с 20px до 28px) */
-	h3 {
-		font-size: var(--text-2xl);           /* 28px */
-		font-weight: var(--font-semibold);    /* 600 */
-		line-height: var(--leading-snug);     /* 1.375 */
-		color: var(--text-primary);
-	}
+  /* H3 - Подзаголовки (увеличен с 20px до 28px) */
+  h3 {
+    font-size: var(--text-2xl); /* 28px */
+    font-weight: var(--font-semibold); /* 600 */
+    line-height: var(--leading-snug); /* 1.375 */
+    color: var(--text-primary);
+  }
 
-	/* H4 - Заголовки карточек */
-	h4 {
-		font-size: var(--text-lg);            /* 18px */
-		font-weight: var(--font-semibold);    /* 600 */
-		line-height: var(--leading-normal);
-		color: var(--text-primary);
-	}
+  /* H4 - Заголовки карточек */
+  h4 {
+    font-size: var(--text-lg); /* 18px */
+    font-weight: var(--font-semibold); /* 600 */
+    line-height: var(--leading-normal);
+    color: var(--text-primary);
+  }
 
-	/* Body текст - основной */
-	p, span, div {
-		font-size: var(--text-base);          /* 15px */
-		line-height: var(--leading-normal);   /* 1.5 */
-	}
+  /* Body текст - основной */
+  p,
+  span,
+  div {
+    font-size: var(--text-base); /* 15px */
+    line-height: var(--leading-normal); /* 1.5 */
+  }
 
-	/* Вторичный текст - подписи, метаданные */
-	.text-secondary {
-		font-size: var(--text-sm);            /* 13px */
-		color: var(--text-tertiary);          /* Средне-серый */
-	}
+  /* Вторичный текст - подписи, метаданные */
+  .text-secondary {
+    font-size: var(--text-sm); /* 13px */
+    color: var(--text-tertiary); /* Средне-серый */
+  }
 
-	/* Скрытие скроллбара */
-	.no-scrollbar::-webkit-scrollbar {
-		display: none;
-	}
+  /* Скрытие скроллбара */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 
-	.no-scrollbar {
-		-ms-overflow-style: none;
-		scrollbar-width: none;
-	}
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
 
 /* ============================================
    UTILITY КЛАССЫ
    ============================================ */
 
-
-	/* Кнопка - базовая */
-	@utility btn {
-		@apply inline-flex items-center justify-center gap-2
+/* Кнопка - базовая */
+@utility btn {
+  @apply inline-flex items-center justify-center gap-2
 		       px-4 py-2.5 rounded-lg
 		       font-medium text-sm
 		       transition-all duration-(--transition-base)
 		       focus:outline-none focus:ring-2 focus:ring-offset-2
 		       disabled:opacity-50 disabled:cursor-not-allowed;
-	}
+}
 
-	/* Карточка - базовая */
-	@utility card {
-		@apply bg-[var(--background-card)]
+/* Карточка - базовая */
+@utility card {
+  @apply bg-[var(--background-card)]
 		       rounded-xl
 		       border border-[var(--border-color)]
 		       shadow-[var(--shadow-sm)]
 		       transition-shadow duration-[var(--transition-base)];
-	}
+}
 
-	/* Badge - базовый */
-	@utility badge {
-		@apply inline-flex items-center gap-1.5
+/* Badge - базовый */
+@utility badge {
+  @apply inline-flex items-center gap-1.5
 		       px-2.5 py-1
 		       rounded-md
 		       text-[var(--text-xs)]
 		       font-medium
 		       transition-colors duration-[var(--transition-fast)];
-	}
+}
 
-	/* Input - базовый */
-	@utility input {
-		@apply w-full px-3 py-2
+/* Input - базовый */
+@utility input {
+  @apply w-full px-3 py-2
 		       rounded-lg
 		       bg-white
 		       border border-[var(--border-color)]
@@ -137,16 +140,16 @@
 		       transition-all duration-[var(--transition-fast)]
 		       disabled:bg-[var(--background-subtle)]
 		       disabled:cursor-not-allowed;
-	}
+}
 
-  @utility icon-wrapper {
-		@apply flex items-center justify-center
+@utility icon-wrapper {
+  @apply flex items-center justify-center
 		       rounded-lg
 		       transition-all duration-[var(--transition-base)];
-	}
+}
 
-  @utility nav-link {
-		@apply px-4 py-2
+@utility nav-link {
+  @apply px-4 py-2
 		       rounded-md
 		       text-[var(--text-sm)]
 		       font-medium
@@ -155,56 +158,56 @@
 		       hover:bg-[var(--background-hover)]
 		       transition-colors duration-[var(--transition-fast)]
 		       cursor-pointer;
-	}
-
+}
 
 /* ============================================
    КОМПОНЕНТЫ - Modern SaaS UI
    ============================================ */
 
 @layer components {
-
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   КНОПКИ
 	   ---------------------------------------- */
 
-	/* Primary - главное действие */
-	.btn-primary {
-		@apply btn
+  /* Primary - главное действие */
+  .btn-primary {
+    @apply btn
 		       bg-[var(--primary-600)]
 		       text-white
+			   cursor-pointer
 		       hover:bg-[var(--primary-700)]
 		       active:bg-[var(--primary-800)]
 		       focus:ring-[var(--primary-500)]
 		       shadow-[var(--shadow-sm)];
-	}
+  }
 
-	/* Secondary - второстепенное */
-	.btn-secondary {
-		@apply btn
+  /* Secondary - второстепенное */
+  .btn-secondary {
+    @apply btn
 		       bg-white
+			   cursor-pointer
 		       text-[var(--text-secondary)]
 		       border border-[var(--border-color)]
 		       hover:bg-[var(--background-hover)]
 		       active:bg-[var(--background-active)]
 		       focus:ring-[var(--gray-400)]
 		       shadow-[var(--shadow-xs)];
-	}
+  }
 
-	/* Ghost - без фона */
-	.btn-ghost {
-		@apply btn
+  /* Ghost - без фона */
+  .btn-ghost {
+    @apply btn
 		       bg-transparent
 		       text-[var(--text-tertiary)]
 		       hover:bg-[var(--background-hover)]
 		       hover:text-[var(--text-secondary)]
 		       active:bg-[var(--background-active)]
 		       focus:ring-[var(--gray-400)];
-	}
+  }
 
-	/* Добавление - круглая кнопка с + */
-	.btn-add {
-		@apply flex items-center justify-center
+  /* Добавление - круглая кнопка с + */
+  .btn-add {
+    @apply flex items-center justify-center
 		       rounded-xl
 		       border-2  border-[var(--border-color)]
 		       text-lg font-bold text-white
@@ -212,216 +215,211 @@
 		       hover:bg-[var(--primary-50)]
 		       transition-all duration-[var(--transition-base)]
 		       cursor-pointer;
-	}
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   КАРТОЧКИ
 	   ---------------------------------------- */
 
-	/* С паддингом */
-	.card-padded {
-		@apply card p-4;
-	}
+  /* С паддингом */
+  .card-padded {
+    @apply card p-4;
+  }
 
-	/* Категория медиа - улучшенная */
-	.category-card {
-		@apply card p-6
+  /* Категория медиа - улучшенная */
+  .category-card {
+    @apply card p-6
 		       hover:shadow-[var(--shadow-md)]
 		       hover:border-[var(--primary-200)]
 		       cursor-pointer
 		       transition-all duration-[var(--transition-base)];
-	}
+  }
 
-
-	/* Hero карточка - для InProgress */
-	.card-hero {
-		@apply card p-8
+  /* Hero карточка - для InProgress */
+  .card-hero {
+    @apply card p-8
 		       bg-[var(--primary-50)]
 		       border-[var(--primary-200)]
 		       shadow-[var(--shadow-md)];
-	}
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   СТАТУСЫ (без градиентов!)
 	   ---------------------------------------- */
 
-	/* Backlog - нейтральный серый */
-	.badge-backlog {
-		@apply badge
+  /* Backlog - нейтральный серый */
+  .badge-backlog {
+    @apply badge
 		       bg-[var(--status-backlog-bg)]
 		       text-[var(--status-backlog-text)]
 		       border border-[var(--status-backlog-border)];
-	}
+  }
 
-	/* In Progress - primary синий */
-	.badge-in-progress {
-		@apply badge
+  /* In Progress - primary синий */
+  .badge-in-progress {
+    @apply badge
 		       bg-[var(--status-progress-bg)]
 		       text-[var(--status-progress-text)]
 		       border border-[var(--status-progress-border)];
-	}
+  }
 
-	/* Completed - светлый primary */
-	.badge-completed {
-		@apply badge
+  /* Completed - светлый primary */
+  .badge-completed {
+    @apply badge
 		       bg-[var(--status-completed-bg)]
 		       text-[var(--status-completed-text)]
 		       border border-[var(--status-completed-border)];
-	}
+  }
 
-	/* Dropped - темный серый */
-	.badge-dropped {
-		@apply badge
+  /* Dropped - темный серый */
+  .badge-dropped {
+    @apply badge
 		       bg-[var(--status-dropped-bg)]
 		       text-[var(--status-dropped-text)]
 		       border border-[var(--status-dropped-border)];
-	}
+  }
 
-	/* Wishlist - средний серый */
-	.badge-wishlist {
-		@apply badge
+  /* Wishlist - средний серый */
+  .badge-wishlist {
+    @apply badge
 		       bg-[var(--status-wishlist-bg)]
 		       text-[var(--status-wishlist-text)]
 		       border border-[var(--status-wishlist-border)];
-	}
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   ПРОГРЕСС БАР (без градиента!)
 	   ---------------------------------------- */
 
-	.progress {
-		@apply w-full h-1.5
+  .progress {
+    @apply w-full h-1.5
 		       rounded-full
 		       bg-[var(--gray-100)]
 		       overflow-hidden;
-	}
+  }
 
-	.progress-fill {
-		@apply h-full
+  .progress-fill {
+    @apply h-full
 		       rounded-full
 		       bg-[var(--primary-500)]  /* Чистый синий, без градиента */
 		       transition-all duration-[var(--transition-slow)];
-	}
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   ИКОНКИ И ОБЕРТКИ
 	   ---------------------------------------- */
 
-
-
-	/* Категории - тонкие вариации primary */
-	.icon-wrapper-books {
-		@apply icon-wrapper
+  /* Категории - тонкие вариации primary */
+  .icon-wrapper-books {
+    @apply icon-wrapper
 		       bg-[var(--category-books-bg)]
-		      text-white
-	}
+		      text-white;
+  }
 
-	.icon-wrapper-movies {
-		@apply icon-wrapper
+  .icon-wrapper-movies {
+    @apply icon-wrapper
 		       bg-[var(--category-movies-bg)]
-		      text-white
-	}
+		      text-white;
+  }
 
-	.icon-wrapper-games {
-		@apply icon-wrapper
+  .icon-wrapper-games {
+    @apply icon-wrapper
 		       bg-[var(--category-games-bg)]
-text-white
-	}
+text-white;
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   НАВИГАЦИЯ
 	   ---------------------------------------- */
 
-
-
-	.nav-link-active {
-		@apply nav-link
+  .nav-link-active {
+    @apply nav-link
 		       bg-[var(--primary-50)]
 		       text-[var(--primary-700)]
 		       hover:bg-[var(--primary-100)]
 		       hover:text-[var(--primary-800)];
-	}
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   СПИСКИ
 	   ---------------------------------------- */
 
-	.list-header {
-		@apply flex items-center justify-between
+  .list-header {
+    @apply flex items-center justify-between
 		       pb-3
 		       border-b border-[var(--border-color)];
-	}
+  }
 
-	.list-title {
-		@apply text-[var(--text-lg)]
+  .list-title {
+    @apply text-[var(--text-lg)]
 		       font-semibold
 		       text-[var(--text-primary)]
 		       flex items-center gap-2;
-	}
+  }
 
-	.list-count {
-		@apply text-[var(--text-sm)]
+  .list-count {
+    @apply text-[var(--text-sm)]
 		       text-[var(--text-tertiary)]
 		       font-normal;
-	}
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   GRID СИСТЕМЫ
 	   ---------------------------------------- */
 
-	.stats-grid {
-		@apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
-	}
+  .stats-grid {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
 
-	.media-grid {
-		@apply grid grid-cols-1 gap-3;
-	}
+  .media-grid {
+    @apply grid grid-cols-1 gap-3;
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   DIVIDER
 	   ---------------------------------------- */
 
-	.divider {
-		@apply border-t border-[var(--border-color)] my-6;
-	}
+  .divider {
+    @apply border-t border-[var(--border-color)] my-6;
+  }
 
-	/* ----------------------------------------
+  /* ----------------------------------------
 	   УТИЛИТЫ
 	   ---------------------------------------- */
 
-	/* Текст с многоточием */
-	.text-ellipsis-1 {
-		display: -webkit-box;
-		-webkit-line-clamp: 1;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
+  /* Текст с многоточием */
+  .text-ellipsis-1 {
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 
-	.text-ellipsis-2 {
-		display: -webkit-box;
-		-webkit-line-clamp: 2;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
+  .text-ellipsis-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
-	.text-ellipsis-3 {
-		display: -webkit-box;
-		-webkit-line-clamp: 3;
-		-webkit-box-orient: vertical;
-		overflow: hidden;
-	}
+  .text-ellipsis-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
 
-	/* Skeleton загрузчик */
-	.skeleton {
-		@apply bg-[var(--gray-100)]
+  /* Skeleton загрузчик */
+  .skeleton {
+    @apply bg-[var(--gray-100)]
 		       animate-pulse
 		       rounded;
-	}
+  }
 
-	/* Аватар */
-	.avatar {
-		@apply w-9 h-9
+  /* Аватар */
+  .avatar {
+    @apply w-9 h-9
 		       rounded-full
 		       bg-[var(--primary-600)]  /* Чистый синий, без градиента */
 		       flex items-center justify-center
@@ -429,7 +427,526 @@ text-white
 		       font-semibold
 		       text-[var(--text-sm)]
 		       shadow-[var(--shadow-sm)];
-	}
+  }
+  /* ============================================
+	   AUTH КОМПОНЕНТЫ
+	   Используются только в Login.vue и Register.vue.
+	   Все значения читаются из переменных --auth-* в variables.css.
+	   Разделение намеренное: тёмная тема auth изолирована
+	   от основной светлой темы приложения.
+	   ============================================ */
+
+  /* Корневая обёртка всей страницы.
+	   overflow-hidden нужен чтобы декоративные слова на фоне
+	   не создавали горизонтальный скролл. */
+  .auth-page {
+    min-height: 100vh;
+    width: 100%;
+    background-color: var(--auth-bg);
+    font-family: var(--auth-font-body);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Слой фона: сетка + свечение + декоративные слова.
+	   position: fixed — не скроллится вместе со страницей.
+	   pointer-events: none — не перехватывает клики. */
+  .auth-bg-layer {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Пересекающиеся линии сетки — добавляют текстуру глубины.
+	   Цвет берётся из --auth-grid-color (почти прозрачный). */
+  .auth-grid-lines {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(var(--auth-grid-color) 1px, transparent 1px),
+      linear-gradient(90deg, var(--auth-grid-color) 1px, transparent 1px);
+    background-size: 72px 72px;
+  }
+
+  /* Радиальное свечение по центру — мягко подсвечивает форму.
+	   Создаёт ощущение «источника света» за карточкой. */
+  .auth-center-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px;
+    height: 700px;
+    background: radial-gradient(
+      circle,
+      var(--auth-glow-color) 0%,
+      transparent 65%
+    );
+    border-radius: 50%;
+  }
+
+  /* Огромные декоративные слова на фоне.
+	   Используют var(--auth-poster-color) — почти прозрачные,
+	   анимируются классом auth-drift через @keyframes ниже. */
+  .auth-poster {
+    position: absolute;
+    font-family: var(--auth-font-display);
+    font-weight: 800;
+    letter-spacing: -0.04em;
+    color: var(--auth-poster-color);
+    user-select: none;
+    line-height: 1;
+  }
+
+  /* Шапка с логотипом.
+	   z-index: 10 — поверх фонового слоя. */
+  .auth-header {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    padding: 1.75rem 2.5rem;
+    display: flex;
+    align-items: center;
+  }
+
+  /* Ссылка-логотип */
+  .auth-logo {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    text-decoration: none;
+  }
+
+  /* Белый квадратный значок с буквой «M».
+	   Используем --auth-logo-bg и --auth-logo-text. */
+  .auth-logo-mark {
+    width: 36px;
+    height: 36px;
+    background-color: var(--auth-logo-bg);
+    color: var(--auth-logo-text);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--auth-font-display);
+    font-size: 1.1rem;
+    font-weight: 800;
+    flex-shrink: 0;
+  }
+
+  /* Двустрочная подпись логотипа — как издательский марк */
+  .auth-logo-text {
+    font-family: var(--auth-font-display);
+    font-size: 0.6rem;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    color: var(--auth-logo-label);
+    line-height: 1.4;
+  }
+
+  /* Центральная зона — растягивается и центрирует карточку */
+  .auth-main {
+    position: relative;
+    z-index: 10;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem 1.5rem 3rem;
+    width: 100%;
+  }
+
+  /* Стеклянная карточка формы.
+	   Ключевые свойства:
+	   - backdrop-filter: blur(24px) — создаёт эффект матового стекла
+	   - background: --auth-card-bg — полупрозрачный белый
+	   - animation: auth-card-in — плавное появление снизу */
+  .auth-card {
+    width: 100%;
+    max-width: 420px;
+    background: var(--auth-card-bg);
+    border: 1px solid var(--auth-card-border);
+    border-radius: 20px;
+    padding: 2.5rem;
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    box-shadow: var(--auth-card-shadow);
+    animation: auth-card-in 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+  }
+
+  /* Расширенная карточка для Register — больше полей (пароль + подтверждение в сетке) */
+  .auth-card--wide {
+    max-width: 460px;
+  }
+
+  /* Заголовочная зона карточки */
+  .auth-card-header {
+    margin-bottom: 1.75rem;
+  }
+
+  /* Надпись-eyebrow над заголовком.
+	   Маленькие буквы с большим трекингом — типографический акцент. */
+  .auth-eyebrow {
+    font-family: var(--auth-font-display);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--auth-accent);
+    margin: 0 0 0.4rem;
+  }
+
+  /* Главный заголовок формы */
+  .auth-title {
+    font-family: var(--auth-font-display);
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin: 0 0 0.3rem;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+  }
+
+  /* Подзаголовок / слоган под заголовком */
+  .auth-subtitle {
+    font-size: 0.82rem;
+    color: var(--auth-text-muted);
+    margin: 0;
+  }
+
+  /* Контейнер полей формы */
+  .auth-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  /* Одно поле: label + input [+ hint] */
+  .auth-field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  /* Label над полем */
+  .auth-label {
+    font-size: 0.73rem;
+    font-weight: 500;
+    color: var(--auth-label);
+    letter-spacing: 0.04em;
+  }
+
+  /* Подсказка под полем — например «✓ Совпадает» */
+  .auth-hint {
+    font-size: 0.72rem;
+    font-weight: 500;
+    display: block;
+    margin-top: 0.2rem;
+    color: var(--auth-label);
+  }
+
+  /* Цветовые модификаторы подсказки */
+  .auth-hint--ok {
+    color: var(--auth-success-text);
+  }
+  .auth-hint--err {
+    color: var(--auth-error-text);
+  }
+
+  /* Двухколоночная сетка для полей паролей в Register.
+	   На мобильных (<520px) схлопывается в одну колонку (см. @media ниже). */
+  .auth-fields-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.875rem;
+  }
+
+  /* Обёртка input + кнопка-глаз */
+  .auth-input-wrap {
+    position: relative;
+  }
+
+  /* Поле ввода — полупрозрачное тёмное.
+	   Все цвета берутся из --auth-input-* переменных. */
+  .auth-input {
+    width: 100%;
+    padding: 0.7rem 0.9rem;
+    background: var(--auth-input-bg);
+    border: 1px solid var(--auth-input-border);
+    border-radius: 10px;
+    font-family: var(--auth-font-body);
+    font-size: 0.875rem;
+    color: var(--auth-input-text);
+    outline: none;
+    box-sizing: border-box;
+    transition:
+      border-color 0.2s ease,
+      background 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .auth-input::placeholder {
+    color: var(--auth-input-placeholder);
+  }
+
+  /* Состояние фокуса: подсвечиваем акцентным голубым */
+  .auth-input:focus {
+    border-color: var(--auth-accent-border);
+    background: var(--auth-input-bg-focus);
+    box-shadow: 0 0 0 3px var(--auth-accent-glow);
+  }
+
+  /* Модификатор «пароли совпадают» — зелёный border */
+  .auth-input--ok {
+    border-color: var(--auth-match-border);
+  }
+  .auth-input--ok:focus {
+    box-shadow: 0 0 0 3px var(--auth-match-glow);
+  }
+
+  /* Модификатор «пароли не совпадают» — красный border */
+  .auth-input--err {
+    border-color: var(--auth-mismatch-border);
+  }
+  .auth-input--err:focus {
+    box-shadow: 0 0 0 3px var(--auth-mismatch-glow);
+  }
+
+  /* Когда input внутри auth-input-wrap — освобождаем место под кнопку-глаз */
+  .auth-input-wrap .auth-input {
+    padding-right: 2.5rem;
+  }
+
+  /* Кнопка показа/скрытия пароля */
+  .auth-eye-btn {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    padding: 0;
+    color: var(--auth-label);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    transition: color 0.15s ease;
+  }
+
+  .auth-eye-btn:hover {
+    color: rgba(255, 255, 255, 0.6);
+  }
+
+  /* Блок ошибки формы */
+  .auth-error-msg {
+    font-size: 0.8rem;
+    color: var(--auth-error-text);
+    padding: 0.6rem 0.875rem;
+    background: var(--auth-error-bg);
+    border: 1px solid var(--auth-error-border);
+    border-radius: 8px;
+    margin: 0;
+  }
+
+  /* Кнопка отправки.
+	   Белая на тёмном фоне — инвертированный контраст.
+	   Это лучше чем синяя кнопка, потому что синий акцент
+	   уже занят элементами интерфейса (eyebrow, ссылки). */
+  .auth-submit {
+    width: 100%;
+    padding: 0.875rem;
+    margin-top: 0.25rem;
+    background: var(--auth-btn-bg);
+    color: var(--auth-btn-text);
+    border: none;
+    border-radius: 10px;
+    font-family: var(--auth-font-display);
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    transition:
+      background 0.15s ease,
+      transform 0.1s ease,
+      box-shadow 0.15s ease;
+    box-shadow: var(--auth-btn-shadow);
+  }
+
+  .auth-submit:hover:not(:disabled) {
+    background: var(--auth-btn-bg-hover);
+    transform: translateY(-1px);
+    box-shadow: var(--auth-btn-shadow-hover);
+  }
+
+  .auth-submit:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .auth-submit:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+  }
+
+  /* Три точки-индикатора загрузки внутри кнопки.
+	   Каждая точка анимируется с задержкой через @keyframes auth-blink. */
+  .auth-loading-dots {
+    display: inline-flex;
+    gap: 5px;
+    align-items: center;
+    height: 18px;
+  }
+
+  .auth-loading-dots span {
+    display: block;
+    width: 5px;
+    height: 5px;
+    background: var(--auth-btn-text);
+    border-radius: 50%;
+    animation: auth-blink 1s ease-in-out infinite;
+  }
+
+  .auth-loading-dots span:nth-child(2) {
+    animation-delay: 0.15s;
+  }
+  .auth-loading-dots span:nth-child(3) {
+    animation-delay: 0.3s;
+  }
+
+  /* Нижняя строка карточки (ссылки «уже есть аккаунт» и «без аккаунта») */
+  .auth-card-footer {
+    margin-top: 1.25rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-size: 0.82rem;
+    color: var(--auth-text-muted);
+  }
+
+  /* Основная ссылка — голубая акцентная */
+  .auth-link {
+    color: var(--auth-accent);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.15s ease;
+  }
+
+  .auth-link:hover {
+    color: rgba(99, 180, 255, 1);
+  }
+
+  /* Второстепенная ссылка — почти невидимая, «продолжить без аккаунта» */
+  .auth-link-muted {
+    font-size: 0.78rem;
+    color: var(--auth-text-very-muted);
+    text-decoration: none;
+    transition: color 0.15s ease;
+  }
+
+  .auth-link-muted:hover {
+    color: var(--auth-text-muted);
+  }
+
+  /* Экран успешной регистрации — заменяет форму после успешной отправки */
+  .auth-success-screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    padding: 2rem 0;
+    text-align: center;
+  }
+
+  /* Иконка галочки в круге */
+  .auth-success-icon {
+    width: 60px;
+    height: 60px;
+    background: var(--auth-success-bg);
+    border: 1px solid var(--auth-success-border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--auth-success-text);
+  }
+
+  .auth-success-title {
+    font-family: var(--auth-font-display);
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #ffffff;
+    margin: 0;
+  }
+
+  .auth-success-sub {
+    font-size: 0.85rem;
+    color: var(--auth-text-muted);
+    margin: 0;
+  }
+
+  /* Адаптив: на мобильных (<520px) убираем сетку паролей в Register */
+  @media (max-width: 520px) {
+    .auth-fields-row {
+      grid-template-columns: 1fr;
+    }
+
+    .auth-card {
+      padding: 2rem 1.5rem;
+    }
+
+    .auth-title {
+      font-size: 1.75rem;
+    }
+  }
+}
+
+/* ============================================
+   AUTH АНИМАЦИИ (вне @layer — глобальные keyframes)
+   ============================================ */
+
+/* Карточка появляется снизу со scale — ощущение «всплытия».
+   cubic-bezier(0.22, 1, 0.36, 1) — упругий easing, быстрый финиш. */
+@keyframes auth-card-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Медленный дрейф декоративных слов на фоне.
+   Каждое слово использует разные duration и delay в компоненте,
+   поэтому движения выглядят независимыми. */
+@keyframes auth-drift {
+  from {
+    transform: translate(0, 0) rotate(-1deg);
+  }
+  to {
+    transform: translate(2%, 3%) rotate(1deg);
+  }
+}
+
+/* Мигание трёх точек в кнопке при загрузке.
+   40% — пик яркости, остальное — затухание. */
+@keyframes auth-blink {
+  0%,
+  80%,
+  100% {
+    opacity: 0.2;
+    transform: scale(0.8);
+  }
+  40% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 /* ============================================
@@ -437,46 +954,46 @@ text-white
    ============================================ */
 
 @keyframes slideIn {
-	from {
-		opacity: 0;
-		transform: translateY(12px);
-	}
-	to {
-		opacity: 1;
-		transform: translateY(0);
-	}
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 @keyframes fadeIn {
-	from {
-		opacity: 0;
-	}
-	to {
-		opacity: 1;
-	}
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes scaleIn {
-	from {
-		opacity: 0;
-		transform: scale(0.95);
-	}
-	to {
-		opacity: 1;
-		transform: scale(1);
-	}
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .animate-slide-in {
-	animation: slideIn var(--transition-slower) ease-out;
+  animation: slideIn var(--transition-slower) ease-out;
 }
 
 .animate-fade-in {
-	animation: fadeIn var(--transition-base) ease-out;
+  animation: fadeIn var(--transition-base) ease-out;
 }
 
 .animate-scale-in {
-	animation: scaleIn var(--transition-slower) ease-out;
+  animation: scaleIn var(--transition-slower) ease-out;
 }
 
 /* ============================================
@@ -485,28 +1002,29 @@ text-white
 
 /* Контейнеры с максимальной шириной */
 .container-sm {
-	max-width: var(--content-width-sm);
-	margin-left: auto;
-	margin-right: auto;
+  max-width: var(--content-width-sm);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .container-md {
-	max-width: var(--content-width-md);
-	margin-left: auto;
-	margin-right: auto;
+  max-width: var(--content-width-md);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .container-lg {
-	max-width: var(--content-width-lg);
-	margin-left: auto;
-	margin-right: auto;
+  max-width: var(--content-width-lg);
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .container-xl {
-	max-width: var(--content-width-xl);
-	margin-left: auto;
-	margin-right: auto;
+  max-width: var(--content-width-xl);
+  margin-left: auto;
+  margin-right: auto;
 }
+
 /* @import "tailwindcss";
 @import "./variables.css";
 

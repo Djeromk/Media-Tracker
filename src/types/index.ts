@@ -63,9 +63,7 @@ export interface UserMedia {
   media?: MediaItem;
   current_page: number | null;
   currentPage: number | null;
-  //currentSeason: number | null;
   current_season: number | null;
-  //currentEpisode: number | null;
   current_episode: number | null;
   hoursPlayed: number | null;
   watched_episodes: WatchedEpisodesMap;

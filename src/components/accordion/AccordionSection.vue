@@ -1,104 +1,134 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { ChevronDown } from 'lucide-vue-next';
-import type { MediaStatus, UserMedia } from '@/types';
-import MediaListItem from './MediaListItem.vue';
+import { ref, computed } from 'vue'
+import { ChevronDown } from 'lucide-vue-next'
+import type { MediaType, MediaStatus, UserMedia } from '@/types'
+import MediaListItem from './MediaListItem.vue'
 
 interface Props {
-  title: string;
-  items: UserMedia[];
-  count: number;
-  status: MediaStatus;
+  title: string
+  items: UserMedia[]
+  /**
+   * Количество ВИДИМЫХ элементов с учётом фильтра.
+   * Считается в родителе и передаётся сюда,
+   * чтобы не дублировать логику фильтрации.
+   */
+  visibleCount: number
+  /**
+   * Активный фильтр по типу медиа из родителя.
+   * Передаётся в MediaListItem и применяется там через v-show.
+   * Это ключевой prop для предотвращения перезагрузки обложек:
+   * элементы скрываются, а не уничтожаются из DOM.
+   */
+  activeFilter: MediaType | 'all'
+  status: MediaStatus
 }
 
 interface Emits {
-  (e: 'update-status', id: string, status: MediaStatus): void;
-  (e: 'delete-item', id: string): void;
+  (e: 'update-status', id: string, status: MediaStatus): void
+  (e: 'delete-item', id: string): void
 }
 
-const props = defineProps<Props>();
-const emit = defineEmits<Emits>();
-const isOpen = ref(props.status === 'in_progress' || props.status === 'backlog');
-function toggleAccordion() {
-  isOpen.value = !isOpen.value;
-}
-function handleUpdateStatus(id: string, newStatus: MediaStatus) {
-  emit('update-status', id, newStatus);
-}
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
 
-function handleDeleteItem(id: string) {
-  emit('delete-item', id);
-}
+/**
+ * Секции с элементами открыты по умолчанию.
+ * Пустые секции закрыты — не занимают место.
+ */
+const isOpen = ref(props.items.length > 0)
 
-function getStatusColor(): string {
-  const colors: Record<MediaStatus, string> = {
-    backlog: 'text-orange-600',
-    in_progress: 'text-blue-600',
-    completed: 'text-green-600',
-    dropped: 'text-red-600',
-  };
-  return colors[props.status] || 'text-gray-600';
-}
-
-function getStatusIndicatorColor(): string {
-  const colors: Record<MediaStatus, string> = {
-    backlog: 'bg-orange-500',
-    in_progress: 'bg-blue-500',
-    completed: 'bg-green-500',
-    dropped: 'bg-red-500',
-  };
-  return colors[props.status] || 'bg-gray-500';
-}
+const statusAccent = computed(() => {
+  const map: Record<MediaStatus, { bar: string; badge: string; dot: string }> = {
+    backlog: {
+      bar: 'bg-(--gray-300)',
+      badge: 'bg-(--gray-100) text-(--gray-600)',
+      dot: 'bg-(--gray-400)',
+    },
+    in_progress: {
+      bar: 'bg-(--primary-400)',
+      badge: 'bg-(--primary-50) text-(--primary-700)',
+      dot: 'bg-(--primary-500)',
+    },
+    completed: {
+      bar: 'bg-(--primary-600)',
+      badge: 'bg-(--primary-100) text-(--primary-800)',
+      dot: 'bg-(--primary-600)',
+    },
+    dropped: {
+      bar: 'bg-(--gray-200)',
+      badge: 'bg-(--gray-50) text-(--gray-500)',
+      dot: 'bg-(--gray-300)',
+    },
+  }
+  return map[props.status]
+})
 </script>
 
 <template>
-  <div class="card-neo overflow-hidden p-0">
+  <!--
+    Секция скрывается целиком (v-show) когда нет видимых элементов
+    при активном фильтре — не занимает место в списке.
+    Используем v-show, а не v-if, чтобы сохранить DOM внутри.
+  -->
+  <div
+    v-show="visibleCount > 0 || activeFilter === 'all'"
+    class="rounded-2xl border border-(--border-color) bg-(--background-card) overflow-hidden transition-shadow duration-200 hover:shadow-(--shadow-sm)"
+  >
+    <!-- Заголовок-кнопка аккордеона -->
     <button
-      @click="toggleAccordion"
-      class="w-full flex items-center p-5 justify-between  cursor-pointer hover:bg-(--neo-background-body) transition-colors"
+      @click="isOpen = !isOpen"
+      class="w-full flex items-center justify-between px-5 py-4 cursor-pointer transition-colors duration-150 hover:bg-(--background-hover)"
     >
-      <div class="flex items-center gap-4">
-        <div :class="['w-1 h-8 rounded-full', getStatusIndicatorColor()]" />
-        <div class="text-left">
-          <h3 :class="['text-2xl font-semibold', getStatusColor()]">
-            {{ title }}
-          </h3>
-          <p class="text-sm text-gray-500 mt-1">
-            {{ count }} {{ count === 1 ? 'элемент' : count < 5 ? 'элемента' : 'элементов' }}
-          </p>
-        </div>
+      <div class="flex items-center gap-3">
+        <span
+          class="w-2.5 h-2.5 rounded-full shrink-0"
+          :class="statusAccent.dot"
+        />
+        <span class="text-base font-semibold text-(--text-primary)">
+          {{ title }}
+        </span>
+        <!-- Бейдж показывает количество ВИДИМЫХ элементов (с учётом фильтра) -->
+        <span
+          v-if="visibleCount > 0"
+          class="inline-flex items-center justify-center min-w-[22px] h-[22px] px-1.5 rounded-full text-xs font-semibold"
+          :class="statusAccent.badge"
+        >
+          {{ visibleCount }}
+        </span>
       </div>
+
       <ChevronDown
+        :size="18"
         :class="[
-          'w-6 h-6 text-gray-500 transition-transform duration-300',
+          'text-(--text-tertiary) transition-transform duration-250 ease-out shrink-0',
           isOpen ? 'rotate-180' : ''
         ]"
       />
     </button>
 
-    <!-- Контент аккордеона -->
-    <Transition
-      name="accordion"
-	  mode="out-in"
-	  enter-active-class="animate-fadeIn"
-	  leave-active-class="animate-fadeOut"
-    >
+    <!-- Тонкая цветная линия под заголовком -->
+    <div v-if="visibleCount > 0" class="h-px w-full" :class="statusAccent.bar" />
+
+    <!-- Список с анимацией раскрытия -->
+    <Transition name="accordion">
       <div v-if="isOpen" class="overflow-hidden">
-        <div class="p-6 space-y-3">
+        <div
+          v-for="(item, index) in items"
+          :key="item.id"
+          v-show="activeFilter === 'all' || item.media?.type === activeFilter"
+          :class="{ 'border-t border-(--border-color-subtle)': index > 0 }"
+        >
+          <!--
+            v-show на родительском div скрывает элемент без удаления из DOM.
+            <img> внутри MediaListItem остаётся в памяти браузера —
+            обложка не перезагружается при смене таба.
+          -->
           <MediaListItem
-            v-for="item in items"
-            :key="item.id"
             :item="item"
             :current-status="status"
-            @update-status="handleUpdateStatus"
-            @delete-item="handleDeleteItem"
+            @update-status="(id, s) => emit('update-status', id, s)"
+            @delete-item="(id) => emit('delete-item', id)"
           />
-          <div
-            v-if="items.length === 0"
-            class="text-center py-8 text-gray-400"
-          >
-            Нет элементов в этом разделе
-          </div>
         </div>
       </div>
     </Transition>
@@ -108,12 +138,15 @@ function getStatusIndicatorColor(): string {
 <style scoped>
 .accordion-enter-active,
 .accordion-leave-active {
-  transition: height 0.3s ease;
+  transition: max-height 0.28s cubic-bezier(0.4, 0, 0.2, 1),
+              opacity 0.2s ease;
+  max-height: 2000px;
   overflow: hidden;
 }
 
 .accordion-enter-from,
 .accordion-leave-to {
-  height: 0;
+  max-height: 0;
+  opacity: 0;
 }
 </style>

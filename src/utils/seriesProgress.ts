@@ -34,8 +34,8 @@ import type {
 	  totalEpisodes,
 	  watchedEpisodes: watchedCount,
 	  completionPercentage: Math.round((watchedCount / totalEpisodes) * 100),
-	  currentSeason: current.season,
-	  currentEpisode: current.episode,
+	  current_season: current.season,
+	  current_episode: current.episode,
 	  seasons: seasonProgress
 	};
   }
@@ -65,9 +65,6 @@ import type {
 	return { season: null, episode: null };
   }
 
-  /**
-   * Отмечает серию как просмотренную
-   */
   export function markEpisodeWatched(
 	watchedEpisodes: WatchedEpisodesMap,
 	seasonNumber: number,
@@ -87,9 +84,6 @@ import type {
 	return updated;
   }
 
-  /**
-   * Снимает отметку с серии
-   */
   export function markEpisodeUnwatched(
 	watchedEpisodes: WatchedEpisodesMap,
 	seasonNumber: number,
@@ -105,9 +99,7 @@ import type {
 	return updated;
   }
 
-  /**
-   * Отмечает весь сезон как просмотренный
-   */
+
   export function markSeasonWatched(
 	watchedEpisodes: WatchedEpisodesMap,
 	season: KinopoiskTVSeason
@@ -120,9 +112,7 @@ import type {
 	return updated;
   }
 
-  /**
-   * Снимает отметку со всего сезона
-   */
+
   export function markSeasonUnwatched(
 	watchedEpisodes: WatchedEpisodesMap,
 	seasonNumber: number
@@ -133,9 +123,7 @@ import type {
 	return updated;
   }
 
-  /**
-   * Проверяет, просмотрена ли серия
-   */
+
   export function isEpisodeWatched(
 	watchedEpisodes: WatchedEpisodesMap,
 	seasonNumber: number,
@@ -145,9 +133,7 @@ import type {
 	return watched.includes(episodeNumber);
   }
 
-  /**
-   * Проверяет, просмотрен ли весь сезон
-   */
+
   export function isSeasonWatched(
 	watchedEpisodes: WatchedEpisodesMap,
 	season: KinopoiskTVSeason

@@ -29,8 +29,8 @@ export type WatchedEpisodesMap = {
 	totalEpisodes: number;
 	watchedEpisodes: number;
 	completionPercentage: number;
-	currentSeason: number | null;
-	currentEpisode: number | null;
+	current_season: number | null;
+	current_episode: number | null;
 	seasons: SeasonProgress[];
   }
 

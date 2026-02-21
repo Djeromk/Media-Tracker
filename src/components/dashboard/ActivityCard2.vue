@@ -4,17 +4,11 @@ import { Trophy, TrendingUp } from "lucide-vue-next";
 import * as echarts from "echarts";
 import type { EChartsOption } from "echarts";
 
-/**
- * Интерфейс для статистики по категориям
- */
 interface CategoryStats {
-  completed: number; // Завершено в этой категории
-  total: number; // Всего в этой категории
+  completed: number;
+  total: number;
 }
 
-/**
- * Props компонента
- */
 interface Props {
   booksStats: CategoryStats; // Статистика по книгам
   moviesStats: CategoryStats; // Статистика по фильмам
@@ -26,9 +20,6 @@ const props = withDefaults(defineProps<Props>(), {
   thisWeekCompleted: 0,
 });
 
-/**
- * Ref для контейнера ECharts
- */
 const chartContainer = ref<HTMLElement | null>(null);
 
 let chartInstance: echarts.ECharts | null = null;
@@ -94,7 +85,7 @@ const getChartOption = (): EChartsOption => {
     },
 
     legend: {
-      bottom: 50,
+      bottom: 10,
       left: "center",
       itemWidth: 10,
       itemHeight: 10,
@@ -119,7 +110,7 @@ const getChartOption = (): EChartsOption => {
           borderColor: "#fff",
           borderWidth: 2,
         },
-		startAngle: 180,
+        startAngle: 180,
         endAngle: 360,
 
         label: {
@@ -147,7 +138,6 @@ const getChartOption = (): EChartsOption => {
     ],
   };
 };
-
 
 const initChart = () => {
   if (!chartContainer.value) return;
@@ -205,152 +195,122 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="card-padded border-l-4 border-l-[var(--primary-500)]">
+  <div class="card-padded border-l-4 border-l-(--primary-500)">
     <!-- Заголовок -->
     <div class="flex items-center gap-3">
       <div
-        class="w-12 h-12 rounded-xl bg-[var(--primary-600)] flex items-center justify-center shadow-[var(--shadow-sm)]"
+        class="w-12 h-12 rounded-xl bg-(--primary-600) flex items-center justify-center shadow-(--shadow-sm)"
       >
         <Trophy :size="24" class="text-white" />
       </div>
       <div>
-        <h3
-          class="text-[var(--text-xl)] font-semibold text-[var(--text-primary)]"
-        >
+        <h3 class="text-xl font-semibold text-(--text-primary)">
           Моя Активность
         </h3>
       </div>
     </div>
 
     <!-- Главная метрика - процент выполнения -->
-    <div class="text-center items-start justify-between flex flex-row py-6 rounded-xl">
-	 <div class="flex flex-col gap-2">
-		<div class="text-[var(--text-sm)] text-[var(--text-tertiary)]">
-		Ваш прогресс
-	  </div>
-      <div
-        class="text-4xl font-extrabold text-[var(--primary-700)] leading-none"
-      >
-        {{ completionPercentage }}%
+    <div
+      class="text-center items-start justify-between flex flex-row py-6 rounded-xl"
+    >
+      <div class="flex flex-col gap-2">
+        <div class="text-sm text-(--text-tertiary)">Ваш прогресс</div>
+        <div class="text-4xl font-extrabold text-(--primary-700) leading-none">
+          {{ completionPercentage }}%
+        </div>
       </div>
-	  </div>
-      <!-- <div class="text-[var(--text-xs)] text-[var(--text-tertiary)]">
+      <!-- <div class="text-xs text-(--text-tertiary)">
         {{ totalCompleted }} из {{ totalItems }} элементов
       </div> -->
-	      <!-- Активность за неделю -->
-		  <div
-      v-if="thisWeekCompleted > 0"
-      class="flex flex-col gap-2"
-    >
-      <div
-        class="flex flex-col items-center justify-between p-3 rounded-lg outline-2 outline-(--gray-300)"
-      >
+      <!-- Активность за неделю -->
+      <div v-if="thisWeekCompleted > 0" class="flex flex-col gap-2">
         <div
-          class="flex items-center gap-2 text-sm "
+          class="flex flex-col items-center justify-between p-3 rounded-lg outline-2 outline-(--gray-300)"
         >
-          <TrendingUp :size="16" />
-          <span class="font-medium">На этой неделе</span>
-        </div>
-        <div class="text-xl font-bold text-(--green-600)">
-          +{{ thisWeekCompleted }}
+          <div class="flex items-center gap-2 text-sm">
+            <TrendingUp :size="16" />
+            <span class="font-medium">На этой неделе</span>
+          </div>
+          <div class="text-xl font-bold text-(--green-600)">
+            +{{ thisWeekCompleted }}
+          </div>
         </div>
       </div>
-    </div>
     </div>
 
     <!-- График распределения завершенных по категориям -->
 
     <div class="flex flex-row justify-between">
       <div v-if="totalCompleted > 0" class="w-fit">
-        <h4
-          class="text-sm font-semibold text-(--text-secondary)"
-        >
+        <h4 class="text-sm font-semibold text-(--text-secondary)">
           Распределение по категориям
         </h4>
 
         <!-- Контейнер для ECharts -->
-        <div ref="chartContainer" class="w-full h-48"></div>
+        <div ref="chartContainer" class="w-full h-35"></div>
       </div>
 
       <!-- Детальная статистика по категориям -->
       <div class="flex flex-col gap-2">
         <!-- Книги -->
-        <div
-          class="flex items-center justify-between p-1 rounded-lg bg-[var(--background-subtle)]"
-        >
+        <div class="flex items-center justify-between p-3 gap-6">
           <div class="flex items-center gap-3">
             <div class="w-2 h-2 rounded-full bg-[#3b82f6]"></div>
-            <span class="text-[var(--text-sm)] text-[var(--text-secondary)]"
-              >Книги</span
-            >
+            <span class="text-lg text-(--text-secondary)">Книги</span>
           </div>
-          <div class="text-right">
-            <div
-              class="text-[var(--text-base)] font-semibold text-[var(--text-primary)]"
-            >
-              {{ booksStats.completed }}
-            </div>
-            <div class="text-[var(--text-xs)] text-[var(--text-tertiary)]">
+          <div class="flex flex-row">
+            <span class="text-base">
+              <span class=" font-semibold text-(--text-primary)">
+                {{ booksStats.completed }}
+              </span>
               из {{ booksStats.total }}
-            </div>
+            </span>
           </div>
         </div>
 
         <!-- Фильмы -->
-        <div
-          class="flex items-center justify-between p-3 rounded-lg bg-[var(--background-subtle)]"
-        >
+        <div class="flex items-center justify-between p-3 gap-6">
           <div class="flex items-center gap-3">
             <div class="w-2 h-2 rounded-full bg-[#2563eb]"></div>
-            <span class="text-[var(--text-sm)] text-[var(--text-secondary)]"
-              >Фильмы</span
-            >
+            <span class="text-lg text-(--text-secondary)">Фильмы</span>
           </div>
-          <div class="text-right">
-            <div
-              class="text-[var(--text-base)] font-semibold text-[var(--text-primary)]"
-            >
-              {{ moviesStats.completed }}
-            </div>
-            <div class="text-[var(--text-xs)] text-[var(--text-tertiary)]">
+          <div class="flex flex-row">
+            <span class="text-base">
+              <span class="font-semibold">
+                {{ moviesStats.completed }}
+              </span>
               из {{ moviesStats.total }}
-            </div>
+            </span>
           </div>
         </div>
 
         <!-- Игры -->
-        <div
-          class="flex items-center justify-between p-3 rounded-lg bg-[var(--background-subtle)]"
-        >
+        <div class="flex items-center justify-between p-3 gap-6">
           <div class="flex items-center gap-3">
             <div class="w-2 h-2 rounded-full bg-[#1d4ed8]"></div>
-            <span class="text-[var(--text-sm)] text-[var(--text-secondary)]"
-              >Игры</span
-            >
+            <span class="text-lg text-(--text-secondary)">Игры</span>
           </div>
-          <div class="text-right">
-            <div
-              class="text-[var(--text-base)] font-semibold text-[var(--text-primary)]"
-            >
-              {{ gamesStats.completed }}
-            </div>
-            <div class="text-[var(--text-xs)] text-[var(--text-tertiary)]">
+          <div class="flex flex-row">
+            <span class="text-base">
+              <span class="font-semibold">
+                {{ gamesStats.completed }}
+              </span>
               из {{ gamesStats.total }}
-            </div>
+            </span>
           </div>
         </div>
       </div>
     </div>
 
-
     <!-- Пустое состояние -->
     <div v-if="totalCompleted === 0" class="text-center py-8">
       <div
-        class="w-16 h-16 mx-auto rounded-full bg-[var(--gray-100)] flex items-center justify-center"
+        class="w-16 h-16 mx-auto rounded-full bg-(--gray-100) flex items-center justify-center"
       >
-        <Trophy :size="24" class="text-[var(--gray-400)]" />
+        <Trophy :size="24" class="text-(--gray-400)" />
       </div>
-      <p class="text-[var(--text-sm)] text-[var(--text-tertiary)]">
+      <p class="text-sm text-(--text-tertiary)">
         Пока нет завершенных элементов
       </p>
     </div>
@@ -599,7 +559,7 @@ onUnmounted(() => {
         </div>
         <div>
           <h3 class="text-lg font-semibold">Активность</h3>
-          <p class="text-xs text-[var(--text-tertiary)]">Общая статистика</p>
+          <p class="text-xs text-(--text-tertiary)">Общая статистика</p>
         </div>
       </div>
     </div>
@@ -611,12 +571,12 @@ onUnmounted(() => {
 
       <div class="flex items-center justify-between mb-2">
         <span
-          class="text-sm text-[var(--text-secondary)] flex items-center gap-1"
+          class="text-sm text-(--text-secondary) flex items-center gap-1"
         >
           <Target :size="14" />
           Распределение по статусам
         </span>
-        <span class="text-4xl font-semibold text-[var(--text-primary)]">
+        <span class="text-4xl font-semibold text-(--text-primary)">
           {{ completionPercentage }}%
         </span>
       </div>
@@ -624,27 +584,27 @@ onUnmounted(() => {
       <div ref="chartContainer" class="w-full h-64 relative"></div>
 
 
-      <p class="text-xs text-[var(--text-tertiary)] mt-2 italic text-center">
+      <p class="text-xs text-(--text-tertiary) mt-2 italic text-center">
         {{ motivationMessage }}
       </p>
     </div>
 
     <div
       v-if="thisWeekCompleted > 0"
-      class="mt-4 pt-4 border-t border-[var(--gray-200)]"
+      class="mt-4 pt-4 border-t border-(--gray-200)"
     >
       <div class="flex items-center justify-between">
         <div
-          class="flex items-center gap-2 text-sm text-[var(--text-secondary)]"
+          class="flex items-center gap-2 text-sm text-(--text-secondary)"
         >
-          <TrendingUp :size="16" class="text-[var(--success-500)]" />
+          <TrendingUp :size="16" class="text-(--success-500)" />
           <span>На этой неделе</span>
         </div>
         <div class="flex items-center gap-1">
-          <span class="text-lg font-bold text-[var(--success-600)]">
+          <span class="text-lg font-bold text-(--success-600)">
             +{{ thisWeekCompleted }}
           </span>
-          <span class="text-xs text-[var(--text-tertiary)]"> завершено </span>
+          <span class="text-xs text-(--text-tertiary)"> завершено </span>
         </div>
       </div>
     </div>
@@ -652,9 +612,9 @@ onUnmounted(() => {
 
     <div
       v-if="totalItems === 0"
-      class="mt-4 p-3 rounded-lg bg-[var(--gray-50)] text-center"
+      class="mt-4 p-3 rounded-lg bg-(--gray-50) text-center"
     >
-      <p class="text-sm text-[var(--text-secondary)]">
+      <p class="text-sm text-(--text-secondary)">
         Добавьте первый элемент, чтобы начать отслеживание
       </p>
     </div>

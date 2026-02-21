@@ -1,156 +1,344 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
+import { ref, computed } from "vue";
+import { useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/auth";
+import { Eye, EyeOff, Check } from "lucide-vue-next";
 
-const router = useRouter()
-const authStore = useAuthStore()
+const router = useRouter();
+const authStore = useAuthStore();
 
-const email = ref('')
-const name = ref('') // Добавлено поле имени
-const password = ref('')
-const confirmPassword = ref('')
-const errorMessage = ref('')
-const successMessage = ref('')
+// ── Состояние полей ──────────────────────────────────────────────────────────
 
-async function handleRegister() {
-  errorMessage.value = ''
-  successMessage.value = ''
+const email = ref<string>("");
+const name = ref<string>("");
+const password = ref<string>("");
+const confirmPassword = ref<string>("");
+const errorMessage = ref<string>("");
 
-  if (!email.value || !name.value || !password.value || !confirmPassword.value) {
-    errorMessage.value = 'Пожалуйста, заполните все поля'
-    return
+// Показывать ли пароли открытым текстом
+const showPassword = ref<boolean>(false);
+const showConfirmPassword = ref<boolean>(false);
+
+// Показываем экран успеха вместо формы
+const isSuccess = ref<boolean>(false);
+
+// ── Вычисляемые свойства для живого индикатора совпадения паролей ────────────
+
+/**
+ * Совпадают ли пароли.
+ * Проверяем только когда confirmPassword непустой — иначе преждевременные ошибки.
+ */
+const passwordsMatch = computed<boolean>(
+  () =>
+    confirmPassword.value.length > 0 && password.value === confirmPassword.value
+);
+
+const passwordMismatch = computed<boolean>(
+  () =>
+    confirmPassword.value.length > 0 && password.value !== confirmPassword.value
+);
+
+// ── Обработчик отправки ──────────────────────────────────────────────────────
+
+async function handleRegister(): Promise<void> {
+  errorMessage.value = "";
+
+  if (
+    !email.value ||
+    !name.value ||
+    !password.value ||
+    !confirmPassword.value
+  ) {
+    errorMessage.value = "Пожалуйста, заполните все поля";
+    return;
   }
 
   if (password.value !== confirmPassword.value) {
-    errorMessage.value = 'Пароли не совпадают'
-    return
+    errorMessage.value = "Пароли не совпадают";
+    return;
   }
 
   if (password.value.length < 6) {
-    errorMessage.value = 'Пароль должен быть не менее 6 символов'
-    return
+    errorMessage.value = "Пароль должен быть не менее 6 символов";
+    return;
   }
 
   if (name.value.trim().length < 2) {
-    errorMessage.value = 'Имя должно быть не менее 2 символов'
-    return
+    errorMessage.value = "Имя должно быть не менее 2 символов";
+    return;
   }
 
-  const result = await authStore.signUp(email.value, password.value, name.value)
+  const result = await authStore.signUp(
+    email.value,
+    password.value,
+    name.value
+  );
 
   if (result.success) {
-    successMessage.value = 'Аккаунт успешно создан! Пожалуйста, проверьте свой почтовый ящик.'
+    // Показываем экран успеха, затем редиректим
+    isSuccess.value = true;
     setTimeout(() => {
-      router.push('/')
-    }, 2000)
+      router.push("/");
+    }, 1800);
   } else {
-    errorMessage.value = result.error || 'Регистрация не удалась'
+    errorMessage.value = result.error ?? "Ошибка регистрации";
   }
 }
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-    <div class="max-w-md w-full space-y-8">
-      <div>
-        <h2 class="text-center text-3xl font-bold text-gray-900">
-          Создайте аккаунт
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Или
-          <router-link to="/login" class="text-primary-600 hover:text-primary-500">
-            Войти в существующий аккаунт
-          </router-link>
-        </p>
+  <!-- Корневой контейнер страницы -->
+  <div class="auth-page">
+    <!-- ── Фоновый слой ───────────────────────────────────────────────────── -->
+    <div class="auth-bg-layer">
+      <div class="auth-grid-lines"></div>
+      <div class="auth-center-glow"></div>
+
+      <!-- Декоративные слова — другие позиции и скорости чем в Login -->
+      <div
+        class="auth-poster"
+        style="
+          font-size: 14vw;
+          top: -3%;
+          right: -2%;
+          animation: auth-drift 24s ease-in-out infinite alternate;
+        "
+      >
+        WATCH
       </div>
-
-      <form @submit.prevent="handleRegister" class="mt-8 space-y-6">
-        <div class="space-y-4">
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">
-              Адрес электронной почты
-            </label>
-            <input
-              id="email"
-              v-model="email"
-              type="email"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="you@example.com"
-            />
-          </div>
-
-          <div>
-            <label for="name" class="block text-sm font-medium text-gray-700">
-              Ваше имя
-            </label>
-            <input
-              id="name"
-              v-model="name"
-              type="text"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="Алиса"
-            />
-          </div>
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">
-              Пароль
-            </label>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="••••••••"
-            />
-            <p class="mt-1 text-xs text-gray-500">Не менее 6 символов</p>
-          </div>
-          <div>
-            <label for="confirm-password" class="block text-sm font-medium text-gray-700">
-              Подтвердите пароль
-            </label>
-            <input
-              id="confirm-password"
-              v-model="confirmPassword"
-              type="password"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="••••••••"
-            />
-          </div>
-        </div>
-
-        <!-- Сообщения об ошибках -->
-        <div v-if="errorMessage" class="text-red-600 text-sm text-center">
-          {{ errorMessage }}
-        </div>
-
-        <!-- Сообщение об успехе -->
-        <div v-if="successMessage" class="text-green-600 text-sm text-center">
-          {{ successMessage }}
-        </div>
-
-        <button
-          type="submit"
-          :disabled="authStore.loading"
-          class="btn-add w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span v-if="authStore.loading">Создаем аккаунт...</span>
-          <span v-else>Создать аккаунт</span>
-        </button>
-
-        <div class="text-center">
-          <router-link
-            to="/"
-            class="text-sm text-gray-600 hover:text-gray-900"
-          >
-            Продолжить без аккаунта
-          </router-link>
-        </div>
-      </form>
+      <div
+        class="auth-poster"
+        style="
+          font-size: 10vw;
+          bottom: 8%;
+          left: -2%;
+          animation: auth-drift 20s ease-in-out infinite alternate-reverse;
+          animation-delay: -10s;
+        "
+      >
+        PLAY
+      </div>
+      <div
+        class="auth-poster"
+        style="
+          font-size: 7vw;
+          top: 35%;
+          left: 55%;
+          animation: auth-drift 16s ease-in-out infinite alternate;
+          animation-delay: -3s;
+        "
+      >
+        READ
+      </div>
     </div>
+
+    <!-- ── Шапка с логотипом ─────────────────────────────────────────────── -->
+    <header class="auth-header">
+      <router-link to="/" class="auth-logo">
+        <span class="auth-logo-mark">M</span>
+        <span class="auth-logo-text">MEDIA<br />ARCHIVE</span>
+      </router-link>
+    </header>
+
+    <!-- ── Центральная зона ──────────────────────────────────────────────── -->
+    <main class="auth-main">
+      <!-- auth-card--wide расширяет max-width для двухколоночной сетки паролей -->
+      <div class="auth-card auth-card--wide">
+        <!-- ── Экран успеха — показывается вместо формы после регистрации ── -->
+        <Transition name="auth-success-fade">
+          <div v-if="isSuccess" class="auth-success-screen">
+            <div class="auth-success-icon">
+              <!-- Иконка галочки из lucide-vue-next -->
+              <Check :size="28" />
+            </div>
+            <p class="auth-success-title">Аккаунт создан!</p>
+            <p class="auth-success-sub">Перенаправляем…</p>
+          </div>
+        </Transition>
+
+        <!-- ── Форма — скрывается после успеха ──────────────────────────── -->
+        <Transition name="auth-success-fade">
+          <div v-if="!isSuccess">
+            <!-- Заголовок -->
+            <div class="auth-card-header">
+              <p class="auth-eyebrow">Новый аккаунт</p>
+              <h1 class="auth-title" style="font-size: 1.875rem">
+                Регистрация
+              </h1>
+              <p class="auth-subtitle">Начните отслеживать свою коллекцию</p>
+            </div>
+
+            <!-- Форма -->
+            <form class="auth-form" @submit.prevent="handleRegister">
+              <!-- Email -->
+              <div class="auth-field">
+                <label class="auth-label" for="reg-email">Email</label>
+                <input
+                  id="reg-email"
+                  v-model="email"
+                  type="email"
+                  autocomplete="email"
+                  placeholder="you@example.com"
+                  class="auth-input"
+                />
+              </div>
+
+              <!-- Имя -->
+              <div class="auth-field">
+                <label class="auth-label" for="reg-name">Ваше имя</label>
+                <input
+                  id="reg-name"
+                  v-model="name"
+                  type="text"
+                  autocomplete="name"
+                  placeholder="Алиса"
+                  class="auth-input"
+                />
+              </div>
+
+              <!-- Пароль + Подтверждение — двухколоночная сетка на десктопе.
+                   На мобильных (<520px) схлопывается через @media в style.css. -->
+              <div class="auth-fields-row">
+                <!-- Пароль -->
+                <div class="auth-field">
+                  <label class="auth-label" for="reg-password">Пароль</label>
+                  <div class="auth-input-wrap">
+                    <input
+                      id="reg-password"
+                      v-model="password"
+                      :type="showPassword ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      placeholder="••••••••"
+                      class="auth-input"
+                    />
+                    <button
+                      type="button"
+                      class="auth-eye-btn"
+                      :aria-label="
+                        showPassword ? 'Скрыть пароль' : 'Показать пароль'
+                      "
+                      @click="showPassword = !showPassword"
+                    >
+                      <EyeOff v-if="showPassword" :size="15" />
+                      <Eye v-else :size="15" />
+                    </button>
+                  </div>
+                  <!-- Подсказка: минимум символов -->
+                  <span class="auth-hint">Не менее 6 символов</span>
+                </div>
+
+                <!-- Подтверждение пароля -->
+                <div class="auth-field">
+                  <label class="auth-label" for="reg-confirm"
+                    >Повторите пароль</label
+                  >
+                  <div class="auth-input-wrap">
+                    <input
+                      id="reg-confirm"
+                      v-model="confirmPassword"
+                      :type="showConfirmPassword ? 'text' : 'password'"
+                      autocomplete="new-password"
+                      placeholder="••••••••"
+                      class="auth-input"
+                      :class="{
+                        'auth-input--ok': passwordsMatch,
+                        'auth-input--err': passwordMismatch,
+                      }"
+                    />
+                    <button
+                      type="button"
+                      class="auth-eye-btn"
+                      :aria-label="
+                        showConfirmPassword
+                          ? 'Скрыть пароль'
+                          : 'Показать пароль'
+                      "
+                      @click="showConfirmPassword = !showConfirmPassword"
+                    >
+                      <EyeOff v-if="showConfirmPassword" :size="15" />
+                      <Eye v-else :size="15" />
+                    </button>
+                  </div>
+                  <!-- Живой индикатор совпадения паролей.
+                       Показывается только когда confirmPassword непустой. -->
+                  <Transition name="auth-msg">
+                    <span v-if="passwordsMatch" class="auth-hint auth-hint--ok"
+                      >✓ Совпадает</span
+                    >
+                    <span
+                      v-else-if="passwordMismatch"
+                      class="auth-hint auth-hint--err"
+                      >✗ Не совпадает</span
+                    >
+                  </Transition>
+                </div>
+              </div>
+
+              <!-- Блок ошибки -->
+              <Transition name="auth-msg">
+                <p v-if="errorMessage" class="auth-error-msg">
+                  {{ errorMessage }}
+                </p>
+              </Transition>
+
+              <!-- Кнопка регистрации -->
+              <button
+                type="submit"
+                class="auth-submit"
+                :disabled="authStore.loading"
+              >
+                <span v-if="authStore.loading" class="auth-loading-dots">
+                  <span></span><span></span><span></span>
+                </span>
+                <span v-else>Создать аккаунт</span>
+              </button>
+            </form>
+
+            <!-- Подвал карточки -->
+            <div class="auth-card-footer">
+              <span>Уже есть аккаунт?</span>
+              <router-link to="/login" class="auth-link">Войти</router-link>
+            </div>
+            <div class="auth-card-footer" style="margin-top: 0.5rem">
+              <router-link to="/" class="auth-link-muted">
+                Продолжить без аккаунта
+              </router-link>
+            </div>
+          </div>
+        </Transition>
+      </div>
+    </main>
   </div>
 </template>
+
+<!-- Только transition-анимации — специфика конкретных компонентов,
+     не подходят для style.css как переиспользуемые классы. -->
+<style scoped>
+/* Появление/исчезновение сообщений (ошибка, индикатор паролей) */
+.auth-msg-enter-active,
+.auth-msg-leave-active {
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
+}
+
+.auth-msg-enter-from,
+.auth-msg-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+/* Переход между формой и экраном успеха */
+.auth-success-fade-enter-active,
+.auth-success-fade-leave-active {
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease;
+}
+
+.auth-success-fade-enter-from,
+.auth-success-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.97);
+}
+</style>

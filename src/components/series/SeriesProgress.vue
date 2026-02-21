@@ -133,8 +133,8 @@ async function syncProgress() {
   console.log('syncProgress watchedEpisodes', watched_episodes);
   await mediaStore.updateMedia(props.userMediaEntry.id, {
     watched_episodes: watched_episodes,
-    current_season: current.currentSeason,
-    current_episode: current.currentEpisode
+    current_season: current.current_season,
+    current_episode: current.current_episode
   });
 }
 </script>
@@ -146,10 +146,10 @@ async function syncProgress() {
     <!-- Общий прогресс -->
     <div v-if="!loading && !error" class="mb-6">
       <div class="flex items-center justify-between mb-2">
-        <span class="text-sm text-gray-600">
+        <span class="text-base text-gray-600">
           {{ progress.watchedEpisodes }} / {{ progress.totalEpisodes }} серий
         </span>
-        <span class="text-sm font-medium">{{ progress.completionPercentage }}%</span>
+        <span class="text-base font-medium">{{ progress.completionPercentage }}%</span>
       </div>
       <div class="progress-neo">
         <div
@@ -159,15 +159,15 @@ async function syncProgress() {
       </div>
 
       <!-- Текущая серия -->
-      <div v-if="progress.currentSeason && progress.currentEpisode" class="mt-4 flex items-center gap-2 text-primary-600">
+      <div v-if="progress.current_season && progress.current_episode" class="mt-4 flex items-center gap-2 text-primary-600">
         <Play :size="18" />
-        <span class="text-sm font-medium">
-          Текущая серия: S{{ progress.currentSeason }}E{{ progress.currentEpisode }}
+        <span class="text-base font-medium">
+          Текущая серия: S{{ progress.current_season }}E{{ progress.current_episode }}
         </span>
       </div>
       <div v-else-if="progress.completionPercentage === 100" class="mt-4 flex items-center gap-2 text-green-600">
         <Check :size="18"  />
-        <span class="text-sm font-medium">
+        <span class="text-base font-medium">
           Сериал полностью просмотрен!
         </span>
       </div>
@@ -189,7 +189,7 @@ async function syncProgress() {
             <!-- Чекбокс сезона -->
             <button
               @click.stop="toggleSeasonWatched(season.number)"
-              class="w-6 h-6 rounded border-2 border-gray-300 flex items-center justify-center hover:border-primary-600 transition-colors"
+              class="w-6 h-6 cursor-pointer rounded border-2 border-gray-300 flex items-center justify-center hover:border-primary-600 transition-colors"
               :class="{ 'bg-primary-600 border-primary-600': isSeasonWatched(watchedEpisodes, season) }"
             >
               <Check
@@ -200,7 +200,7 @@ async function syncProgress() {
             </button>
 
             <span class="font-medium">Сезон {{ season.number }}</span>
-            <span class="text-sm text-gray-500">
+            <span class="text-base text-gray-500">
               {{ progress.seasons[season.number - 1]?.watchedCount || 0 }} / {{ season.episodes.length }}
             </span>
           </div>
@@ -225,7 +225,7 @@ async function syncProgress() {
               <!-- Чекбокс серии -->
               <button
                 @click="toggleEpisode(season.number, episode.episodeNumber)"
-                class="mt-0.5 w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center hover:border-primary-600 transition-colors shrink-0"
+                class="cursor-pointer mt-0.5 w-5 h-5 rounded border-2 border-gray-300 flex items-center justify-center hover:border-primary-600 transition-colors shrink-0"
                 :class="{ 'bg-primary-600 border-primary-600': isEpisodeWatched(watchedEpisodes, season.number, episode.episodeNumber) }"
               >
                 <Check
@@ -237,14 +237,14 @@ async function syncProgress() {
 
               <div class="flex-1 min-w-0">
                 <div class="flex items-baseline gap-2">
-                  <span class="text-sm font-medium">
+                  <span class="text-base font-medium">
                     Серия {{ episode.episodeNumber }}
                   </span>
-                  <span class="text-sm text-gray-600 truncate">
+                  <span class="text-base text-gray-600 truncate">
                     {{ episode.nameRu || episode.nameEn }}
                   </span>
                 </div>
-                <p v-if="episode.synopsis" class="text-xs text-gray-500 mt-1 line-clamp-2">
+                <p v-if="episode.synopsis" class="text-sm text-gray-500 mt-1 line-clamp-2">
                   {{ episode.synopsis }}
                 </p>
               </div>

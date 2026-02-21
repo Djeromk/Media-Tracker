@@ -3,9 +3,6 @@ import { computed } from "vue";
 import type { UserMedia, MediaStatus } from "@/types";
 import { BookOpen, Film, Gamepad2, ChevronRight } from "lucide-vue-next";
 
-/**
- * Props для Hero блока InProgress
- */
 interface Props {
   items: UserMedia[]; // Список медиа в процессе
 }
@@ -77,8 +74,7 @@ function getCoverUrl(item: UserMedia): string | null {
   return item.media?.coverUrl || item.media?.cover_url || null;
 }
 
-const visibleItems = computed(() => props.items.slice(0, 5));
-console.log("visibleItems", visibleItems);
+const visibleItems = computed(() => props.items.slice(0, 5).reverse())
 
 const hasMore = computed(() => props.items.length > 4);
 

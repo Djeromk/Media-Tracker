@@ -34,14 +34,7 @@ const progress = computed(() => {
       :step="step"
       @input="updateValue"
     />
-    <div class="w-full h-2 rounded-full bg-gray-400 overflow-hidden">
-      <div
-        class="h-full bg-green-400 rounded-full bg-primary-500 transition-all duration-300"
-        :style="{
-          width: `${Math.min(((value ?? 0) / max) * 100, 100)}%`,
-        }"
-      />
-    </div>
+
     <p class="text-xs text-gray-400 mt-1 text-right">
       {{ Math.round(((value ?? 0) / max) * 100) }}%
     </p>

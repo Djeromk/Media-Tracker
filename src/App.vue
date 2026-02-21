@@ -1,13 +1,7 @@
 <script setup lang="ts">
-//import { onMounted } from 'vue'
-//import { useAuthStore } from '@/stores/auth'
 import AppHeader from '@/components/layout/AppHeader.vue'
 import Footer from './components/layout/Footer.vue';
 import AppWrapper from '@/AppWrapper.vue'
-//import { useMediaStore } from '@/stores/media'
-
-// const authStore = useAuthStore()
-// const mediaStore = useMediaStore()
 
 </script>
 
@@ -29,9 +23,3 @@ import AppWrapper from '@/AppWrapper.vue'
     <Footer />
   </div>
 </template>
-
-<style scoped>
-#app {
-  /* font-family: system-ui, -apple-system, sans-serif; */
-}
-</style>

@@ -2,102 +2,185 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { Eye, EyeOff } from 'lucide-vue-next'
 
-const router = useRouter()
+const router    = useRouter()
 const authStore = useAuthStore()
 
-const email = ref('')
-const password = ref('')
-const errorMessage = ref('')
+// ── Состояние полей ──────────────────────────────────────────────────────────
 
-async function handleLogin() {
+const email        = ref<string>('')
+const password     = ref<string>('')
+const errorMessage = ref<string>('')
+
+// Показывать ли пароль открытым текстом
+const showPassword = ref<boolean>(false)
+
+// ── Обработчик отправки ──────────────────────────────────────────────────────
+
+async function handleLogin(): Promise<void> {
   errorMessage.value = ''
 
   if (!email.value || !password.value) {
-    errorMessage.value = 'Пожалуйста заполните все поля'
+    errorMessage.value = 'Пожалуйста, заполните все поля'
     return
   }
 
   const result = await authStore.signIn(email.value, password.value)
 
   if (result.success) {
-    // Редирект на страницу, с которой пользователь пришел, или на dashboard
-    const redirect = router.currentRoute.value.query.redirect as string
-    router.push(redirect || '/')
+    // Редиректим на страницу, с которой пришли, или на главную
+    const redirect = router.currentRoute.value.query.redirect as string | undefined
+    router.push(redirect ?? '/')
   } else {
-    errorMessage.value = result.error || 'Login failed'
+    errorMessage.value = result.error ?? 'Ошибка входа'
   }
 }
 </script>
 
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-gray-50 px-4">
-    <div class="max-w-md w-full space-y-8">
-      <div>
-        <h2 class="text-center text-3xl font-bold text-gray-900">
-          Войдите в свой аккаунт
-        </h2>
-        <p class="mt-2 text-center text-sm text-gray-600">
-          Or
-          <router-link to="/register" class="text-primary-600 hover:text-primary-500">
-            создать новый аккаунт
-          </router-link>
-        </p>
-      </div>
+  <!-- Корневой контейнер страницы — тёмный фон, flex-column -->
+  <div class="auth-page">
 
-      <form @submit.prevent="handleLogin" class="mt-8 space-y-6">
-        <div class="space-y-4">
-          <div>
-            <label for="email" class="block text-sm font-medium text-gray-700">
-              Email
-            </label>
+    <!-- ── Фоновый слой: сетка + свечение + декоративные слова ───────────── -->
+    <div class="auth-bg-layer">
+
+      <!-- Пересекающиеся линии — текстура глубины -->
+      <div class="auth-grid-lines"></div>
+
+      <!-- Радиальное свечение под карточкой -->
+      <div class="auth-center-glow"></div>
+
+      <!-- Огромные слова-плашки: почти прозрачные, медленно дрейфуют.
+           Разные font-size, position и animation-duration — выглядят независимо. -->
+      <div
+        class="auth-poster"
+        style="font-size: 18vw; top: -5%; left: -5%;
+               animation: auth-drift 22s ease-in-out infinite alternate;"
+      >FILM</div>
+      <div
+        class="auth-poster"
+        style="font-size: 12vw; bottom: 5%; right: -3%;
+               animation: auth-drift 26s ease-in-out infinite alternate-reverse; animation-delay: -8s;"
+      >READ</div>
+      <div
+        class="auth-poster"
+        style="font-size: 7vw; top: 40%; left: 60%;
+               animation: auth-drift 18s ease-in-out infinite alternate; animation-delay: -5s;"
+      >PLAY</div>
+    </div>
+
+    <!-- ── Шапка с логотипом ─────────────────────────────────────────────── -->
+    <header class="auth-header">
+      <router-link to="/" class="auth-logo">
+        <!-- Белый квадрат с буквой M -->
+        <span class="auth-logo-mark">M</span>
+        <!-- Двустрочная подпись -->
+        <span class="auth-logo-text">MEDIA<br>ARCHIVE</span>
+      </router-link>
+    </header>
+
+    <!-- ── Центральная зона с карточкой ─────────────────────────────────── -->
+    <main class="auth-main">
+      <div class="auth-card">
+
+        <!-- Заголовок -->
+        <div class="auth-card-header">
+          <!-- Eyebrow — маленькая надпись над заголовком -->
+          <p class="auth-eyebrow">Добро пожаловать</p>
+          <h1 class="auth-title">Войдите</h1>
+          <p class="auth-subtitle">Отслеживайте фильмы, книги и игры</p>
+        </div>
+
+        <!-- Форма -->
+        <form class="auth-form" @submit.prevent="handleLogin">
+
+          <!-- Email -->
+          <div class="auth-field">
+            <label class="auth-label" for="login-email">Email</label>
             <input
-              id="email"
+              id="login-email"
               v-model="email"
               type="email"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
+              autocomplete="email"
               placeholder="you@example.com"
+              class="auth-input"
             />
           </div>
 
-          <div>
-            <label for="password" class="block text-sm font-medium text-gray-700">
-             Пароль
-            </label>
-            <input
-              id="password"
-              v-model="password"
-              type="password"
-              required
-              class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-primary-500 focus:border-primary-500"
-              placeholder="••••••••"
-            />
+          <!-- Пароль -->
+          <div class="auth-field">
+            <label class="auth-label" for="login-password">Пароль</label>
+            <!-- Обёртка нужна для кнопки-глаза -->
+            <div class="auth-input-wrap">
+              <input
+                id="login-password"
+                v-model="password"
+                :type="showPassword ? 'text' : 'password'"
+                autocomplete="current-password"
+                placeholder="••••••••"
+                class="auth-input"
+              />
+              <!-- Кнопка показа пароля -->
+              <button
+                type="button"
+                class="auth-eye-btn"
+                :aria-label="showPassword ? 'Скрыть пароль' : 'Показать пароль'"
+                @click="showPassword = !showPassword"
+              >
+                <EyeOff v-if="showPassword" :size="16" />
+                <Eye v-else :size="16" />
+              </button>
+            </div>
           </div>
-        </div>
 
-        <div v-if="errorMessage" class="text-red-600 text-sm text-center">
-          {{ errorMessage }}
-        </div>
+          <!-- Блок ошибки — появляется только при наличии сообщения -->
+          <Transition name="auth-msg">
+            <p v-if="errorMessage" class="auth-error-msg">
+              {{ errorMessage }}
+            </p>
+          </Transition>
 
-        <button
-          type="submit"
-          :disabled="authStore.loading"
-          class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-primary-600 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          <span v-if="authStore.loading">Выполняется вход...</span>
-          <span v-else>Sign in</span>
-        </button>
-
-        <div class="text-center">
-          <router-link
-            to="/"
-            class="text-sm text-gray-600 hover:text-gray-900"
+          <!-- Кнопка входа -->
+          <button
+            type="submit"
+            class="auth-submit"
+            :disabled="authStore.loading"
           >
+            <!-- Три анимированные точки при загрузке -->
+            <span v-if="authStore.loading" class="auth-loading-dots">
+              <span></span><span></span><span></span>
+            </span>
+            <span v-else>Войти</span>
+          </button>
+        </form>
+
+        <!-- Подвал карточки -->
+        <div class="auth-card-footer">
+          <span>Нет аккаунта?</span>
+          <router-link to="/register" class="auth-link">Создать</router-link>
+        </div>
+        <div class="auth-card-footer" style="margin-top: 0.5rem;">
+          <router-link to="/" class="auth-link-muted">
             Продолжить без аккаунта
           </router-link>
         </div>
-      </form>
-    </div>
+      </div>
+    </main>
   </div>
 </template>
+
+<!-- Локальный transition для сообщений об ошибке.
+     Не переносим в style.css потому что это мелкая деталь
+     конкретного компонента, а не переиспользуемый класс. -->
+<style scoped>
+.auth-msg-enter-active,
+.auth-msg-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.auth-msg-enter-from,
+.auth-msg-leave-to {
+  opacity: 0;
+  transform: translateY(-5px);
+}
+</style>

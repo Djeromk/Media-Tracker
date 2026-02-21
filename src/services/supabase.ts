@@ -158,8 +158,8 @@ export const db = {
       started_at?: string | null;
       completed_at?: string | null;
       currentPage?: number | null;
-      currentSeason?: number | null;
-      currentEpisode?: number | null;
+      current_season?: number | null;
+      current_episode?: number | null;
       hoursPlayed?: number | null;
       watched_episodes?: WatchedEpisodesMap;
     },
@@ -174,10 +174,10 @@ export const db = {
     if (updates.completed_at !== undefined) dbUpdates.completed_at = updates.completed_at;
     if (updates.currentPage !== undefined)
       dbUpdates.current_page = updates.currentPage;
-    if (updates.currentSeason !== undefined)
-      dbUpdates.current_season = updates.currentSeason;
-    if (updates.currentEpisode !== undefined)
-      dbUpdates.current_episode = updates.currentEpisode;
+    if (updates.current_season !== undefined)
+      dbUpdates.current_season = updates.current_season;
+    if (updates.current_episode !== undefined)
+      dbUpdates.current_episode = updates.current_episode;
     if (updates.hoursPlayed !== undefined)
       dbUpdates.hours_played = updates.hoursPlayed;
     if (updates.watched_episodes !== undefined)
@@ -195,8 +195,8 @@ export const db = {
     userMediaId: string,
     updates: {
       watchedEpisodes?: WatchedEpisodesMap;
-      currentSeason?: number | null;
-      currentEpisode?: number | null;
+      current_season?: number | null;
+      current_episode?: number | null;
     }
   ) {
     const dbUpdates: Record<string, unknown> = {};
@@ -204,11 +204,11 @@ export const db = {
     if (updates.watchedEpisodes !== undefined) {
       dbUpdates.watched_episodes = updates.watchedEpisodes;
     }
-    if (updates.currentSeason !== undefined) {
-      dbUpdates.current_season = updates.currentSeason;
+    if (updates.current_season !== undefined) {
+      dbUpdates.current_season = updates.current_season;
     }
-    if (updates.currentEpisode !== undefined) {
-      dbUpdates.current_episode = updates.currentEpisode;
+    if (updates.current_episode !== undefined) {
+      dbUpdates.current_episode = updates.current_episode;
     }
 
     dbUpdates.updated_at = new Date().toISOString();
