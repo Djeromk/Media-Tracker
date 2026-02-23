@@ -93,7 +93,7 @@ const statItems = computed(() => [
         :class="[
           'p-3 rounded-lg transition-all',
           item.highlight
-            ? 'ring-1 ring-(--status-completed-border) row-span-2 content-end'
+            ? ' row-span-2 content-end'
             : '',
         ]"
       >
@@ -122,7 +122,7 @@ const statItems = computed(() => [
         <div class="progress">
           <div
             class="progress-fill"
-            :style="{ width: `${completionRate}%` }"
+            :style="{ width: `${completionRate}%`, backgroundColor: ` var(--category-${props.variant}-bg`}"
           ></div>
         </div>
     </div>

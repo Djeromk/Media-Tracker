@@ -106,9 +106,9 @@ const getChartOption = (): EChartsOption => {
         data: chartData.value,
 
         itemStyle: {
-          borderRadius: 8,
+          borderRadius: 4,
           borderColor: "#fff",
-          borderWidth: 2,
+          borderWidth: 1,
         },
         startAngle: 180,
         endAngle: 360,
@@ -216,7 +216,7 @@ onUnmounted(() => {
     >
       <div class="flex flex-col gap-2">
         <div class="text-sm text-(--text-tertiary)">Ваш прогресс</div>
-        <div class="text-4xl font-extrabold text-(--primary-700) leading-none">
+        <div class="text-6xl font-extrabold text-(--primary-700) leading-none">
           {{ completionPercentage }}%
         </div>
       </div>
@@ -226,7 +226,7 @@ onUnmounted(() => {
       <!-- Активность за неделю -->
       <div v-if="thisWeekCompleted > 0" class="flex flex-col gap-2">
         <div
-          class="flex flex-col items-center justify-between p-3 rounded-lg outline-2 outline-(--gray-300)"
+          class="flex flex-col items-center justify-between p-3 bg-green-50 rounded-lg outline-1 outline-green-200"
         >
           <div class="flex items-center gap-2 text-sm">
             <TrendingUp :size="16" />
