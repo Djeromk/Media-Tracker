@@ -104,8 +104,9 @@ export interface ExternalGame {
 }
 export interface User {
   id: string;
-  email: string;
+  email: string | null;
   createdAt: string;
+  isAnonymous: boolean;
 }
 
 export interface UserProfile {

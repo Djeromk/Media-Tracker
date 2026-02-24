@@ -36,6 +36,19 @@ async function handleLogin(): Promise<void> {
     errorMessage.value = result.error ?? 'Ошибка входа'
   }
 }
+
+async function handleDemoLogin(): Promise<void> {
+  errorMessage.value = ''
+
+  const result = await authStore.signInAnonymously()
+
+  if (result.success) {
+    const redirect = router.currentRoute.value.query.redirect as string | undefined
+    router.push(redirect ?? '/')
+  } else {
+    errorMessage.value = result.error ?? 'Ошибка демо-режима'
+  }
+}
 </script>
 
 <template>
@@ -161,9 +174,13 @@ async function handleLogin(): Promise<void> {
           <router-link to="/register" class="auth-link">Создать</router-link>
         </div>
         <div class="auth-card-footer" style="margin-top: 0.5rem;">
-          <router-link to="/" class="auth-link-muted">
-            Продолжить без аккаунта
-          </router-link>
+          <button
+            type="button"
+            class="auth-link-muted bg-(--muted-foreground) rounded-xl p-2 text-black cursor-pointer hover:bg-(--secondary)"
+            @click="handleDemoLogin"
+          >
+            Попробовать демо без аккаунта
+          </button>
         </div>
       </div>
     </main>

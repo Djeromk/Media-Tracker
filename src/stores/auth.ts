@@ -16,6 +16,7 @@ export const useAuthStore = defineStore('auth', () => {
   const loading = ref(false)
   const error = ref<string | null>(null)
   const isAuthenticated = computed(() => !!user.value)
+  const isDemoUser = computed(() => user.value?.isAnonymous === true)
   const userEmail = computed(() => user.value?.email || '')
   const userName = computed(() => profile.value?.name || '')
 
@@ -44,13 +45,15 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function setUserFromSession(sessionUser: {
     id: string
-    email?: string
+    email?: string | null
     created_at: string
+    is_anonymous?: boolean
   }) {
     user.value = {
       id: sessionUser.id,
-      email: sessionUser.email!,
-      createdAt: sessionUser.created_at
+      email: sessionUser.email ?? null,
+      createdAt: sessionUser.created_at,
+      isAnonymous: sessionUser.is_anonymous === true
     }
 
     await loadProfile(sessionUser.id)
@@ -114,11 +117,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Устанавливаем пользователя в состояние
-      user.value = {
-        id: authData.user.id,
-        email: authData.user.email!,
-        createdAt: authData.user.created_at
-      }
+      await setUserFromSession(authData.user as any)
 
       // Шаг 2: Создаем профиль в таблице profiles (если передано имя)
       if (name && name.trim()) {
@@ -165,7 +164,31 @@ export const useAuthStore = defineStore('auth', () => {
       if (!data.user) {
         throw new Error('Sign in failed')
       }
-      await setUserFromSession(data.user)
+      await setUserFromSession(data.user as any)
+
+      return { success: true }
+    } catch (e) {
+      const authError = e as AuthError | Error
+      error.value = authError.message
+      return { success: false, error: authError.message }
+    } finally {
+      loading.value = false
+    }
+  }
+
+  async function signInAnonymously(): Promise<AuthResponse> {
+    loading.value = true
+    error.value = null
+
+    try {
+      const { data, error: signInError } = await supabase.auth.signInAnonymously()
+
+      if (signInError) throw signInError
+      if (!data.user) {
+        throw new Error('Anonymous sign in failed')
+      }
+
+      await setUserFromSession(data.user as any)
 
       return { success: true }
     } catch (e) {
@@ -247,12 +270,14 @@ export const useAuthStore = defineStore('auth', () => {
     error,
 
     isAuthenticated,
+    isDemoUser,
     userEmail,
     userName,
 
     initialize,
     signUp,
     signIn,
+    signInAnonymously,
     signOut,
     updateProfile,
     clearError

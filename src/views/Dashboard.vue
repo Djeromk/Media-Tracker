@@ -162,8 +162,9 @@ function handleUpdateStatus(id: string, status: MediaStatus) {
 }
 
 function handleViewAllInProgress() {
-  // TODO: навигация на страницу всех элементов в процессе
+
 }
+
 </script>
 
 <template>
@@ -194,6 +195,7 @@ function handleViewAllInProgress() {
 
       <!-- Hero: в процессе -->
       <InProgressHero
+      v-if="authStore.isAuthenticated"
         :items="inProgressItems"
         @update-status="handleUpdateStatus"
         @view-all="handleViewAllInProgress"

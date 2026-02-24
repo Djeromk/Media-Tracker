@@ -13,10 +13,15 @@
 
   * {
     font-family:
-      "Geist Mono",
-      "Epilogue",
+	"Geist Mono",
+	"Epilogue",
+	"Syne"
       ui-monospace,
       monospace;
+  }
+  .header-logo {
+    font-family: "Syne";
+	font-weight: 100
   }
 
   body {
@@ -451,7 +456,7 @@
     font-family: var(--auth-font-display);
     font-size: 2rem;
     font-weight: 800;
-    color: var(--text-primary);
+    color: var(--text-inverse);
     margin: 0 0 0.3rem;
     letter-spacing: -0.03em;
     line-height: 1.1;

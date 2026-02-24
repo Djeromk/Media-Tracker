@@ -18,13 +18,13 @@ const userInitials = computed(() => {
 
 <template>
   <header v-if="authStore.isAuthenticated">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-center h-16">
+    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-(--primary-100)">
+      <div class="flex justify-between items-center h-16  ">
         <router-link
         to="/"
-        class="text-4xl font-extrabold text-primary-600 hover:text-primary-700 transition-colors"
+        class="text-4xl bg-(--primary-500) rounded-b-xl p-1 header-logo text-primary-600 hover:text-primary-700 transition-colors"
         >
-        Media Archive
+        TRACKmy
       </router-link>
 
       <div class="flex items-center space-x-4">
@@ -39,16 +39,26 @@ const userInitials = computed(() => {
 
             <!--
               Аватар с инициалами — ведёт на страницу профиля.
-              Кнопка "Выйти" перенесена в ProfilePage.vue.
+              Кнопка \"Выйти\" перенесена в ProfilePage.vue.
+              Для демо-пользователя рядом показываем небольшой бейдж.
             -->
-            <router-link
-              to="/profile"
-              class="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0 transition-all hover:scale-105 hover:shadow-md"
-              style="background: linear-gradient(135deg, var(--primary-500), var(--primary-700))"
-              :title="authStore.profile?.name ?? 'Профиль'"
-            >
-              {{ userInitials }}
-            </router-link>
+            <div class="flex items-center gap-2">
+              <router-link
+                to="/profile"
+                class="w-9 h-9 rounded-xl flex items-center justify-center text-white text-sm font-bold shrink-0 transition-all hover:scale-105 hover:shadow-md"
+                style="background: linear-gradient(135deg, var(--primary-500), var(--primary-700))"
+                :title="authStore.profile?.name ?? 'Профиль'"
+              >
+                {{ userInitials }}
+              </router-link>
+              <span
+                v-if="authStore.isDemoUser"
+                class="px-2 py-0.5 rounded-full text-xs font-medium"
+                style="background: rgba(251, 191, 36, 0.18); color: #92400e;"
+              >
+                Демо
+              </span>
+            </div>
           </template>
 
           <template v-else>
