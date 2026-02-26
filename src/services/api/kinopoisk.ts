@@ -18,12 +18,12 @@ export class Kinopoisk {
     );
     const data = await response.json();
     return data.items.map((item: KinopoiskItem) => ({
-      id: item.kinopoiskId.toString(),
+      id: item.kinopoiskId?.toString() || "",
       title: item.nameRu || item.nameOriginal,
       thumbnail: item.posterUrlPreview || item.posterUrl || null,
       releaseDate: item.year,
       isSeries: item.type === "TV_SERIES",
-      year: item.year.toString(),
+      year: item.year?.toString() || null,
       ratingImdb: item.ratingImdb,
       ratingKinopoisk: item.ratingKinopoisk,
       other: item

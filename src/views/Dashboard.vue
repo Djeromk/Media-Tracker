@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import InProgressHero from "@/components/dashboard/InProgressHero.vue";
-import ActivityCard2 from "@/components/dashboard/ActivityCard2.vue";
-import MediaTypeCard2 from "@/components/dashboard/MediaTypeCard2.vue";
+import ActivityCard from "@/components/dashboard/ActivityCard.vue";
+import MediaTypeCard from "@/components/dashboard/MediaTypeCard.vue";
 import { BookOpen, Film, Gamepad2 } from "lucide-vue-next";
 import { ref, onMounted, computed } from "vue";
 import { useMediaStore } from "@/stores/media";
@@ -209,27 +209,27 @@ function handleViewAllInProgress() {
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
-        <ActivityCard2
+        <ActivityCard
           :books-stats="activityStats.booksStats"
           :movies-stats="activityStats.moviesStats"
           :games-stats="activityStats.gamesStats"
           :this-week-completed="activityStats.thisWeekCompleted"
         />
-        <MediaTypeCard2
+        <MediaTypeCard
           title="Книги"
           :icon="BookOpen"
           :stats="stats.books"
           variant="books"
           @add="() => openSearchModal('book')"
         />
-        <MediaTypeCard2
+        <MediaTypeCard
           title="Фильмы и Сериалы"
           :icon="Film"
           :stats="stats.movies"
           variant="movies"
           @add="() => openSearchModal('movie')"
         />
-        <MediaTypeCard2
+        <MediaTypeCard
           title="Игры"
           :icon="Gamepad2"
           :stats="stats.games"

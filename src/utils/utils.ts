@@ -45,7 +45,7 @@ export function transformKinopoiskToExternalMovie(
   },
 ) {
   return {
-    id: movie.kinopoiskId.toString(),
+    id: movie.kinopoiskId?.toString() || "",
     thumbnail: movie.posterUrl,
     isSeries: movie.serial,
     imdbId: movie.imdbId,
@@ -66,7 +66,7 @@ export function transformKinopoiskToExternalMovie(
 
 export function transformGameToExternalGame(game: GameById): ExternalGame {
   return {
-    id: game.id.toString(),
+    id: game.id.toString() || "",
     name: game.name,
     background_image: game.background_image,
     thumbnail: game.background_image_additional,

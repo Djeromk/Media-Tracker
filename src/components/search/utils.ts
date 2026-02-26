@@ -50,10 +50,7 @@ function getMetacritic(item: ExternalGame): number {
 function getReleaseDate(
   item: ExternalMovie | ExternalBook | ExternalGame,
 ): string {
-  if ("year" in item && item.year) {
-    return item.year.toString();
-  }
-  return "";
+  return ("year" in item ? item.year?.toString() ?? "" : "");
 }
 
 const STATUS_ICONS: Record<MediaStatus, string> = {

@@ -386,6 +386,7 @@ const vFocus = {
                   v-if="getImage(result.item)"
                   :src="getImage(result.item)!"
                   :alt="getTitle(result.item)"
+                  loading="lazy"
                   class="w-full h-full object-cover"
                   @error="handleImageError"
                 />

@@ -207,6 +207,9 @@ export const useAuthStore = defineStore('auth', () => {
       user.value = null
       profile.value = null
       error.value = null
+      const { useMediaStore } = await import('./media')
+      const mediaStore = useMediaStore()
+      mediaStore.clearUserMedia()
     } catch (e) {
       const authError = e as AuthError
       error.value = authError.message

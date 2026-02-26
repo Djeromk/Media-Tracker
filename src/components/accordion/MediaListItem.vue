@@ -93,6 +93,7 @@ function confirmDelete() {
           <img
             :src="coverUrl"
             :alt="mediaTitle"
+            loading="lazy"
             class="w-full h-full object-cover"
             @error="handleImageError"
           />

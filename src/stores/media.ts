@@ -200,6 +200,11 @@ export const useMediaStore = defineStore("media", () => {
     }
   }
 
+  function clearUserMedia(): void {
+    userMedia.value = [];
+    error.value = null;
+  }
+
   const getInProgressByType = computed(() => {
     return (type: MediaType) => {
       const items = userMedia.value.filter(
@@ -228,5 +233,6 @@ export const useMediaStore = defineStore("media", () => {
     //addMedia,
     updateMedia,
     deleteMedia,
+    clearUserMedia,
   };
 });

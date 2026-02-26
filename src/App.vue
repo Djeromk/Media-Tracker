@@ -6,7 +6,7 @@ import AppWrapper from '@/AppWrapper.vue'
 </script>
 
 <template>
-  <div id="app" class="min-h-screen">
+  <div id="trackmy-app" class="min-h-screen">
     <AppHeader />
     <main>
       <Suspense>
