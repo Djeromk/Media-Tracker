@@ -23,7 +23,9 @@ const authStore = useAuthStore();
 
 const isSearchModalOpen = ref(false);
 const selectedMediaType = ref<MediaType>("other");
-const notification = ref<{ message: string; type: "success" | "error" } | null>(null);
+const notification = ref<{ message: string; type: "success" | "error" } | null>(
+  null,
+);
 
 onMounted(() => {
   if (authStore.user) {
@@ -32,7 +34,7 @@ onMounted(() => {
 });
 
 const inProgressItems = computed(() =>
-  mediaStore.userMedia.filter(item => item.status === "in_progress")
+  mediaStore.userMedia.filter((item) => item.status === "in_progress"),
 );
 
 const stats = computed(() => mediaStore.stats);
@@ -52,30 +54,30 @@ const stats = computed(() => mediaStore.stats);
  */
 const thisWeekCompleted = computed<number>(() => {
   // Начало сегодняшнего дня в миллисекундах
-  const todayStart = new Date()
-  todayStart.setHours(0, 0, 0, 0)
+  const todayStart = new Date();
+  todayStart.setHours(0, 0, 0, 0);
 
   // 7 дней назад (включая сегодня)
-  const weekAgo = new Date(todayStart)
-  weekAgo.setDate(weekAgo.getDate() - 6)
-  const weekAgoMs = weekAgo.getTime()
+  const weekAgo = new Date(todayStart);
+  weekAgo.setDate(weekAgo.getDate() - 6);
+  const weekAgoMs = weekAgo.getTime();
 
   return mediaStore.userMedia.filter((item: UserMedia) => {
-    if (item.status !== "completed") return false
+    if (item.status !== "completed") return false;
 
     // Предпочитаем completed_at как точную дату завершения.
     // Если поле пустое — используем updatedAt как запасной вариант.
-    const rawDate = item.completed_at ?? item.updatedAt
-    if (!rawDate) return false
+    const rawDate = item.completed_at ?? item.updatedAt;
+    if (!rawDate) return false;
 
-    const completedMs = new Date(rawDate).getTime()
+    const completedMs = new Date(rawDate).getTime();
 
     // Проверяем что дата валидна (защита от некорректных строк)
-    if (isNaN(completedMs)) return false
+    if (isNaN(completedMs)) return false;
 
-    return completedMs >= weekAgoMs
-  }).length
-})
+    return completedMs >= weekAgoMs;
+  }).length;
+});
 
 const activityStats = computed(() => ({
   booksStats: {
@@ -104,24 +106,27 @@ function closeSearchModal() {
 
 async function handleMediaSelect(
   item: ExternalMovie | ExternalBook | ExternalGame,
-  status: MediaStatus
+  status: MediaStatus,
 ) {
   if (!authStore.isAuthenticated) {
-    showNotification("Войдите в аккаунт, чтобы сохранять медиа в свой список", "error");
+    showNotification(
+      "Войдите в аккаунт, чтобы сохранять медиа в свой список",
+      "error",
+    );
     return;
   }
 
   const result = await mediaStore.addMediaFromExternal(
     item,
     selectedMediaType.value,
-    status
+    status,
   );
 
   showNotification(
     result.success
       ? result.message || "Медиа успешно добавлено!"
       : result.error || "Ошибка при добавлении медиа",
-    result.success ? "success" : "error"
+    result.success ? "success" : "error",
   );
 }
 
@@ -138,7 +143,7 @@ async function handleStatusUpdate(id: string, status: MediaStatus) {
     result.success
       ? "Статус успешно обновлён!"
       : result.error || "Ошибка при обновлении статуса",
-    result.success ? "success" : "error"
+    result.success ? "success" : "error",
   );
 }
 
@@ -148,7 +153,7 @@ async function handleDeleteItem(id: string) {
     result.success
       ? "Элемент удалён из списка"
       : result.error || "Ошибка при удалении",
-    result.success ? "success" : "error"
+    result.success ? "success" : "error",
   );
 }
 
@@ -161,16 +166,12 @@ function handleUpdateStatus(id: string, status: MediaStatus) {
   handleStatusUpdate(id, status);
 }
 
-function handleViewAllInProgress() {
-
-}
-
+function handleViewAllInProgress() {}
 </script>
 
 <template>
   <div class="min-h-screen bg-(--background-body)">
     <div class="container-xl px-6 py-8">
-
       <!-- Уведомление -->
       <Transition name="slide-down">
         <div
@@ -182,7 +183,13 @@ function handleViewAllInProgress() {
               : 'border-l-4 border-red-500',
           ]"
         >
-          <p :class="notification.type === 'success' ? 'text-green-700' : 'text-red-700'">
+          <p
+            :class="
+              notification.type === 'success'
+                ? 'text-green-700'
+                : 'text-red-700'
+            "
+          >
             {{ notification.message }}
           </p>
         </div>
@@ -190,12 +197,11 @@ function handleViewAllInProgress() {
 
       <!-- Шапка -->
 
-          <Banner v-if="!authStore.user" />
-
+      <Banner v-if="!authStore.user" />
 
       <!-- Hero: в процессе -->
       <InProgressHero
-      v-if="authStore.isAuthenticated"
+        v-if="authStore.isAuthenticated"
         :items="inProgressItems"
         @update-status="handleUpdateStatus"
         @view-all="handleViewAllInProgress"
@@ -260,10 +266,18 @@ function handleViewAllInProgress() {
 .grid > * {
   animation: slideIn var(--transition-slower) ease-out;
 }
-.grid > *:nth-child(1) { animation-delay: 0ms; }
-.grid > *:nth-child(2) { animation-delay: 100ms; }
-.grid > *:nth-child(3) { animation-delay: 150ms; }
-.grid > *:nth-child(4) { animation-delay: 200ms; }
+.grid > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.grid > *:nth-child(2) {
+  animation-delay: 100ms;
+}
+.grid > *:nth-child(3) {
+  animation-delay: 150ms;
+}
+.grid > *:nth-child(4) {
+  animation-delay: 200ms;
+}
 
 .slide-down-enter-active,
 .slide-down-leave-active {
