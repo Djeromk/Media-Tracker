@@ -49,11 +49,6 @@ interface Emits {
   ): void;
 }
 
-/**
- * Интерфейс для обогащённого результата поиска.
- * Хранит оригинальный элемент медиа + информацию о его состоянии
- * в коллекции текущего пользователя.
- */
 interface EnrichedSearchResult {
   item: ExternalMovie | ExternalBook | ExternalGame;
   /** Внешний ID из стороннего API — используется как ключ для v-for и поиска совпадений */
@@ -66,11 +61,6 @@ interface EnrichedSearchResult {
   userMediaId: string | null;
 }
 
-/**
- * Координаты дропдауна в пространстве viewport (для position:fixed).
- * Вычисляются через getBoundingClientRect() кнопки, которая его открывает.
- * top — нижний край кнопки + отступ, right — расстояние от правого края viewport.
- */
 interface DropdownCoords {
   top: number;
   right: number;
@@ -84,20 +74,29 @@ const mediaStore = useMediaStore();
 const searchResults = ref<(ExternalMovie | ExternalBook | ExternalGame)[]>([]);
 const loading = ref(false);
 const error = ref<string | null>(null);
+const itemRef = ref<HTMLElement[]>([]);
+const activeIndex = ref(-1);
 
-/**
- * ID элемента, у которого открыт дропдаун статуса.
- * null — все дропдауны закрыты.
- */
+const inputRef = ref<HTMLInputElement | null>(null);
+
+function moveFocus(delta: number) {
+  const total = enrichedResults.value.length;
+  if (total === 0) return;
+
+  const next = activeIndex.value + delta;
+  if (next < 0) {
+    activeIndex.value = -1;
+    inputRef.value?.focus();
+    return;
+  }
+  if (next >= total) return;
+
+  activeIndex.value = next;
+  itemRef.value[next]?.focus();
+}
+
 const activeDropdown = ref<string | null>(null);
-
-/**
- * Текущие координаты дропдауна.
- * Обновляются в toggleDropdown() каждый раз при открытии нового дропдауна.
- */
 const dropdownCoords = ref<DropdownCoords>({ top: 0, right: 0 });
-
-/** Таймер debounce — чтобы не делать запрос после каждого нажатия клавиши */
 let searchTimeout: ReturnType<typeof setTimeout> | null = null;
 
 /**
@@ -127,10 +126,12 @@ const enrichedResults = computed<EnrichedSearchResult[]>(() => {
   });
 });
 
+watch(enrichedResults, () => {
+  activeIndex.value = -1;
+});
+
 /** Список доступных статусов зависит от типа медиа */
 const availableStatuses = computed(() => getAvailableStatuses(props.mediaType));
-
-/** Плейсхолдер поля ввода зависит от типа медиа */
 const placeholder = computed(() => getSearchPlaceholder(props.mediaType));
 
 /**
@@ -142,15 +143,6 @@ const activeResult = computed<EnrichedSearchResult | undefined>(() =>
   enrichedResults.value.find((r) => r.id === activeDropdown.value),
 );
 
-/**
- * Возвращает Vue-компонент иконки по строковому имени.
- *
- * getStatusIcon() возвращает строку ("Archive", "ClockFading", ...),
- * а не компонент напрямую — это позволяет хранить конфигурацию статусов
- * в обычном JS-объекте без зависимости от Vue.
- * Здесь маппим имя обратно в компонент.
- * Возвращает null если имя не найдено — защита от опечаток.
- */
 function getIconComponent(
   iconName: string,
 ): typeof Archive | typeof ClockFading | typeof CircleCheckBig | null {
@@ -165,10 +157,6 @@ function getIconComponent(
   return icons[iconName] ?? null;
 }
 
-/**
- * Watcher с debounce (1 сек) — запускает поиск после паузы в наборе.
- * Минимальная длина запроса 2 символа, иначе очищаем результаты.
- */
 watch(searchQuery, (newQuery) => {
   if (searchTimeout) clearTimeout(searchTimeout);
 
@@ -182,10 +170,6 @@ watch(searchQuery, (newQuery) => {
   }, 1000);
 });
 
-/**
- * Запрашивает результаты поиска через нужный API-сервис
- * в зависимости от типа медиа.
- */
 async function performSearch(query: string) {
   loading.value = true;
   error.value = null;
@@ -213,9 +197,6 @@ async function performSearch(query: string) {
   }
 }
 
-/**
- * Закрывает модальное окно: сбрасывает все состояния и уведомляет родителя.
- */
 function handleClose() {
   searchQuery.value = "";
   searchResults.value = [];
@@ -223,7 +204,6 @@ function handleClose() {
   emit("close");
 }
 
-/** Заменяет сломанное изображение обложки на fallback.svg */
 const handleImageError = createImageErrorHandler(fallbackImage);
 
 /**
@@ -239,21 +219,15 @@ const handleImageError = createImageErrorHandler(fallbackImage);
  * @param itemId — ID элемента в списке результатов
  * @param event  — MouseEvent клика на кнопку; из currentTarget берём HTMLElement
  */
-function toggleDropdown(itemId: string, event: MouseEvent) {
+function toggleDropdown(itemId: string, event: MouseEvent | KeyboardEvent) {
   // Закрываем если уже открыт
   if (activeDropdown.value === itemId) {
     activeDropdown.value = null;
     return;
   }
-
-  // Измеряем позицию кнопки и вычисляем куда разместить дропдаун.
-  // right считается как расстояние от правого края viewport до правого края кнопки —
-  // это нужно для CSS свойства right в position:fixed, чтобы правый край
-  // дропдауна совпадал с правым краем кнопки.
   const button = event.currentTarget as HTMLButtonElement;
   const rect = button.getBoundingClientRect();
 
-  // Примерная высота дропдауна: количество статусов × высота одного пункта (44px) + padding (8px)
   const estimatedDropdownHeight = availableStatuses.value.length * 44 + 8;
   const spaceBelow = window.innerHeight - rect.bottom;
   const openUpward = spaceBelow < estimatedDropdownHeight;
@@ -266,14 +240,6 @@ function toggleDropdown(itemId: string, event: MouseEvent) {
   activeDropdown.value = itemId;
 }
 
-/**
- * Обрабатывает выбор статуса из дропдауна.
- *
- * Три сценария:
- * 1. Статус уже установлен — ничего не делаем, закрываем дропдаун.
- * 2. Элемент в коллекции, но статус другой — обновляем через store.
- * 3. Элемент ещё не добавлен — эмитим "select" родителю, тот добавляет в коллекцию.
- */
 async function handleSelectWithStatus(
   result: EnrichedSearchResult,
   status: MediaStatus,
@@ -295,7 +261,7 @@ async function handleSelectWithStatus(
 
   emit("select", result.item, status);
   activeDropdown.value = null;
-  handleClose();
+  // handleClose();
 }
 
 const vFocus = {
@@ -311,18 +277,13 @@ const vFocus = {
     <div
       class="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4"
       @click.self="handleClose"
+      @keydown.esc="handleClose"
     >
-      <!--
-        Модальное окно.
-        flex flex-col + overflow-hidden: шапка и поле поиска зафиксированы сверху,
-        список результатов скроллится независимо внутри.
-        Клик по модалке (но не по строкам) закрывает открытый дропдаун.
-      -->
+
       <div
         class="bg-white rounded-2xl shadow-2xl w-full max-w-2xl max-h-[85vh] flex flex-col overflow-hidden"
         @click="activeDropdown = null"
       >
-        <!-- Шапка (не скроллится) -->
         <div
           class="flex items-center justify-between px-6 pt-5 pb-4 border-b border-gray-100 shrink-0"
         >
@@ -337,9 +298,9 @@ const vFocus = {
           </button>
         </div>
 
-        <!-- Поле поиска (не скроллится) -->
         <div class="px-6 py-3 shrink-0">
           <input
+            ref="inputRef"
             v-model="searchQuery"
             type="text"
             :placeholder="placeholder"
@@ -347,34 +308,37 @@ const vFocus = {
             autofocus
             v-focus
             @click.stop
+            @keydown.down.prevent="moveFocus(1)"
           />
         </div>
 
-        <!-- Загрузка -->
         <div v-if="loading" class="flex justify-center py-10 flex-1">
           <div
             class="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"
           />
         </div>
 
-        <!-- Ошибка -->
         <div v-else-if="error" class="text-center py-10 flex-1 px-6">
           <p class="text-sm text-red-500">{{ error }}</p>
         </div>
 
-        <!-- Список результатов со скроллом -->
         <div
           v-else-if="enrichedResults.length > 0"
           class="overflow-y-auto flex-1 px-4 pb-3"
         >
-          <div class="space-y-0.5 pt-1">
-            <div
+          <ul class="space-y-0.5 pt-1">
+            <li
               v-for="result in enrichedResults"
               :key="result.id"
+              ref="itemRef"
+              tabindex="0"
               class="flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-gray-50 transition-colors"
               @click.stop
+              @keydown.down.prevent="moveFocus(1)"
+              @keydown.up.prevent="moveFocus(-1)"
+              @keydown.esc="handleClose"
+              @keydown.enter.prevent="toggleDropdown(result.id, $event)"
             >
-              <!-- Обложка -->
               <div
                 class="w-10 h-14 shrink-0 rounded-lg overflow-hidden bg-gray-100 shadow-sm"
               >
@@ -394,7 +358,6 @@ const vFocus = {
                 </div>
               </div>
 
-              <!-- Информация -->
               <div class="flex-1 min-w-0">
                 <router-link :to="`/${mediaType}s/${result.item.id}`">
                   <h3
@@ -413,7 +376,6 @@ const vFocus = {
                     {{ getReleaseDate(result.item) }}
                   </span>
 
-                  <!-- Metacritic для игр -->
                   <span
                     v-if="
                       mediaType === 'game' &&
@@ -515,8 +477,8 @@ const vFocus = {
                   />
                 </button>
               </div>
-            </div>
-          </div>
+            </li>
+          </ul>
         </div>
 
         <!-- Пустой результат поиска -->
@@ -555,7 +517,7 @@ const vFocus = {
     <Transition name="dropdown">
       <div
         v-if="activeDropdown !== null && activeResult !== undefined"
-        class="fixed z-[9999]"
+        class="fixed z-9999"
         :style="{
           top: dropdownCoords.top + 'px',
           right: dropdownCoords.right + 'px',
@@ -600,10 +562,6 @@ const vFocus = {
   opacity: 0;
 }
 
-/*
-  Дропдаун появляется снизу вверх (translateY положительный → элемент начинает
-  чуть ниже и поднимается в финальную позицию).
-*/
 .dropdown-enter-active,
 .dropdown-leave-active {
   transition: all 0.15s cubic-bezier(0.16, 1, 0.3, 1);

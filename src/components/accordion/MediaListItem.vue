@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ChevronDown, Trash2, MoreHorizontal } from 'lucide-vue-next'
+import { ChevronDown, Trash2 } from 'lucide-vue-next'
 import type { MediaStatus, UserMedia } from '@/types'
 import { STATUS_LABELS, MEDIA_TYPE_LABELS } from '@/types'
 import fallbackImage from '@/assets/fallback.svg'

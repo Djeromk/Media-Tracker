@@ -8,7 +8,6 @@ import type {
   MediaStatus,
   DashboardStats,
   ExternalGame,
-  //KinopoiskItem,
   ExternalMovie,
   ExternalBook,
 } from "@/types";
@@ -70,7 +69,7 @@ export const useMediaStore = defineStore("media", () => {
 
     try {
       const { data, error: fetchError } = await db.getUserMedia(
-        authStore.user.id
+        authStore.user.id,
       );
       if (fetchError) throw fetchError;
       userMedia.value = data as UserMedia[];
@@ -85,7 +84,7 @@ export const useMediaStore = defineStore("media", () => {
   async function addMediaFromExternal(
     item: ExternalMovie | ExternalBook | ExternalGame,
     type: MediaType,
-    status: MediaStatus = "backlog"
+    status: MediaStatus = "backlog",
   ): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
@@ -160,26 +159,57 @@ export const useMediaStore = defineStore("media", () => {
   // Обновляет существующий медиа элемент (рейтинг, статус, отзыв и т.д.)
   async function updateMedia(
     id: string,
-    updates: Partial<UserMedia>
+    updates: Partial<UserMedia>,
   ): Promise<MediaResponse> {
-    loading.value = true;
     error.value = null;
-    console.log("updateMedia updates", id, updates.watched_episodes);
+    const itemIndex = userMedia.value.findIndex((item) => item.id === id);
+
+    let previousState: UserMedia | null = null;
+    if (itemIndex !== -1) {
+      previousState = { ...userMedia.value[itemIndex] };
+
+      const updatedItem: UserMedia = {
+        ...userMedia.value[itemIndex],
+        ...updates,
+      };
+      userMedia.value.splice(itemIndex, 1, updatedItem);
+    }
     try {
       const { error: updateError } = await db.updateUserMedia(id, updates);
-
       if (updateError) throw updateError;
 
-      await fetchUserMedia();
       return { success: true };
     } catch (e) {
+      if (itemIndex !== -1 && previousState !== null) {
+        userMedia.value.splice(itemIndex, 1, previousState);
+      }
       const dbError = e as PostgrestError;
       error.value = dbError.message;
       return { success: false, error: dbError.message };
-    } finally {
-      loading.value = false;
     }
   }
+  // async function updateMedia(
+  //   id: string,
+  //   updates: Partial<UserMedia>,
+  // ): Promise<MediaResponse> {
+  //   loading.value = true;
+  //   error.value = null;
+  //   console.log("updateMedia updates", id, updates.watched_episodes);
+  //   try {
+  //     const { error: updateError } = await db.updateUserMedia(id, updates);
+
+  //     if (updateError) throw updateError;
+
+  //     await fetchUserMedia();
+  //     return { success: true };
+  //   } catch (e) {
+  //     const dbError = e as PostgrestError;
+  //     error.value = dbError.message;
+  //     return { success: false, error: dbError.message };
+  //   } finally {
+  //     loading.value = false;
+  //   }
+  // }
 
   async function deleteMedia(id: string): Promise<MediaResponse> {
     loading.value = true;
@@ -208,7 +238,7 @@ export const useMediaStore = defineStore("media", () => {
   const getInProgressByType = computed(() => {
     return (type: MediaType) => {
       const items = userMedia.value.filter(
-        (m) => m.media?.type === type && m.status === "in_progress"
+        (m) => m.media?.type === type && m.status === "in_progress",
       );
 
       // Сортируем по дате обновления (или создания) - самый свежий первый
