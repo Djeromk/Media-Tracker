@@ -19,7 +19,7 @@ const userInitials = computed(() => {
 
 <template>
   <header v-if="authStore.isAuthenticated">
-    <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 bg-(--primary-100)">
+    <nav class="mx-auto px-4 sm:px-6 lg:px-8 bg-(--primary-100)">
       <div class="flex justify-between items-center h-16  ">
        <AppLogo />
 

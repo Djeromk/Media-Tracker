@@ -221,7 +221,9 @@ function handleViewAllInProgress() {}
           :games-stats="activityStats.gamesStats"
           :this-week-completed="activityStats.thisWeekCompleted"
         />
+
         <MediaTypeCard
+        v-if="authStore.user"
           title="Книги"
           :icon="BookOpen"
           :stats="stats.books"
@@ -229,6 +231,7 @@ function handleViewAllInProgress() {}
           @add="() => openSearchModal('book')"
         />
         <MediaTypeCard
+        v-if="authStore.user"
           title="Фильмы и Сериалы"
           :icon="Film"
           :stats="stats.movies"
@@ -236,6 +239,7 @@ function handleViewAllInProgress() {}
           @add="() => openSearchModal('movie')"
         />
         <MediaTypeCard
+        v-if="authStore.user"
           title="Игры"
           :icon="Gamepad2"
           :stats="stats.games"
