@@ -103,7 +103,7 @@ function confirmDelete() {
       <!-- Основной контент: название, тип, рейтинг -->
       <div class="flex-1 min-w-0">
         <router-link :to="`/${mediaType}s/${item.media?.external_id}`">
-          <h4 class="text-sm font-semibold text-(--text-primary) truncate leading-snug mb-0.5 hover:text-(--primary-600) transition-colors">
+          <h4 class="text-xs md:text-sm font-semibold text-(--text-primary) truncate leading-snug mb-0.5 hover:text-(--primary-600) transition-colors">
             {{ mediaTitle }}
           </h4>
         </router-link>
@@ -231,5 +231,23 @@ function confirmDelete() {
 .modal-enter-from,
 .modal-leave-to {
   opacity: 0;
+}
+@media (max-width: 640px) {
+  /* Уменьшить padding карточки элемента */
+  .px-5.py-4 {
+    padding: 0.75rem 1rem; /* было 1.25rem 1rem */
+  }
+
+  /* Уменьшить размер обложки */
+  .w-10.h-14 {
+    width: 2rem;  /* было 2.5rem */
+    height: 3rem; /* было 3.5rem */
+  }
+
+  /* Кнопка статуса - уменьшить */
+  button[class*="px-3.py-1.5"] {
+    padding: 0.25rem 0.5rem;
+    font-size: 11px;
+  }
 }
 </style>

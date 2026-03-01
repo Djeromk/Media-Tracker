@@ -219,7 +219,7 @@ onUnmounted(() => { cleanup(); });
     <div class="mb-6">
       <div class="flex items-end gap-3 mb-3">
         <span
-          class="text-7xl font-extrabold leading-none tracking-tight"
+          class="text-5xl sm:text-7xl font-extrabold leading-none tracking-tight"
           style="color: var(--primary-500);"
         >
           {{ completionPercentage }}%
@@ -315,4 +315,21 @@ onUnmounted(() => { cleanup(); });
 
 <style scoped>
 canvas { outline: none; }
+@media (max-width: 640px) {
+  /* Уменьшить размер диаграммы */
+  .w-32.h-32 {
+    width: 6rem;
+    height: 6rem;
+  }
+
+  /* Уменьшить padding карточки */
+  .card-padded {
+    padding: 1rem;
+  }
+
+  /* Легенда - уменьшить отступы */
+  .flex.flex-col.gap-2 {
+    gap: 0.5rem;
+  }
+}
 </style>

@@ -64,3 +64,33 @@ const userInitials = computed(() => {
     </nav>
   </header>
 </template>
+
+<style>
+@media (max-width: 640px) {
+  header nav {
+    padding: 0 12px; /* было 16px */
+  }
+
+  header nav .flex {
+    gap: 8px; /* уменьшить расстояние между элементами */
+  }
+
+  header nav a,
+  header nav button {
+    font-size: 13px; /* было 15px */
+    padding: 6px 10px; /* уменьшить padding */
+  }
+
+  /* Аватар пользователя */
+  header nav a[title*="Профиль"] {
+    width: 32px;  /* было 36px */
+    height: 32px;
+  }
+
+  /* Бейдж "Демо" */
+  header nav span[class*="px-2"] {
+    padding: 2px 6px;
+    font-size: 10px;
+  }
+}
+</style>

@@ -84,7 +84,7 @@ const borderClass = computed(() => `${props.variant}-card`);
 
       >
         <div
-          class="text-5xl font-extrabold leading-none mb-2 tracking-tight"
+          class="text-4xl md:text-5xl font-extrabold leading-none mb-2 tracking-tight"
           :style="{ color: accentColor }"
         >
           {{ stats.inProgress }}
@@ -160,3 +160,21 @@ const borderClass = computed(() => `${props.variant}-card`);
 
   </div>
 </template>
+
+<style>
+@media (max-width: 640px) {
+  .category-card {
+    padding: 1rem; /* было 1.5rem */
+  }
+
+  /* Статистика - уменьшить отступы между метриками */
+  .grid.grid-cols-2.gap-3 {
+    gap: 0.5rem;
+  }
+
+  /* Завершено/Бэклог - уменьшить размер текста */
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+}
+</style>

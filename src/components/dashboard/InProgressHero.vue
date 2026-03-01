@@ -74,7 +74,7 @@ function getCoverUrl(item: UserMedia): string | null {
   return item.media?.coverUrl || item.media?.cover_url || null;
 }
 
-const visibleItems = computed(() => props.items.slice(0, 5).reverse())
+const visibleItems = computed(() => props.items.slice(0, 5).reverse());
 
 const hasMore = computed(() => props.items.length > 4);
 
@@ -85,9 +85,7 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
   <div v-if="items.length > 0" class="mb-8 animate-slide-in">
     <div class="flex items-center justify-between mb-6">
       <div>
-        <h3
-          class="text-2xl font-bold text-(--text-primary) mb-1"
-        >
+        <h3 class="text-2xl font-bold text-(--text-primary) mb-1">
           Сейчас в процессе
         </h3>
         <p class="text-sm text-(--text-tertiary)">
@@ -114,9 +112,9 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
         <div
           v-for="(item, index) in visibleItems"
           :key="item.id"
-		  :title="getMediaTitle(item)"
-      class="card-padded w-80 lg:w-95 flex border-l-4 items-center gap-4
-      hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"          :style="{
+          :title="getMediaTitle(item)"
+          class="card-padded w-72 sm:w-80 lg:w-95 flex border-l-4 items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
+          :style="{
             animationDelay: `${index * 50}ms`,
             ...getBorderStyle(item.media?.type || ''),
           }"
@@ -195,12 +193,11 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
   <!-- Пустое состояние - если нет элементов в процессе -->
   <div v-else class="card-padded mb-8 text-center py-12">
     <div
-    class="w-16 h-16 mx-auto mb-4 rounded-full bg-(--background-subtle) flex items-center justify-center"    >
+      class="w-16 h-16 mx-auto mb-4 rounded-full bg-(--background-subtle) flex items-center justify-center"
+    >
       <BookOpen :size="24" class="text-(--gray-400)" />
     </div>
-    <h4
-      class="text-lg font-semibold text-(--text-primary) mb-2"
-    >
+    <h4 class="text-lg font-semibold text-(--text-primary) mb-2">
       Нет активных элементов
     </h4>
     <p class="text-sm text-(--text-tertiary)">
@@ -215,5 +212,22 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
  */
 .card-padded {
   animation: slideIn var(--transition-slower) ease-out;
+}
+@media (max-width: 640px) {
+  /* Уменьшить размер обложки */
+  .w-16.h-20 {
+    width: 3rem;   /* было 4rem */
+    height: 4.5rem; /* было 5rem */
+  }
+
+  /* Заголовок в карточке */
+  h4.text-base {
+    font-size: 0.875rem;
+  }
+
+  /* Уменьшить padding карточки */
+  .card-padded {
+    padding: 0.75rem;
+  }
 }
 </style>
