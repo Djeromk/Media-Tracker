@@ -19,7 +19,6 @@ export const useAuthStore = defineStore('auth', () => {
   const isDemoUser = computed(() => user.value?.isAnonymous === true)
   const userEmail = computed(() => user.value?.email || '')
   const userName = computed(() => profile.value?.name || '')
-
   //const userNickname = computed(() => profile.value?.nickname || '')
 
   async function loadProfile(userId: string) {
@@ -63,9 +62,12 @@ export const useAuthStore = defineStore('auth', () => {
     loading.value = true
     try {
       const { data: { session } } = await supabase.auth.getSession()
-
+      console.log("getSession session", session)
       if (session?.user) {
         await setUserFromSession(session.user)
+      } else {
+        user.value = null
+        profile.value = null
       }
 
       supabase.auth.onAuthStateChange(async (_event, session) => {
