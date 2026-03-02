@@ -304,7 +304,7 @@ const vFocus = {
             v-model="searchQuery"
             type="text"
             :placeholder="placeholder"
-            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all text-sm"
+            class="w-full px-4 py-2.5 rounded-xl border border-gray-200 bg-gray-50 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-400 focus:border-transparent transition-all text-base"
             autofocus
             v-focus
             @click.stop
@@ -481,7 +481,6 @@ const vFocus = {
           </ul>
         </div>
 
-        <!-- Пустой результат поиска -->
         <div
           v-else-if="searchQuery.length >= 2"
           class="text-center py-10 text-gray-400 flex-1 text-sm"
