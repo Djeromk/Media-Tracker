@@ -2,7 +2,7 @@
 </script>
 
 <template>
-  <div class="skeleton-container">
+  <div class="skeleton-container animate-pulse">
 
     <!-- Hero: карточки "В процессе" -->
     <div class="skeleton-hero mb-8">
@@ -17,7 +17,7 @@
         <div
           v-for="i in 3"
           :key="`hero-${i}`"
-          class="skeleton-card-hero"
+          class="skeleton skeleton-card-hero"
         >
           <div class="skeleton-cover"></div>
           <div class="flex-1 space-y-2">
@@ -36,10 +36,10 @@
     </div>
 
     <!-- Сетка карточек -->
-    <div class="skeleton-stats-grid">
+    <div class=" skeleton-stats-grid">
 
       <!-- ActivityCard -->
-      <div class="skeleton-card skeleton-card--activity">
+      <div class="skeleton skeleton-card skeleton-card--activity">
         <div class="flex items-center justify-between mb-6">
           <div class="flex items-center gap-3">
             <div class="skeleton-icon"></div>
@@ -69,7 +69,7 @@
       <div
         v-for="i in 3"
         :key="`media-${i}`"
-        class="skeleton-card"
+        class="skeleton skeleton-card"
       >
         <div class="flex items-start justify-between mb-5">
           <div class="flex items-center gap-3">
@@ -109,14 +109,14 @@
         <div
           v-for="i in 4"
           :key="`filter-${i}`"
-          class="skeleton-filter-chip"
+          class="skeleton skeleton-filter-chip"
         ></div>
       </div>
 
       <div
         v-for="i in 4"
         :key="`accordion-${i}`"
-        class="skeleton-accordion-section"
+        class="skeleton skeleton-accordion-section"
       >
         <div class="flex items-center justify-between px-5 py-4">
           <div class="flex items-center gap-3">
@@ -128,10 +128,5 @@
         </div>
       </div>
     </div>
-
   </div>
 </template>
-
-<style scoped>
-
-</style>

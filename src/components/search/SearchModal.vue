@@ -319,7 +319,7 @@ const vFocus = {
         </div>
 
         <div v-else-if="error" class="text-center py-10 flex-1 px-6">
-          <p class="text-sm text-red-500">{{ error }}</p>
+          <p class="text-base text-red-500">{{ error }}</p>
         </div>
 
         <div
@@ -483,13 +483,13 @@ const vFocus = {
 
         <div
           v-else-if="searchQuery.length >= 2"
-          class="text-center py-10 text-gray-400 flex-1 text-sm"
+          class="text-center py-10 text-gray-400 flex-1 text-base"
         >
           Ничего не найдено
         </div>
 
         <!-- Ожидание ввода -->
-        <div v-else class="text-center py-10 text-gray-400 flex-1 text-sm">
+        <div v-else class="text-center py-10 text-gray-400 flex-1 text-base">
           Введите название для поиска
         </div>
       </div>

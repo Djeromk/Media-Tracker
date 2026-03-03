@@ -102,11 +102,13 @@ const getChartOption = (): EChartsOption => ({
     backgroundColor: "var(--background-card)",
     borderColor: "var(--border-color)",
     borderWidth: 1,
+    confine: true,
     textStyle: {
       color: "var(--text-primary)",
       fontSize: 12,
     },
     padding: [8, 12],
+
   },
   legend: {
     show: false,
