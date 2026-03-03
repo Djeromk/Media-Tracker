@@ -98,13 +98,14 @@ const activityStats = computed(() => ({
   },
   thisWeekCompleted: thisWeekCompleted.value,
 }));
-
+const scrollPosition = window.scrollY || document.documentElement.scrollTop
 function openSearchModal(type: MediaType) {
   selectedMediaType.value = type;
   isSearchModalOpen.value = true;
   document.body.style.overflow = 'hidden';
   document.body.style.position = 'fixed';
   document.body.style.width = '100%';
+  document.body.style.top = `-${scrollPosition}px`
 }
 
 function closeSearchModal() {
@@ -112,6 +113,7 @@ function closeSearchModal() {
   document.body.style.overflow = 'auto';
   document.body.style.position = '';
   document.body.style.width = '';
+  document.body.style.top = '';
 }
 
 async function handleMediaSelect(
