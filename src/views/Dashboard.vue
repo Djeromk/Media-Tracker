@@ -102,10 +102,12 @@ const activityStats = computed(() => ({
 function openSearchModal(type: MediaType) {
   selectedMediaType.value = type;
   isSearchModalOpen.value = true;
+  document.body.style.overflow = 'hidden';
 }
 
 function closeSearchModal() {
   isSearchModalOpen.value = false;
+  document.body.style.overflow = 'auto';
 }
 
 async function handleMediaSelect(
