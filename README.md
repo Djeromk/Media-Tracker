@@ -93,7 +93,6 @@
 | **Pinia** | 2.2+ | Официальный state management для Vue 3 |
 | **Vue Router** | 4.4+ | Официальный роутер с поддержкой TypeScript |
 | **Tailwind CSS** | 3.4+ | Utility-first CSS-фреймворк (через UnoCSS) |
-| **UnoCSS** | 0.64+ | Атомарный CSS-движок с поддержкой кастомных правил |
 
 ### Backend & Services
 
@@ -1092,25 +1091,15 @@ SOFTWARE.
 
 ---
 
-## 🙏 Благодарности
-
-- **Vue.js Team** — за прекрасный фреймворк
-- **Supabase** — за мощный BaaS с отличной DX
-- **Кинопоиск / Google Books / RAWG** — за предоставление API
-- **UnoCSS Team** — за быстрый CSS-движок
-- **Lucide** — за качественные иконки
-
----
-
 ## 📞 Контакты
 
-**Автор**: [Your Name]
-**Email**: your.email@example.com
-**GitHub**: [@yourusername](https://github.com/yourusername)
-**Telegram**: [@yourusername](https://t.me/yourusername)
+**Автор**: Алексей Сурков
+**Email**: adimisug@example.com
+**GitHub**: [@yourusername](https://github.com/Djerom_k)
+**Telegram**: [@yourusername](https://t.me/adsurs)
 
 ---
 
 <p align="center">
-  Сделано с ❤️ для изучения Vue 3 и современной фронтенд-разработки
+  Сделано для изучения Vue 3 и современной фронтенд-разработки
 </p>
