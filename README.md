@@ -1095,8 +1095,8 @@ SOFTWARE.
 
 **Автор**: Алексей Сурков
 **Email**: adimisug@example.com
-**GitHub**: [@yourusername](https://github.com/Djerom_k)
-**Telegram**: [@yourusername](https://t.me/adsurs)
+**GitHub**: [@Djerom_k](https://github.com/Djerom_k)
+**Telegram**: [@adsurs](https://t.me/adsurs)
 
 ---
 
