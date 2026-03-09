@@ -1,0 +1,13 @@
+{
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/" },
+    { "source": "/books/:id", "destination": "/books/:id" },
+    { "source": "/movies/:id", "destination": "/movies/:id" },
+    { "source": "/games/:id", "destination": "/games/:id" },
+    { "source": "/login", "destination": "/login" },
+    { "source": "/register", "destination": "/register" },
+    { "source": "/reset-password", "destination": "/reset-password" },
+    { "source": "/profile", "destination": "/profile" },
+    { "source": "/not-found", "destination": "/not-found" }
+  ]
+}
