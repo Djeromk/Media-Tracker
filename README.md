@@ -1,6 +1,7 @@
 # 🎬 TRACKmy — Media Tracking Application
 
 > Современное веб-приложение для отслеживания фильмов, сериалов, книг и игр с удобным интерфейсом и детальной статистикой
+> [https://track-my.vercel.app](https://track-my.vercel.app)
 
 [![Vue 3](https://img.shields.io/badge/Vue-3.x-4FC08D?style=flat&logo=vue.js&logoColor=white)](https://vuejs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.x-3178C6?style=flat&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
