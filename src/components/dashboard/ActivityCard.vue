@@ -179,7 +179,7 @@ onUnmounted(() => { cleanup(); });
 </script>
 
 <template>
-  <div class="card-padded border-l-4 border-l-(--primary-500)">
+  <div class="card-padded">
 
     <!-- ── Заголовок ───────────────────────────────────────────── -->
     <div class="flex items-center justify-between mb-6">

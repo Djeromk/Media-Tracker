@@ -28,19 +28,19 @@ const selectedMediaType = ref<MediaType>("other");
 const notification = ref<{ message: string; type: "success" | "error" } | null>(
   null,
 );
-let loading = ref(true)
+let loading = ref(true);
 
 const SearchModal = defineAsyncComponent({
   loader: () => import("@/components/search/SearchModal.vue"),
-})
+});
 const MediaTypeCard = defineAsyncComponent({
   loader: () => import("@/components/dashboard/MediaTypeCard.vue"),
-})
+});
 const MediaAccordion = defineAsyncComponent({
   loader: () => import("@/components/accordion/MediaAccordion.vue"),
-})
+});
 onMounted(() => {
-  loading.value = false
+  loading.value = false;
   if (authStore.user) {
     mediaStore.fetchUserMedia();
   }
@@ -107,22 +107,22 @@ const activityStats = computed(() => ({
   },
   thisWeekCompleted: thisWeekCompleted.value,
 }));
-const scrollPosition = window.scrollY || document.documentElement.scrollTop
+const scrollPosition = window.scrollY || document.documentElement.scrollTop;
 function openSearchModal(type: MediaType) {
   selectedMediaType.value = type;
   isSearchModalOpen.value = true;
-  document.body.style.overflow = 'hidden';
-  document.body.style.position = 'fixed';
-  document.body.style.width = '100%';
-  document.body.style.top = `-${scrollPosition}px`
+  document.body.style.overflow = "hidden";
+  document.body.style.position = "fixed";
+  document.body.style.width = "100%";
+  document.body.style.top = `-${scrollPosition}px`;
 }
 
 function closeSearchModal() {
   isSearchModalOpen.value = false;
-  document.body.style.overflow = 'auto';
-  document.body.style.position = '';
-  document.body.style.width = '';
-  document.body.style.top = '';
+  document.body.style.overflow = "auto";
+  document.body.style.position = "";
+  document.body.style.width = "";
+  document.body.style.top = "";
 }
 
 async function handleMediaSelect(
@@ -229,45 +229,46 @@ function handleViewAllInProgress() {}
         @view-all="handleViewAllInProgress"
       />
 
-      <!-- <div class="mb-6">
-      </div> -->
-      
-      <div v-if="authStore.user" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
-        <h2 class="mb-2">Статистика</h2>
-        <p class="text-sm text-(--text-tertiary)">
-          Отслеживайте свой прогресс по всем категориям
-        </p>
-        <ActivityCard
-          :books-stats="activityStats.booksStats"
-          :movies-stats="activityStats.moviesStats"
-          :games-stats="activityStats.gamesStats"
-          :this-week-completed="activityStats.thisWeekCompleted"
-        />
+      <div v-if="authStore.user">
+        <div class="p-4">
+          <h2 class="mb-2">Статистика</h2>
+          <p class="text-sm text-(--text-tertiary)">
+            Отслеживайте свой прогресс по всем категориям
+          </p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-5">
+          <ActivityCard
+            :books-stats="activityStats.booksStats"
+            :movies-stats="activityStats.moviesStats"
+            :games-stats="activityStats.gamesStats"
+            :this-week-completed="activityStats.thisWeekCompleted"
+          />
 
-        <MediaTypeCard
-          v-if="authStore.user"
-          title="Книги"
-          :icon="BookOpen"
-          :stats="stats.books"
-          variant="books"
-          @add="() => openSearchModal('book')"
-        />
-        <MediaTypeCard
-          v-if="authStore.user"
-          title="Фильмы и Сериалы"
-          :icon="Film"
-          :stats="stats.movies"
-          variant="movies"
-          @add="() => openSearchModal('movie')"
-        />
-        <MediaTypeCard
-          v-if="authStore.user"
-          title="Игры"
-          :icon="Gamepad2"
-          :stats="stats.games"
-          variant="games"
-          @add="() => openSearchModal('game')"
-        />
+          <MediaTypeCard
+            v-if="authStore.user"
+            title="Книги"
+            :icon="BookOpen"
+            :stats="stats.books"
+            variant="books"
+            @add="() => openSearchModal('book')"
+          />
+          <MediaTypeCard
+            v-if="authStore.user"
+            title="Фильмы и Сериалы"
+            :icon="Film"
+            :stats="stats.movies"
+            variant="movies"
+            @add="() => openSearchModal('movie')"
+          />
+          <MediaTypeCard
+            v-if="authStore.user"
+            title="Игры"
+            :icon="Gamepad2"
+            :stats="stats.games"
+            variant="games"
+            @add="() => openSearchModal('game')"
+          />
+        </div>
       </div>
 
       <MediaAccordion
@@ -292,15 +293,19 @@ function handleViewAllInProgress() {}
 .grid > * {
   animation: slideIn var(--transition-slower) ease-out;
 }
+
 .grid > *:nth-child(1) {
   animation-delay: 0ms;
 }
+
 .grid > *:nth-child(2) {
   animation-delay: 100ms;
 }
+
 .grid > *:nth-child(3) {
   animation-delay: 150ms;
 }
+
 .grid > *:nth-child(4) {
   animation-delay: 200ms;
 }
@@ -309,6 +314,7 @@ function handleViewAllInProgress() {}
 .slide-down-leave-active {
   transition: all 0.3s ease;
 }
+
 .slide-down-enter-from,
 .slide-down-leave-to {
   opacity: 0;

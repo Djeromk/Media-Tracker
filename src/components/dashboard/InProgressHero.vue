@@ -113,7 +113,7 @@ const remainingCount = computed(() => Math.max(0, props.items.length - 3));
           v-for="(item, index) in visibleItems"
           :key="item.id"
           :title="getMediaTitle(item)"
-          class="card-padded w-72 sm:w-80 lg:w-95 flex border-l-4 items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
+          class="card-padded w-72 sm:w-80 lg:w-95 flex border-l-15 items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
           :style="{
             animationDelay: `${index * 50}ms`,
             ...getBorderStyle(item.media?.type || ''),

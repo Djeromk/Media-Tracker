@@ -129,7 +129,7 @@ async function handleDemoLogin(): Promise<void> {
         <div class="auth-card-header">
           <!-- Eyebrow — маленькая надпись над заголовком -->
           <p class="auth-eyebrow">Добро пожаловать</p>
-          <h1 class="auth-title text-(--text-primary)">Войдите</h1>
+          <h1 class="auth-title text-(--text-inverse)">Войдите</h1>
           <p class="auth-subtitle">Отслеживайте фильмы, книги и игры</p>
         </div>
 

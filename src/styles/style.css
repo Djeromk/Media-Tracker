@@ -291,9 +291,9 @@
   }
 
   /* CATEGORY CARDS */
-  .books-card { border-left: 4px solid var(--category-books-bg); }
-  .movies-card { border-left: 4px solid var(--category-movies-bg); }
-  .games-card { border-left: 4px solid var(--category-games-bg); }
+  .books-card { border-left: 20px solid var(--category-books-bg); }
+  .movies-card { border-left: 20px solid var(--category-movies-bg); }
+  .games-card { border-left: 20px solid var(--category-games-bg); }
 
   /* NAV */
   .nav-link-active {

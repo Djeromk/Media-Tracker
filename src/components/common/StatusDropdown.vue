@@ -147,7 +147,7 @@ function isCurrentStatus(status: MediaStatus): boolean {
           }"
           @click.stop
         >
-          <div class="bg-white rounded-xl shadow-2xl border border-(--border-color) overflow-hidden min-w-[164px] py-1">
+          <div class="bg-(--background-elevated) rounded-xl shadow-2xl border border-(--border-color) overflow-hidden min-w-[164px] py-1">
             <button
               v-for="option in availableStatuses"
               :key="option.value"
