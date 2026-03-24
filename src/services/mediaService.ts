@@ -54,6 +54,7 @@ export const mediaService = {
       }
 
       if (userId) {
+        let userMediaId: string | null = null;
         let current_season = null
         let current_episode = null
         if("isSeries" in item && item.isSeries){
@@ -61,7 +62,7 @@ export const mediaService = {
           current_season = 1;
           current_episode = 1;
         }
-        const { error: addError } = await db.addUserMedia({
+        const { data: addedUserMedia, error: addError } = await db.addUserMedia({
           userId,
           mediaId,
           status,
@@ -81,6 +82,9 @@ export const mediaService = {
           }
           throw addError;
         }
+        userMediaId = addedUserMedia?.[0]?.id ?? null;
+
+        return { success: true, mediaId, userMediaId };
       }
 
       return { success: true, mediaId };

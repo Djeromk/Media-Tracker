@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
-import { ref, computed } from "vue";
-import { db } from "@/services/supabase";
+import { ref, computed, watch } from "vue";
+import { db, supabase } from "@/services/supabase";
 import { mediaService } from "@/services/mediaService";
 import type {
   UserMedia,
@@ -12,7 +12,10 @@ import type {
   ExternalBook,
 } from "@/types";
 import { useAuthStore } from "./auth";
-import type { PostgrestError } from "@supabase/supabase-js";
+import type {
+  PostgrestError,
+  RealtimePostgresChangesPayload,
+} from "@supabase/supabase-js";
 
 interface MediaResponse {
   success: boolean;
@@ -27,6 +30,11 @@ export const useMediaStore = defineStore("media", () => {
   const userMedia = ref<UserMedia[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
+  const subscriptionUserId = ref<string | null>(null);
+  const userMediaChannel = ref<ReturnType<typeof supabase.channel> | null>(
+    null,
+  );
+  const mutedEvents = ref<Record<string, number>>({});
 
   // Автоматически рассчитывает статистику на основе userMedia
   const stats = computed<DashboardStats>(() => {
@@ -81,6 +89,124 @@ export const useMediaStore = defineStore("media", () => {
     }
   }
 
+  function getMuteKey(eventType: "INSERT" | "UPDATE" | "DELETE", id: string) {
+    return `${eventType}:${id}`;
+  }
+
+  function muteRealtimeEvent(
+    eventType: "INSERT" | "UPDATE" | "DELETE",
+    id: string,
+    ttlMs = 4000,
+  ) {
+    mutedEvents.value[getMuteKey(eventType, id)] = Date.now() + ttlMs;
+  }
+
+  function isRealtimeEventMuted(
+    eventType: "INSERT" | "UPDATE" | "DELETE",
+    id: string,
+  ) {
+    const key = getMuteKey(eventType, id);
+    const mutedUntil = mutedEvents.value[key];
+    if (mutedUntil === undefined) return false;
+    if (mutedUntil < Date.now()) {
+      delete mutedEvents.value[key];
+      return false;
+    }
+    return true;
+  }
+
+  async function upsertUserMediaRecordById(recordId: string, userId: string) {
+    const { data, error: fetchError } = await db.getUserMediaById(
+      userId,
+      recordId,
+    );
+
+    if (fetchError || !data) {
+      if (fetchError) {
+        console.error("Failed to fetch user_media by id:", fetchError.message);
+      }
+      return;
+    }
+
+    const index = userMedia.value.findIndex((item) => item.id === recordId);
+    if (index === -1) {
+      userMedia.value.unshift(data as UserMedia);
+      return;
+    }
+
+    userMedia.value.splice(index, 1, data as UserMedia);
+  }
+
+  function removeUserMediaById(recordId: string) {
+    const index = userMedia.value.findIndex((item) => item.id === recordId);
+    if (index === -1) return;
+    userMedia.value.splice(index, 1);
+  }
+
+  async function handleRealtimeChange(
+    payload: RealtimePostgresChangesPayload<{ id: string; user_id: string }>,
+  ) {
+    const userId = authStore.user?.id;
+    if (!userId) return;
+
+    if (payload.eventType === "DELETE") {
+      const deletedId = payload.old.id;
+      if (!deletedId) return;
+      if (isRealtimeEventMuted("DELETE", deletedId)) return;
+      removeUserMediaById(deletedId);
+      return;
+    }
+
+    const changedId = payload.new.id;
+    if (!changedId) return;
+    if (isRealtimeEventMuted(payload.eventType, changedId)) return;
+    await upsertUserMediaRecordById(changedId, userId);
+  }
+
+  async function startUserMediaSubscription() {
+    const userId = authStore.user?.id;
+    if (!userId) return;
+
+    if (userMediaChannel.value !== null && subscriptionUserId.value === userId) {
+      return;
+    }
+
+    stopUserMediaSubscription();
+
+    const channel = supabase.channel(`user-media:${userId}`);
+
+    channel.on(
+      "postgres_changes",
+      {
+        event: "*",
+        schema: "public",
+        table: "user_media",
+        filter: `user_id=eq.${userId}`,
+      },
+      (payload) => {
+        void handleRealtimeChange(
+          payload as RealtimePostgresChangesPayload<{
+            id: string;
+            user_id: string;
+          }>,
+        );
+      },
+    );
+
+    channel.subscribe();
+    userMediaChannel.value = channel;
+    subscriptionUserId.value = userId;
+  }
+
+  function stopUserMediaSubscription() {
+    if (userMediaChannel.value !== null) {
+      void userMediaChannel.value.unsubscribe();
+      userMediaChannel.value = null;
+    }
+    subscriptionUserId.value = null;
+    mutedEvents.value = {};
+  }
+
   async function addMediaFromExternal(
     item: ExternalMovie | ExternalBook | ExternalGame,
     type: MediaType,
@@ -102,7 +228,13 @@ export const useMediaStore = defineStore("media", () => {
       }
 
       if (authStore.user) {
-        await fetchUserMedia();
+        const latestItemId = result.userMediaId;
+        if (latestItemId) {
+          muteRealtimeEvent("INSERT", latestItemId);
+          await upsertUserMediaRecordById(latestItemId, authStore.user.id);
+        } else {
+          await fetchUserMedia();
+        }
       }
 
       return {
@@ -177,6 +309,7 @@ export const useMediaStore = defineStore("media", () => {
     try {
       const { error: updateError } = await db.updateUserMedia(id, updates);
       if (updateError) throw updateError;
+      muteRealtimeEvent("UPDATE", id);
 
       return { success: true };
     } catch (e) {
@@ -214,14 +347,24 @@ export const useMediaStore = defineStore("media", () => {
   async function deleteMedia(id: string): Promise<MediaResponse> {
     loading.value = true;
     error.value = null;
+    const itemIndex = userMedia.value.findIndex((item) => item.id === id);
+    const deletedItem = itemIndex === -1 ? null : userMedia.value[itemIndex];
+
+    if (itemIndex !== -1) {
+      userMedia.value.splice(itemIndex, 1);
+    }
+
     try {
       const { error: deleteError } = await db.deleteUserMedia(id);
 
       if (deleteError) throw deleteError;
 
-      await fetchUserMedia();
+      muteRealtimeEvent("DELETE", id);
       return { success: true };
     } catch (e) {
+      if (deletedItem !== null && itemIndex !== -1) {
+        userMedia.value.splice(itemIndex, 0, deletedItem);
+      }
       const dbError = e as PostgrestError;
       error.value = dbError.message;
       return { success: false, error: dbError.message };
@@ -231,9 +374,25 @@ export const useMediaStore = defineStore("media", () => {
   }
 
   function clearUserMedia(): void {
+    stopUserMediaSubscription();
     userMedia.value = [];
     error.value = null;
   }
+
+  watch(
+    () => authStore.user?.id,
+    (userId, previousUserId) => {
+      if (userId && userId !== previousUserId) {
+        void startUserMediaSubscription();
+        return;
+      }
+
+      if (!userId) {
+        stopUserMediaSubscription();
+      }
+    },
+    { immediate: true },
+  );
 
   const getInProgressByType = computed(() => {
     return (type: MediaType) => {
@@ -260,6 +419,8 @@ export const useMediaStore = defineStore("media", () => {
     getInProgressByType,
     addMediaFromExternal,
     fetchUserMedia,
+    startUserMediaSubscription,
+    stopUserMediaSubscription,
     //addMedia,
     updateMedia,
     deleteMedia,
