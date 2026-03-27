@@ -161,15 +161,8 @@ function handleStatusClick(status: MediaStatus) {
 </template>
 
 <style scoped>
-/* ── Карточка ─────────────────────────────────────────────────── */
+
 .featured-card {
-  /*
-    Резиновая карточка через fluid-width:
-    - min-width: никогда не сужается меньше 130px
-    - max-width: не растёт больше 200px на больших экранах
-    - width: заполняет доступное пространство
-    - flex-shrink: 0 — карусель не сжимает карточки
-  */
   min-width: 130px;
   max-width: 200px;
   width: clamp(130px, 18vw, 200px);
@@ -179,7 +172,6 @@ function handleStatusClick(status: MediaStatus) {
   gap: 0.5rem;
 }
 
-/* ── Обёртка обложки — якорь для кнопки ───────────────────────── */
 .featured-card__cover-wrap {
   position: relative;
 }
@@ -191,10 +183,6 @@ function handleStatusClick(status: MediaStatus) {
 
 .featured-card__cover {
   width: 100%;
-  /*
-    aspect-ratio 2/3 — стандартное соотношение постера.
-    Высота адаптируется под текущую ширину карточки автоматически.
-  */
   aspect-ratio: 2 / 3;
   border-radius: var(--border-radius-md);
   overflow: hidden;
@@ -227,7 +215,6 @@ function handleStatusClick(status: MediaStatus) {
   color: var(--text-disabled);
 }
 
-/* ── Кнопка в верхнем левом углу обложки ─────────────────────── */
 .featured-card__btn-wrap {
   position: absolute;
   top: 0.375rem;

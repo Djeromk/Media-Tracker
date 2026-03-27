@@ -1,6 +1,6 @@
 // src/types/featured.ts
 
-import type { MediaType, MediaStatus, UserMedia } from './index'
+import type { MediaType, MediaStatus } from './index'
 
 /**
  * FeaturedItem — запись из media_items с is_featured = true.

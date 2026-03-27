@@ -5,7 +5,7 @@ import { useMediaStore } from '@/stores/media'
 import { useAuthStore } from '@/stores/auth'
 import type { FeaturedItem, FeaturedItemEnriched } from '@/types/featured'
 import type { MediaStatus, MediaType } from '@/types'
-import { createStatusUpdatePayload } from '@/utils/utils'
+//import { createStatusUpdatePayload } from '@/utils/utils'
 import FeaturedCard from './FeaturedCard.vue'
 
 interface Props {
