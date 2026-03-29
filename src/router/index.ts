@@ -78,11 +78,23 @@ const router = createRouter({
 
 router.beforeEach(async (to, _from, next) => {
   const authStore = useAuthStore();
+
+  if (authStore.loading) {
+    await new Promise<void>((resolve) => {
+      const interval = setInterval(() => {
+        if (!authStore.loading) {
+          clearInterval(interval);
+          resolve();
+        }
+      }, 16);
+    });
+  }
+
   const requiresAuth = to.meta.requiresAuth as boolean;
   const guestOnly = to.meta.guestOnly as boolean;
-  if (!authStore.isAuthenticated) {
-    await authStore.initialize();
-  }
+  // if (!authStore.isAuthenticated) {
+  //   await authStore.initialize();
+  // }
   if (requiresAuth && !authStore.isAuthenticated) {
     next({ name: "login", query: { redirect: to.fullPath } });
   } else if (guestOnly && authStore.isAuthenticated) {

@@ -2,11 +2,12 @@
 import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import type { ExternalBook, MediaStatus, UserMedia } from "@/types";
-import { BOOKS_STATUS_LABELS } from "@/types";
+//import { BOOKS_STATUS_LABELS } from "@/types";
 import { booksService } from "@/services/api/google-books";
 import { useMediaStore } from "@/stores/media";
 import Tag from "@/components/tag/tag.vue";
 import Slider from "@/components/slider/slider.vue";
+import MediaStatusDropdown from "@/components/media/MediaStatusDropdown.vue";
 import {
   ArrowLeft,
   BookOpen,
@@ -15,15 +16,13 @@ import {
   Hash,
   Calendar,
   FileText,
-  Plus,
-  ChevronDown,
-  Check,
   Loader,
   Building2,
   Globe,
   ExternalLink,
 } from "lucide-vue-next";
 import fallbackImage from "@/assets/fallback.svg";
+//import { useAuthStore } from "@/stores/auth";
 
 const route = useRoute();
 const router = useRouter();
@@ -48,13 +47,13 @@ const currentStatus = computed<MediaStatus | null>(() => {
   return userMediaEntry.value?.status ?? null;
 });
 
-const availableStatuses = computed<{ value: MediaStatus; label: string }[]>(
-  () => {
-    return (Object.entries(BOOKS_STATUS_LABELS) as [MediaStatus, string][]).map(
-      ([value, label]) => ({ value, label }),
-    );
-  },
-);
+// const availableStatuses = computed<{ value: MediaStatus; label: string }[]>(
+//   () => {
+//     return (Object.entries(BOOKS_STATUS_LABELS) as [MediaStatus, string][]).map(
+//       ([value, label]) => ({ value, label }),
+//     );
+//   },
+// );
 
 const publicationYear = computed<string | null>(() => {
   if (!book.value?.publishedDate) return null;
@@ -188,13 +187,16 @@ async function handleCurrentPageChange(value: number) {
               </div>
             </div>
           </div>
-
+          <MediaStatusDropdown
+            :user-media-entry="userMediaEntry"
+            :current-status="currentStatus"
+            media-type="book"
+            @add="handleAddBook"
+            @update="handleUpdateStatus"
+          />
           <!-- Блок управления статусом книги в списке пользователя -->
-          <div class="relative">
-            <!--
-              Кнопка-триггер дропдауна.
-              Зелёная обводка когда книга уже добавлена в список.
-            -->
+          <!-- <div v-if="isAuthenticated" class="relative">
+
             <button
               @click="statusDropdownOpen = !statusDropdownOpen"
               class="w-full flex items-center justify-between px-4 py-3 rounded-xl border transition-all duration-200 font-medium text-sm cursor-pointer"
@@ -222,10 +224,7 @@ async function handleCurrentPageChange(value: number) {
               />
             </button>
 
-            <!--
-              Выпадающий список статусов.
-              Появляется с анимацией через Transition.
-            -->
+
             <Transition name="dropdown">
               <div
                 v-if="statusDropdownOpen"
@@ -254,7 +253,7 @@ async function handleCurrentPageChange(value: number) {
                 </button>
               </div>
             </Transition>
-          </div>
+          </div> -->
 
           <!--
             Слайдер текущей страницы.

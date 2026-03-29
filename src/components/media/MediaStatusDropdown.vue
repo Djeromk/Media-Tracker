@@ -3,6 +3,9 @@ import { ref, computed } from "vue";
 import type { MediaStatus, UserMedia, MediaType } from "@/types";
 import { getAvailableStatuses } from "@/components/search/utils";
 import { Plus, ChevronDown, Check } from "lucide-vue-next";
+import { useAuthStore } from "@/stores/auth";
+const authStore = useAuthStore();
+const isAuthenticated = computed(() => authStore.isAuthenticated);
 
 interface Props {
   userMediaEntry: UserMedia | null;
@@ -33,7 +36,7 @@ function handleStatusClick(status: MediaStatus) {
 </script>
 
 <template>
-  <div class="relative bg-(--primary-500) w-full rounded-2xl">
+  <div v-if="isAuthenticated" class="relative bg-(--primary-500) w-full rounded-2xl">
     <button
       @click="statusDropdownOpen = !statusDropdownOpen"
       class="w-full flex items-center justify-between px-4 py-3 rounded-2xl  cursor-pointer transition-all hover:bg-(--primary-600) "
