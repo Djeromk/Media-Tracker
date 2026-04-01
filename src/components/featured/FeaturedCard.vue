@@ -6,6 +6,7 @@ import type { FeaturedItemEnriched } from "@/types/featured";
 import type { MediaStatus } from "@/types";
 import { getAvailableStatuses } from "@/components/search/utils";
 import { createImageErrorHandler } from "@/components/search/utils";
+import { getOptimizedImage } from "@/utils/utils";
 import fallbackImage from "@/assets/fallback.svg";
 
 interface Props {
@@ -84,7 +85,7 @@ function handleStatusClick(status: MediaStatus) {
         <div class="featured-card__cover">
           <img
             v-if="item.cover_url"
-            :src="item.cover_url"
+            :src="getOptimizedImage(item.cover_url)"
             :alt="item.title"
             loading="lazy"
             class="featured-card__img"

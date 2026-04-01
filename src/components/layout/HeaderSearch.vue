@@ -1,26 +1,4 @@
-<!-- src/components/layout/HeaderSearch.vue -->
 <script setup lang="ts">
-/**
- * HeaderSearch — строка поиска в шапке приложения.
- *
- * КОНЦЕПЦИЯ:
- * Пользователь сначала выбирает категорию (фильмы / книги / игры),
- * только после этого поле ввода становится активным и запрос летит в API.
- * Это предотвращает лишние вызовы API при случайном фокусе на поле.
- *
- * ПОВЕДЕНИЕ:
- * - Десктоп (≥ 768px): строка поиска всегда видна в шапке
- * - Мобильные (< 768px): скрыта за иконкой лупы, раскрывается по клику
- *
- * РЕЗУЛЬТАТЫ:
- * Выпадающий список под строкой поиска через <Teleport to="body">.
- * Позиция вычисляется через getBoundingClientRect() — работает корректно
- * даже внутри шапки с position: sticky / fixed.
- *
- * DEBOUNCE:
- * Запрос отправляется через 800мс после последнего нажатия клавиши.
- * При смене категории — очищаем предыдущие результаты и запрос.
- */
 
 import { ref, computed, watch, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
@@ -49,18 +27,10 @@ import {
 import StatusDropdown from '@/components/common/StatusDropdown.vue'
 import fallbackImage from '@/assets/fallback.svg'
 
-// ─── Внешние зависимости ───────────────────────────────────────────────────
-
 const router = useRouter()
 const mediaStore = useMediaStore()
 const authStore = useAuthStore()
 
-// ─── Конфигурация кнопок-категорий ────────────────────────────────────────
-
-/**
- * Каждая категория — объект с типом, иконкой и плейсхолдером для input.
- * Иконка — компонент Lucide, передаётся напрямую в <component :is="...">
- */
 interface CategoryConfig {
   type: MediaType
   label: string
@@ -89,65 +59,25 @@ const CATEGORIES: CategoryConfig[] = [
   },
 ]
 
-// ─── Состояние компонента ──────────────────────────────────────────────────
-
-/**
- * selectedCategory — активная категория поиска.
- * null означает что пользователь ещё не выбрал категорию —
- * в этом случае input disabled и запросы не летят.
- */
 const selectedCategory = ref<MediaType | null>(null)
-
-/** Текст поискового запроса, введённый пользователем */
 const query = ref('')
-
-/** Результаты поиска — объединённый тип всех трёх внешних API */
 const results = ref<(ExternalMovie | ExternalBook | ExternalGame)[]>([])
-
-/** Флаг активного HTTP-запроса — показываем спиннер */
 const isLoading = ref(false)
-
-/** Текст ошибки если запрос упал */
 const searchError = ref<string | null>(null)
-
-/**
- * isDropdownOpen — управляет видимостью выпадающего списка.
- * Список показывается только когда есть что показать или идёт загрузка.
- */
 const isDropdownOpen = ref(false)
-
-/**
- * isMobileExpanded — на мобильных управляет раскрытием поиска.
- * При true — строка поиска видна, при false — только иконка лупы.
- */
 const isMobileExpanded = ref(false)
 
-/** Таймер debounce — храним ref чтобы очищать при каждом новом вводе */
 let debounceTimer: ReturnType<typeof setTimeout> | null = null
 
-// ─── DOM-ссылки для позиционирования dropdown ─────────────────────────────
-
-/**
- * inputWrapperRef — обёртка вокруг input, используется как якорь
- * для вычисления координат выпадающего списка через getBoundingClientRect().
- */
 const inputWrapperRef = ref<HTMLDivElement | null>(null)
 const inputRef = ref<HTMLInputElement | null>(null)
 
-/**
- * dropdownCoords — координаты для position: fixed выпадающего списка.
- * Пересчитываются каждый раз перед открытием.
- */
 const dropdownCoords = ref({ top: 0, left: 0, width: 0 })
 
-// ─── Вспомогательные вычисляемые свойства ─────────────────────────────────
 
-/** Конфиг активной категории — используется для плейсхолдера */
 const activeCategoryConfig = computed(
   () => CATEGORIES.find(c => c.type === selectedCategory.value) ?? null,
 )
-
-/** Плейсхолдер меняется в зависимости от выбранной категории */
 const inputPlaceholder = computed(() => {
   if (!selectedCategory.value) return 'Сначала выберите категорию...'
   return activeCategoryConfig.value?.placeholder ?? 'Поиск...'
@@ -174,7 +104,6 @@ const enrichedResults = computed(() =>
   }),
 )
 
-/** Список доступных статусов для текущей категории */
 const availableStatuses = computed(() =>
   getAvailableStatuses(selectedCategory.value ?? undefined),
 )
@@ -1024,8 +953,13 @@ onUnmounted(() => {
 
 /* ── Обложка ─────────────────────────────────────────── */
 .header-search__result-cover {
-  width: 36px;
-  height: 50px;
+  /* width: 36px;
+  height: 50px; */
+  min-width: 40px;
+  max-width: 60px;
+  aspect-ratio: 2 / 3;
+  width: clamp(40px, 10vw, 60px);
+  flex-shrink: 0;
   flex-shrink: 0;
   border-radius: var(--border-radius-sm);
   overflow: hidden;

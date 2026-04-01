@@ -9,5 +9,30 @@
     { "source": "/reset-password", "destination": "/reset-password" },
     { "source": "/profile", "destination": "/profile" },
     { "source": "/not-found", "destination": "/not-found" }
-  ]
+  ],
+
+  "images": {
+    "sizes": [256, 384, 640, 750, 828, 1080, 1200],
+    "domains": ["kinopoiskapiunofficial.tech", "rawg.io", "books.google.com"],
+    "minimumCacheTTL": 60,
+    "formats": ["image/avif", "image/webp"],
+    "remotePatterns": [
+      {
+        "protocol": "https",
+        "hostname": "**.kinopoiskapiunofficial.tech"
+      },
+      {
+        "protocol": "https",
+        "hostname": "**.rawg.io"
+      },
+      {
+        "protocol": "https",
+        "hostname": "**.books.google.com"
+      },
+      {
+        "protocol": "https",
+        "hostname": "**.google.com"
+      }
+    ]
+  }
 }

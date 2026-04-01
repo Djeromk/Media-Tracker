@@ -103,3 +103,17 @@ export function getMovieOriginalTitle(movie: {
   }
   return null;
 }
+
+export const getOptimizedImage = (src: string, width = 640, quality = 75): string => {
+  if (!src) return '';
+
+  if (src.startsWith('/')) return src;
+
+  const params = new URLSearchParams({
+    url: src,
+    w: width.toString(),
+    q: quality.toString(),
+  });
+
+  return `/_vercel/image?${params.toString()}`;
+};

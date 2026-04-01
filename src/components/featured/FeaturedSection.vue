@@ -169,8 +169,10 @@ function handleUpdate(item: FeaturedItemEnriched, status: MediaStatus) {
   display: flex;
   flex-direction: column;
   gap: 0.375rem;
+  min-width: 130px;
+  max-width: 200px;
+  width: clamp(130px, 18vw, 200px);
   flex-shrink: 0;
-  width: 120px;
 }
 
 .featured-section__skeleton-cover {

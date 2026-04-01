@@ -190,18 +190,14 @@ function isCurrentStatus(status: MediaStatus): boolean {
           color: currentStatus !== null ? 'var(--primary-700)' : 'var(--text-secondary)',
         }"
       >
-        <!--
-          Placeholder — disabled + selected.
-          Показывает текущий статус или "Добавить в список".
-          Пользователь не может выбрать эту опцию.
-        -->
-        <option value="" disabled selected>
+        <option value="" disabled selected hidden>
           {{ buttonLabel }}
         </option>
         <option
           v-for="option in availableStatuses"
           :key="option.value"
           :value="option.value"
+          :disabled="isCurrentStatus(option.value)"
         >
           {{ option.label }}
         </option>
