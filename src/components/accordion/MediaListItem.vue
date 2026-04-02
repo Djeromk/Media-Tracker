@@ -60,7 +60,7 @@ function confirmDelete() {
 </script>
 
 <template>
-  <div class="relative group">
+  <div class="relative">
     <div
       class="flex items-center gap-4 px-5 py-4 transition-colors duration-150 hover:bg-(--background-hover)"
     >
@@ -110,7 +110,7 @@ function confirmDelete() {
         </div>
         <button
           @click="isDeleteModalOpen = true"
-          class="p-1.5 rounded-lg text-(--text-tertiary) hover:text-red-500 hover:bg-red-50 transition-all duration-150 cursor-pointer opacity-0 group-hover:opacity-100"
+          class="p-1.5 rounded-lg text-(--text-tertiary) hover:text-red-500 hover:bg-red-50 transition-all duration-150 cursor-pointer"
           title="Удалить из списка"
         >
           <Trash2 :size="15" />
