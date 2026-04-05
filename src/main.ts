@@ -44,6 +44,17 @@ window.addEventListener('unhandledrejection', (event: PromiseRejectionEvent): vo
 
 // Инициализируем auth store перед монтированием приложения
 const authStore = useAuthStore()
-authStore.initialize().then(() => {
+
+// Добавляем таймаут для инициализации (макс 5 секунд)
+Promise.race([
+  authStore.initialize(),
+  new Promise<void>((_, reject) => 
+    setTimeout(() => reject(new Error('Auth initialization timeout')), 5000)
+  )
+]).catch((err) => {
+  console.error('[v0] Auth initialization error:', err.message)
+  // Продолжаем загрузку приложения даже если auth сломан
+}).finally(() => {
+  console.log('[v0] Mounting app...')
   app.mount('#app')
 })
