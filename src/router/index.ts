@@ -32,7 +32,7 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/login",
     name: "login",
-    component: () => import("@/views/{auth}/Login.vue"),
+    component: () => import("@/views/auth/Login.vue"),
     meta: { requiresAuth: false, guestOnly: true },
   },
   {
@@ -44,13 +44,13 @@ const routes: RouteRecordRaw[] = [
   {
     path: "/register",
     name: "register",
-    component: () => import("@/views/{auth}/Register.vue"),
+    component: () => import("@/views/auth/Register.vue"),
     meta: { requiresAuth: false, guestOnly: true },
   },
   {
     path: "/reset-password",
     name: "reset-password",
-    component: () => import("@/views/{auth}/ResetPassword.vue"),
+    component: () => import("@/views/auth/ResetPassword.vue"),
     meta: { requiresAuth: false },
   },
   {
