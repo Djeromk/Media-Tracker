@@ -11,6 +11,7 @@ import MediaPoster from "@/components/media/MediaPoster.vue";
 import MovieRatings from "@/components/media/MovieRatings.vue";
 import SeriesProgress from "@/components/series/SeriesProgress.vue";
 import { useNotFound } from "@/composables/useNotFound";
+import { getOptimizedImage } from "@/utils/utils";
 import {
   ArrowLeft,
   Calendar,
@@ -126,7 +127,7 @@ async function handleUpdateStatus(status: MediaStatus) {
           <div class="relative group">
             <div class="rounded-2xl overflow-hidden shadow-(--shadow-lg) ring-1 ring-black/5 transition-transform duration-300 group-hover:scale-[1.02]">
               <MediaPoster
-                :src="movie.posterUrl"
+                :src="getOptimizedImage(movie.posterUrl)"
                 :alt="getMovieTitle(movie)"
                 fallback-icon="film"
               />

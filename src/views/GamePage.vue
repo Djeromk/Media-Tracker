@@ -8,6 +8,7 @@ import MediaStatusDropdown from "@/components/media/MediaStatusDropdown.vue";
 import MediaRating from "@/components/media/MediaRating.vue";
 import MediaPoster from "@/components/media/MediaPoster.vue";
 import { useNotFound } from "@/composables/useNotFound";
+import { getOptimizedImage } from "@/utils/utils";
 import {
   ArrowLeft,
   Calendar,
@@ -164,7 +165,7 @@ async function handleUpdateStatus(status: MediaStatus) {
 
           <!-- Постер -->
           <MediaPoster
-            :src="game.background_image"
+            :src="getOptimizedImage(game.background_image)"
             :alt="game.name"
             fallback-icon="gamepad"
           />
