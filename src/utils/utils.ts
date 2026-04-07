@@ -107,6 +107,8 @@ export function getMovieOriginalTitle(movie: {
 export const getOptimizedImage = (src: string, width = 640, quality = 75): string => {
   if (!src) return '';
 
+  if (import.meta.env.DEV || import.meta.env.VITE_ENV === 'development') return src;
+
   if (src.startsWith('/')) return src;
 
   const params = new URLSearchParams({
