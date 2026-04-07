@@ -130,31 +130,6 @@ const addButtons = [
         </div>
       </Transition>
 
-      <!-- Header -->
-      <!-- <div class="flex items-center justify-between mb-6">
-        <div>
-          <h1 class="text-2xl font-bold text-(--text-primary) mb-1">
-            Моя библиотека
-          </h1>
-          <p class="text-sm text-(--text-tertiary)">
-            Все ваши книги, фильмы и игры в одном месте
-          </p>
-        </div>
-
-        <div class="flex items-center gap-2">
-          <button
-            v-for="btn in addButtons"
-            :key="btn.type"
-            @click="openSearchModal(btn.type)"
-            class="flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium bg-(--primary) text-(--text-inverse) hover:opacity-90 transition-opacity cursor-pointer"
-          >
-            <Plus :size="16" />
-            <component :is="btn.icon" :size="16" class="hidden sm:block" />
-            <span class="hidden md:inline">{{ btn.label }}</span>
-          </button>
-        </div>
-      </div> -->
-
       <!-- Media Accordion -->
       <MediaAccordion
         v-if="authStore.user && mediaStore.userMedia.length > 0"
