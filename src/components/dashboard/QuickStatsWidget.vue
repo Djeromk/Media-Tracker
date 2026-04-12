@@ -3,6 +3,7 @@ import { computed } from "vue";
 import { Trophy, TrendingUp, PlayCircle } from "lucide-vue-next";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth";
+import { useMediaStore } from "@/stores/media";
 
 interface CategoryStats {
   completed: number;
@@ -22,7 +23,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const router = useRouter();
 const authStore = useAuthStore();
-
+const mediaStore = useMediaStore();
 const userName = computed(() => {
   return authStore.userName || authStore.userEmail?.split("@")[0] || "Друг";
 });
@@ -36,15 +37,14 @@ const totalCompleted = computed(
 
 const totalInProgress = computed(
   () =>
-    props.booksStats.total -
-    props.booksStats.completed +
-    (props.moviesStats.total - props.moviesStats.completed) +
-    (props.gamesStats.total - props.gamesStats.completed)
+    // props.booksStats.total -
+    // props.booksStats.completed +
+    // (props.moviesStats.total - props.moviesStats.completed) +
+    // (props.gamesStats.total - props.gamesStats.completed)
+    mediaStore.stats.movies.inProgress +
+    mediaStore.stats.books.inProgress +
+    mediaStore.stats.games.inProgress
 );
-
-// const totalItems = computed(
-//   () => props.booksStats.total + props.moviesStats.total + props.gamesStats.total
-// );
 
 function goToStats() {
   router.push("/stats");
@@ -58,7 +58,7 @@ function goToStats() {
   >
     <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
       <!-- Left: Greeting -->
-      <div class="flex-shrink-0">
+      <div class="shrink-0">
         <h2 class="text-2xl md:text-3xl font-bold text-(--text-primary)">
           Привет, {{ userName }}!
         </h2>
