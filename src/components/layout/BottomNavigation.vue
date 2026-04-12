@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { Home, Library, BarChart3 } from 'lucide-vue-next'
+import { useAuthStore } from '@/stores/auth'
 
 const route = useRoute()
-
+const authStore = useAuthStore()
 const navItems = [
   { path: '/', label: 'Главная', icon: Home },
   { path: '/library', label: 'Библиотека', icon: Library },
@@ -13,7 +14,7 @@ const navItems = [
 
 <template>
   <!-- Bottom Navigation — видно только на мобильных (max-width: 768px) -->
-  <nav class="fixed bottom-0 left-0 right-0 md:hidden bg-(--primary-100) border-t border-(--border-color) z-40">
+  <nav v-if="authStore.isAuthenticated" class="fixed bottom-0 left-0 right-0 md:hidden bg-(--primary-100) border-t border-(--border-color) z-40">
     <div class="flex justify-around items-center h-16 px-2">
       <router-link
         v-for="item in navItems"
