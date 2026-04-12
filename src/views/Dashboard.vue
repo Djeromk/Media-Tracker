@@ -42,15 +42,15 @@ const thisWeekCompleted = computed<number>(() => {
   const weekAgo = new Date(todayStart);
   weekAgo.setDate(weekAgo.getDate() - 6);
   const weekAgoMs = weekAgo.getTime();
-
-  return mediaStore.userMedia.filter((item: UserMedia) => {
+  const result = mediaStore.userMedia.filter((item: UserMedia) => {
     if (item.status !== "completed") return false;
     const rawDate = item.completed_at ?? item.updatedAt;
     if (!rawDate) return false;
     const completedMs = new Date(rawDate).getTime();
     if (isNaN(completedMs)) return false;
     return completedMs >= weekAgoMs;
-  }).length;
+  })
+  return result.length;
 });
 
 const quickStats = computed(() => ({
