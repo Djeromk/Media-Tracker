@@ -137,6 +137,7 @@ function handleViewAllInProgress() {
         :movies-stats="quickStats.moviesStats"
         :games-stats="quickStats.gamesStats"
         :this-week-completed="quickStats.thisWeekCompleted"
+        :in-progress-covers="inProgressItems.slice(0, 3).map(i => i.media?.cover_url || null)"
       />
 
       <!-- Hero: In Progress -->
