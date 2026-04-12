@@ -63,8 +63,8 @@ function goToStats() {
 
       <!-- Left: Greeting -->
       <div class="shrink-0">
-        <h2 class="text-2xl md:text-3xl font-bold text-(--text-primary)">
-          Привет, {{ userName }}!
+        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-(--text-primary)">
+          Привет,{{ userName }}!
         </h2>
         <p class="text-sm text-(--text-tertiary) mt-1">
           Твой прогресс за неделю
@@ -88,7 +88,7 @@ function goToStats() {
         <!-- Stat: In Progress with stacked covers -->
         <div class="stat-item">
           <!-- Stacked mini covers if available, fallback to count only -->
-          <div v-if="validCovers.length > 0" class="covers-stack">
+          <div v-if="validCovers.length > 0" class="hidden md:block covers-stack">
             <img
               v-for="(cover, i) in validCovers"
               :key="i"

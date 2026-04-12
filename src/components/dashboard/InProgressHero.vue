@@ -128,10 +128,11 @@ function formatDate(dateString: string | null): string {
           v-for="(item, index) in visibleItems"
           :key="item.id"
           :title="getMediaTitle(item)"
-          class="card-padded w-72 sm:w-80 lg:w-95 flex border-l-15 items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
+          class="card-padded  w-72 sm:w-80 lg:w-95 flex items-center gap-4 hover:shadow-(--shadow-md) transition-all duration-(--transition-base)"
+          :class="`hero-${item.media?.type}-card`"
           :style="{
             animationDelay: `${index * 50}ms`,
-            ...getBorderStyle(item.media?.type || ''),
+
           }"
         >
           <router-link
