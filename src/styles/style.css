@@ -88,7 +88,7 @@
 
 @utility card {
   background-color: var(--background-card);
-  border-radius: var(--border-radius-md);
+  border-radius: var(--border-radius-lg);
   border: var(--border-width) solid var(--border-color);
   box-shadow: var(--shadow-sm);
   transition: box-shadow var(--transition-base);

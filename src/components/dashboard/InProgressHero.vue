@@ -48,25 +48,6 @@ function getMediaAction(type: string): string {
   }
 }
 
-function getBorderStyle(type: string) {
-  return {
-    borderLeftColor: getBorderColor(type),
-  };
-}
-
-function getBorderColor(type: string): string {
-  switch (type) {
-    case "book":
-      return "var(--category-books-bg)"; // Голубой
-    case "movie":
-      return "var(--category-movies-bg)"; // Синий
-    case "game":
-      return "var(--category-games-bg)"; // Фиолетовый
-    default:
-      return "var(--primary-500)";
-  }
-}
-
 function getMediaTitle(item: UserMedia): string {
   return item.media?.title || "Без названия";
 }

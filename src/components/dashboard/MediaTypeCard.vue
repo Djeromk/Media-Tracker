@@ -58,10 +58,8 @@ const borderClass = computed(() => `${props.variant}-card`);
 
       <button
         @click="emit('add')"
-        class="flex bg-(--primary) text-(--text-inverse) items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium cursor-pointer transition-all duration-(--transition-base) shrink-0"
+        class="flex text-(--text-primary) items-center gap-1.5 px-3 py-2 rounded-2xl text-sm font-medium cursor-pointer transition-all duration-(--transition-base) shrink-0"
         :style="{
-          // backgroundColor: `color-mix(in srgb, ${accentColor} 12%, transparent)`,
-          // color: accentColor,
           border: `1px solid color-mix(in srgb, ${accentColor} 25%, transparent)`,
         }"
       >
