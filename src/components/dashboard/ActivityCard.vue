@@ -71,12 +71,10 @@ const getChartOption = (): EChartsOption => ({
   tooltip: {
     trigger: "item",
     formatter: "{b}: {c} ({d}%)",
-    backgroundColor: "var(--background-card)",
-    borderColor: "var(--border-color)",
-    borderWidth: 0,
+    borderColor: "#e78a53",
+    borderWidth: 1,
     confine: true,
     textStyle: {
-      color: "var(--text-primary)",
       fontSize: 12,
     },
     padding: [8, 12],
@@ -97,7 +95,7 @@ const getChartOption = (): EChartsOption => ({
           style: {
             text: `${completionPercentage.value}%`,
             fill: "#e78a53",
-            font: "36px 'Geist Mono', ui-monospace, monospace",
+            font: "35px 'Geist Mono', ui-monospace, monospace",
           },
         },
         {
@@ -107,7 +105,8 @@ const getChartOption = (): EChartsOption => ({
           style: {
             text: "Завершено",
             fill: "#e78a53",
-            font: "12px 'Geist Mono', ui-monospace, monospace",
+            font: "11px 'Geist Mono', ui-monospace, monospace",
+
           },
         },
       ],
@@ -318,8 +317,8 @@ canvas {
 
 @media (max-width: 640px) {
   .chart-donut {
-    width: 130px;
-    height: 130px;
+    width: 135px;
+    height: 135px;
   }
 
   .card-padded {

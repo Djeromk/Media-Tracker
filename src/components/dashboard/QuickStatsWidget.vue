@@ -63,7 +63,7 @@ function goToStats() {
 
       <!-- Left: Greeting -->
       <div class="shrink-0">
-        <h2 class="text-xl sm:text-2xl md:text-3xl font-bold text-(--text-primary)">
+        <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-(--text-primary)">
           Привет,{{ userName }}!
         </h2>
         <p class="text-sm text-(--text-tertiary) mt-1">
@@ -214,7 +214,7 @@ function goToStats() {
   box-shadow: var(--shadow-sm);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 768px) {
   .hero-stats-container {
     padding: 1.25rem 1.5rem;
   }
@@ -233,6 +233,12 @@ function goToStats() {
   .covers-stack {
     width: calc(18px * 2 + 32px);
     height: 42px;
+  }
+  .stat-item{
+    gap: 0.5rem;
+  }
+  .stat-divider{
+    margin: 0 0.5rem;
   }
 }
 </style>

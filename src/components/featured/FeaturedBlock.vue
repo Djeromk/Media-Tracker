@@ -119,9 +119,6 @@ async function handleUpdate(userMediaId: string, status: MediaStatus) {
     <!-- Заголовок блока -->
     <div class="featured-block__header">
       <h2 class="featured-block__title">Популярное</h2>
-      <p class="featured-block__subtitle">
-        Добавляй в список одним нажатием
-      </p>
     </div>
 
     <!-- Ошибка загрузки -->
