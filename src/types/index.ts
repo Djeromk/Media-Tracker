@@ -162,3 +162,33 @@ export const MEDIA_TYPE_ICONS: Record<MediaType, string> = {
   game: "🎮",
   other: "📦",
 };
+
+export interface RealtimeUserMediaRecord {
+	id: string
+	user_id: string
+	media_id: string
+	status: string
+	rating: number | null
+	review: string | null
+	is_finished: boolean
+	started_at: string | null
+	completed_at: string | null
+	created_at: string
+	updated_at: string
+	current_page: number | null
+	current_season: number | null
+	current_episode: number | null
+	hours_played: number | null
+	watched_episodes: Record<string, number[]>
+  }
+
+  export type RealtimeEventType = 'INSERT' | 'UPDATE' | 'DELETE'
+
+  export interface RealtimeUserMediaPayload {
+	eventType: RealtimeEventType
+	/** Новое состояние строки. При DELETE — пустой объект {}. */
+	new: Partial<RealtimeUserMediaRecord>
+	/** Старое состояние строки. При INSERT — пустой объект {}. */
+	old: Partial<RealtimeUserMediaRecord>
+  }
+
