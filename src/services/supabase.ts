@@ -145,6 +145,19 @@ export const db = {
 
     return result;
   },
+  async getUserMediaById(userId: string, userMediaId: string) {
+    return supabase
+      .from("user_media")
+      .select(
+        `
+        *,
+        media:media_items (*)
+      `,
+      )
+      .eq("user_id", userId)
+      .eq("id", userMediaId)
+      .single();
+  },
 
   async addUserMedia(data: {
     userId: string;
@@ -153,12 +166,16 @@ export const db = {
     current_season: number | null
     current_episode: number | null
   }) {
-    return supabase.from("user_media").insert({
-      user_id: data.userId,
-      media_id: data.mediaId,
-      status: data.status,
-      current_season: data.current_season,
-      current_episode: data.current_episode,});
+    return supabase
+      .from("user_media")
+      .insert({
+        user_id: data.userId,
+        media_id: data.mediaId,
+        status: data.status,
+        current_season: data.current_season,
+        current_episode: data.current_episode,
+      })
+      .select("id");
   },
 
   async updateUserMedia(
