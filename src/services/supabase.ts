@@ -1,5 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
-import { MediaType, MediaStatus, WatchedEpisodesMap } from "@/types";
+import { MediaType, MediaStatus, WatchedEpisodesMap, RealtimeUserMediaPayload, RealtimeEventType, RealtimeUserMediaRecord } from "@/types";
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
@@ -232,3 +232,35 @@ export const db = {
       .eq('id', userMediaId);
   }
 };
+export function subscribeToUserMedia(
+  userId: string,
+  handler: (payload: RealtimeUserMediaPayload) => void,
+) {
+  return supabase
+    .channel(`user_media:${userId}`)
+    .on(
+      'postgres_changes',
+      {
+        event: '*',               // INSERT | UPDATE | DELETE
+        schema: 'public',
+        table: 'user_media',
+        filter: `user_id=eq.${userId}`,
+      },
+      (payload) => {
+        /**
+         * Supabase SDK типизирует payload как широкий union с RealtimePostgresChangesPayload.
+         * Мы знаем точную форму данных для нашей таблицы, поэтому приводим явно.
+         *
+         * payload.eventType: 'INSERT' | 'UPDATE' | 'DELETE'
+         * payload.new: объект строки (пустой при DELETE)
+         * payload.old: объект строки (пустой при INSERT)
+         */
+        handler({
+          eventType: payload.eventType as RealtimeEventType,
+          new: payload.new as Partial<RealtimeUserMediaRecord>,
+          old: payload.old as Partial<RealtimeUserMediaRecord>,
+        })
+      },
+    )
+    .subscribe()
+}

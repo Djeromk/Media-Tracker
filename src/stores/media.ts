@@ -2,6 +2,9 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { db } from "@/services/supabase";
 import { mediaService } from "@/services/mediaService";
+import { subscribeToUserMedia } from "@/services/supabase";
+import type { RealtimeUserMediaPayload } from "@/types";
+import type { RealtimeChannel } from "@supabase/supabase-js";
 import type {
   UserMedia,
   MediaType,
@@ -23,7 +26,7 @@ interface MediaResponse {
 
 export const useMediaStore = defineStore("media", () => {
   const authStore = useAuthStore();
-
+  const realtimeChannel = ref<RealtimeChannel | null>(null);
   const userMedia = ref<UserMedia[]>([]);
   const loading = ref(false);
   const error = ref<string | null>(null);
@@ -52,6 +55,85 @@ export const useMediaStore = defineStore("media", () => {
       },
     };
   });
+  async function applyRealtimeEvent(
+    payload: RealtimeUserMediaPayload,
+  ): Promise<void> {
+    if (payload.eventType === "DELETE") {
+      const deletedId = payload.old.id;
+      if (!deletedId) return;
+      const idx = userMedia.value.findIndex((m) => m.id === deletedId);
+      if (idx !== -1) userMedia.value.splice(idx, 1);
+      return;
+    }
+
+    if (payload.eventType === "UPDATE") {
+      const updatedId = payload.new.id;
+      if (!updatedId) return;
+      const idx = userMedia.value.findIndex((m) => m.id === updatedId);
+      if (idx === -1) return;
+      // Мержим только пришедшие поля — media-данные берём из существующей записи.
+      // Это сохраняет join (media?.title, media?.cover_url и т.д.)
+      // который в realtime payload отсутствует.
+      const existing = userMedia.value[idx];
+      const updated: UserMedia = {
+        ...existing,
+        status: (payload.new.status as UserMedia["status"]) ?? existing.status,
+        rating:
+          payload.new.rating !== undefined
+            ? payload.new.rating
+            : existing.rating,
+        review:
+          payload.new.review !== undefined
+            ? payload.new.review
+            : existing.review,
+        is_finished: payload.new.is_finished ?? existing.is_finished,
+        started_at:
+          payload.new.started_at !== undefined
+            ? payload.new.started_at
+            : existing.started_at,
+        completed_at:
+          payload.new.completed_at !== undefined
+            ? payload.new.completed_at
+            : existing.completed_at,
+        current_page:
+          payload.new.current_page !== undefined
+            ? payload.new.current_page
+            : existing.current_page,
+        currentPage:
+          payload.new.current_page !== undefined
+            ? payload.new.current_page
+            : existing.currentPage,
+        current_season:
+          payload.new.current_season !== undefined
+            ? payload.new.current_season
+            : existing.current_season,
+        current_episode:
+          payload.new.current_episode !== undefined
+            ? payload.new.current_episode
+            : existing.current_episode,
+        watched_episodes:
+          payload.new.watched_episodes ?? existing.watched_episodes,
+        hoursPlayed:
+          payload.new.hours_played !== undefined
+            ? payload.new.hours_played
+            : existing.hoursPlayed,
+        updatedAt: payload.new.updated_at ?? existing.updatedAt,
+      };
+      userMedia.value.splice(idx, 1, updated);
+    }
+  }
+
+  function stopRealtime(): void {
+    if (realtimeChannel.value) {
+      realtimeChannel.value.unsubscribe();
+      realtimeChannel.value = null;
+    }
+  }
+
+  function startRealtime(userId: string): void {
+    stopRealtime();
+    realtimeChannel.value = subscribeToUserMedia(userId, applyRealtimeEvent);
+  }
 
   // Вспомогательные геттеры для фильтрации
   const getMediaByType = (type: MediaType) => {
@@ -73,6 +155,7 @@ export const useMediaStore = defineStore("media", () => {
       );
       if (fetchError) throw fetchError;
       userMedia.value = data as UserMedia[];
+      startRealtime(authStore.user.id);
     } catch (e) {
       const dbError = e as PostgrestError;
       error.value = dbError.message;
@@ -231,6 +314,7 @@ export const useMediaStore = defineStore("media", () => {
   }
 
   function clearUserMedia(): void {
+    stopRealtime();
     userMedia.value = [];
     error.value = null;
   }
@@ -264,5 +348,7 @@ export const useMediaStore = defineStore("media", () => {
     updateMedia,
     deleteMedia,
     clearUserMedia,
+    startRealtime,
+    stopRealtime,
   };
 });
